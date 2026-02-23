@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>My Tools – каталог інструментів</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- Шапка (буде підключена скриптом) -->
+<div id="header"></div>
+
+<main class="container">
+    <h1>Мої інструменти в браузері</h1>
+
+    <!-- Сітка з картками інструментів -->
+    <section class="tools-grid">
+
+        <!-- ==== Приклад 1 – Оптимізатор зображень ==== -->
+        <article class="tool-card">
+            <h2>Оптимізатор зображень</h2>
+            <p>Конвертує JPEG/PNG/WebP/AVIF/BMP, змінює розмір, дозволяє задавати нові назви файлів.</p>
+            <a href="tools/image-optimizer.html">Перейти →</a>
+        </article>
+
+        <!-- ==== Приклад 2 – (додайте нові інструменти тут) ==== -->
+        <!--
+        <article class="tool-card">
+            <h2>Назва інструмента</h2>
+            <p>Короткий опис…</p>
+            <a href="tools/your‑tool.html">Перейти →</a>
+        </article>
+        -->
+    </section>
+</main>
+
+<!-- Підвал (буде підключений скриптом) -->
+<div id="footer"></div>
+
+<!-- -------------------------------------------------------------
+     Підключення Header & Footer (клієнт‑side include)
+     ------------------------------------------------------------- -->
+<script>
+/*  Працює в будь‑якому статичному хостингу без бекенду   */
+(async () => {
+    // Якщо ви розміщуєте сайт у піддиректорії (GitHub Pages), вкажіть кореневий шлях:
+    const base = ''; // наприклад: '/my-tools'   (залиште порожнім, якщо корінь)
+
+    const headerHTML = await fetch(`${base}/header.html`).then(r=>r.text());
+    document.getElementById('header').innerHTML = headerHTML;
+
+    const footerHTML = await fetch(`${base}/footer.html`).then(r=>r.text());
+    document.getElementById('footer').innerHTML = footerHTML;
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,135 @@
+/* ────── Базові змінні (можна підправити під себе) ────── */
+:root{
+    --radius:12px;
+    --gap:1rem;
+    --font:'Inter',system-ui,sans-serif;
+    --transition:.25s ease;
+
+    /* Палета */
+    --bg:#f5f7fa;
+    --surface:#fff;
+    --text:#212529;
+    --muted:#6c757d;
+    --primary:#3b82f6;
+    --accent:#ff6b00;
+    --success:#28a745;
+    --danger:#d9534f;
+    --warning:#ffbc00;
+
+    /* Тіні */
+    --shadow-sm:0 2px 6px rgba(0,0,0,.08);
+    --shadow-md:0 6px 20px rgba(0,0,0,.12);
+}
+
+/* Темний режим */
+@media (prefers-color-scheme: dark){
+    :root{
+        --bg:#121212;
+        --surface:#1e1e1e;
+        --text:#e0e0e0;
+        --muted:#a0a0a0;
+        --shadow-sm:0 2px 6px rgba(0,0,0,.4);
+        --shadow-md:0 6px 20px rgba(0,0,0,.6);
+    }
+}
+
+/* ────── Базові правила ────── */
+*,*::before,*::after{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+    margin:0;
+    font-family:var(--font);
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.6;
+}
+main{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+}
+h1{font-weight:600; text-align:center; margin:2rem 0 1rem; font-size:2rem;}
+.container{max-width:1200px; margin:auto; padding:0 1rem;}
+
+/* ────── Header / Footer ────── */
+header,footer{
+    background:var(--surface);
+    padding:.8rem 1rem;
+    box-shadow:var(--shadow-sm);
+}
+header a, footer a{color:var(--primary); text-decoration:none;}
+header a:hover, footer a:hover{text-decoration:underline;}
+
+/* ────── Карточки‑інструменти ────── */
+.tools-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:var(--gap);
+    margin-top:2rem;
+}
+.tool-card{
+    background:rgba(255,255,255,.15);
+    backdrop-filter:blur(10px);
+    border-radius:var(--radius);
+    padding:1.5rem;
+    box-shadow:var(--shadow-sm);
+    transition:var(--transition);
+    text-align:center;
+}
+@media (prefers-color-scheme: dark){.tool-card{background:rgba(30,30,30,.5);}}
+.tool-card:hover{
+    transform:translateY(-4px);
+    box-shadow:var(--shadow-md);
+}
+.tool-card h2{
+    margin:0 0 .5rem;
+    font-size:1.3rem;
+    color:var(--primary);
+}
+.tool-card p{
+    font-size:.9rem;
+    color:var(--muted);
+    margin:0 0 1rem;
+}
+.tool-card a{
+    display:inline-block;
+    padding:.45rem 1rem;
+    background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+    color:#fff;
+    border-radius:var(--radius);
+    font-weight:600;
+    text-decoration:none;
+    transition:var(--transition);
+}
+.tool-card a:hover{
+    transform:translateY(-2px);
+    box-shadow:var(--shadow-md);
+}
+
+/* ────── Кнопка «Підтримати автора» ────── */
+.donate-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:.5rem;
+    background:linear-gradient(135deg,var(--accent),#e55a00);
+    color:#fff;
+    border:none;
+    border-radius:var(--radius);
+    padding:.45rem 1rem;
+    font-size:1rem;
+    font-weight:600;
+    cursor:pointer;
+    transition:var(--transition);
+}
+.donate-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:var(--shadow-md);
+}
+
+/* ────── Адаптивність ≤500px ────── */
+@media (max-width:500px){
+    :root{--gap:.75rem; --radius:8px;}
+    h1{font-size:1.6rem;}
+    .tool-card{padding:1rem;}
+    header,footer{padding:.6rem 1rem;}
+}
