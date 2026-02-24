@@ -5,11 +5,24 @@
     <title>Оптимізатор зображень JPEG, PNG, AVIF, WEBP, BMP</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
 
-    <!-- підключення базового шрифту -->
-    <script>(function(){var p=location.pathname.split('/').filter(Boolean),b=(p.length&&location.hostname!=="localhost"&&location.hostname!=="127.0.0.1")?"/"+p[0]+"/":"/",t=document.createElement("base");t.href=b;document.head.prepend(t)})();</script>
-    <!-- **Один‑рядковий патч fetch** -->
-    <script>const __base = document.baseURI, __oldFetch = window.fetch; window.fetch = (url, init) => __oldFetch(new URL(url, __base), init);</script>
+    <!-- 1️⃣ Статичний base (є першим елементом у head) -->
+    <base id="siteBase">
 
+    <!-- 2️⃣ Динамічний скрипт, який лише *змінює* href вже існуючого base -->
+    <script>
+        const parts = location.pathname.split('/').filter(Boolean);
+        const base = (parts.length && location.hostname!=='localhost' && location.hostname!=='127.0.0.1')
+                    ? '/' + parts[0] + '/'         // /MyRepo/
+                    : '/';                        // /
+        document.getElementById('siteBase').href = base;
+        </script>
+
+        <!-- 3️⃣ Патч fetch – працює після того, як base уже задано -->
+        <script>
+        const __base = document.baseURI,
+                __old  = window.fetch;
+        window.fetch = (url, init) => __old(new URL(url, __base), init);
+    </script>
 
 
     <link rel="stylesheet" href="assets/css/vars.css">
