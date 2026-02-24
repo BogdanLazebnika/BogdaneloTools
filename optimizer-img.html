@@ -5,28 +5,9 @@
     <title>Оптимізатор зображень JPEG, PNG, AVIF, WEBP, BMP</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
 
-    <!-- 1️⃣ Статичний base (є першим елементом у head) -->
-    <base id="siteBase">
-
-    <!-- 2️⃣ Динамічний скрипт, який лише *змінює* href вже існуючого base -->
-    <script>
-        const parts = location.pathname.split('/').filter(Boolean);
-        const base = (parts.length && location.hostname!=='localhost' && location.hostname!=='127.0.0.1')
-                    ? '/' + parts[0] + '/'         // /MyRepo/
-                    : '/';                        // /
-        document.getElementById('siteBase').href = base;
-        </script>
-
-        <!-- 3️⃣ Патч fetch – працює після того, як base уже задано -->
-        <script>
-        const __base = document.baseURI,
-                __old  = window.fetch;
-        window.fetch = (url, init) => __old(new URL(url, __base), init);
-    </script>
-
-
-    <link rel="stylesheet" href="assets/css/vars.css">
-    <link rel="stylesheet" href="assets/css/optimizer-img.css">
+    <link rel="stylesheet" href="./assets/css/reset.css">
+    <link rel="stylesheet" href="./assets/css/vars.css">
+    <link rel="stylesheet" href="./assets/css/optimizer-img.css">
 
 
 
@@ -131,11 +112,11 @@
     <footer></footer>
 
     <!-- Спільні функції (завантаження header/footer, toast-и) -->
-    <script type="module" src="assets/js/main.js"></script>
+    <script type="module" src="./assets/js/main.js"></script>
 
     <!-- Специфічний скрипт -->
     <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
-    <script type="module" src="assets/js/optimizer-img.js"></script>
+    <script type="module" src="./assets/js/optimizer-img.js"></script>
 </body>
 </html>
 

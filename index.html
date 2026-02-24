@@ -4,15 +4,10 @@
     <meta charset="UTF-8">
     <title>Мої застосунки</title>
 
-    <!-- підключення базового шрифту -->
-    <script>(function(){var p=location.pathname.split('/').filter(Boolean),b=(p.length&&location.hostname!=="localhost"&&location.hostname!=="127.0.0.1")?"/"+p[0]+"/":"/",t=document.createElement("base");t.href=b;document.head.prepend(t)})();</script>
- 
-    <!-- **Один‑рядковий патч fetch** -->
-    <script>const __base = document.baseURI, __oldFetch = window.fetch; window.fetch = (url, init) => __oldFetch(new URL(url, __base), init);</script>
+    <link rel="stylesheet" href="./assets/css/reset.css">
+    <link rel="stylesheet" href="./assets/css/vars.css">
+    <link rel="stylesheet" href="./assets/css/index.css">
 
-
-    <link rel="stylesheet" href="assets/css/vars.css">
-    <link rel="stylesheet" href="assets/css/index.css">
 </head>
 <body>
     <header></header>
@@ -21,14 +16,14 @@
         
         <h1>Список застосунків</h1>
         <ul>
-            <li><a href="apps/optimizer-img.html">Оптимізатор зображень</a></li>
-            <li><a href="apps/another-app.html">Інший додаток</a></li>
+            <li><a href="./optimizer-img.html">Оптимізатор зображень</a></li>
+            <li><a href="./another-app.html">Інший додаток</a></li>
         </ul>
     </main>
     <footer></footer>
 
-    <script type="module" src="assets/js/main.js"></script>
-    <script type="module" src="assets/js/index.js"></script>
+    <script type="module" src="./assets/js/main.js"></script>
+    <script type="module" src="./assets/js/index.js"></script>
 
 </body>
 </html>
