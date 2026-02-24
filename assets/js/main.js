@@ -7,6 +7,6 @@ export async function loadPartial(url, containerSelector) {
 
 /* автозапуск на всіх сторінках */
 document.addEventListener('DOMContentLoaded', () => {
-    loadPartial('/partials/header.html', 'header');
-    loadPartial('/partials/footer.html', 'footer');
+    loadPartial('./partials/header.html', 'header');
+    loadPartial('./partials/footer.html', 'footer');
 });
