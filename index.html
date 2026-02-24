@@ -1,59 +1,180 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <title>My Tools – каталог інструментів</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <link rel="stylesheet" href="assets/css/style.css">
-</head>
-<body>
+<meta charset="UTF-8">
+<title>My Tools – безкоштовний каталог онлайн‑утиліт</title>
 
-<!-- Шапка (буде підключена скриптом) -->
-<div id="header"></div>
+<!-- ============================= SEO ============================= -->
+<meta name="description"
+      content="Збірка безкоштовних веб‑утиліт, які працюють у браузері без серверу: оптимізатор зображень, генератор QR‑коду, конвертер PDF → PNG, редактор SVG та інші. Підтримка JPEG, PNG, WebP, AVIF, BMP, GIF.">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="index,follow">
+<link rel="canonical"
+      href="https://YOUR_GITHUB_USER.github.io/YOUR_REPO/index.html">
+<link rel="alternate" hreflang="uk"
+      href="https://YOUR_GITHUB_USER.github.io/YOUR_REPO/index.html">
+<meta name="theme-color" content="#3b82f6">
 
-<main class="container">
-    <h1>Мої інструменти в браузері</h1>
+<!-- Open‑Graph / Twitter -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="My Tools – безкоштовний каталог онлайн‑утиліт">
+<meta property="og:description"
+      content="Збірка безкоштовних веб‑утиліт, які працюють у браузері без серверу: оптимізатор зображень, генератор QR‑коду, конвертер PDF → PNG, редактор SVG та інші.">
+<meta property="og:url"
+      content="https://YOUR_GITHUB_USER.github.io/YOUR_REPO/index.html">
+<meta property="og:image"
+      content="https://YOUR_GITHUB_USER.github.io/YOUR_REPO/assets/img/og-image.jpg">
+<meta property="og:locale" content="uk_UA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="My Tools – безкоштовний каталог онлайн‑утиліт">
+<meta name="twitter:description"
+      content="Кілька простих інструментів у вашому браузері: оптимізація зображень, QR‑code, PDF‑to‑image та інші.">
+<meta name="twitter:image"
+      content="https://YOUR_GITHUB_USER.github.io/YOUR_REPO/assets/img/og-image.jpg">
 
-    <!-- Сітка з картками інструментів -->
-    <section class="tools-grid">
+<!-- Шрифти -->
+<link rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+</noscript>
 
-        <!-- ==== Приклад 1 – Оптимізатор зображень ==== -->
-        <article class="tool-card">
-            <h2>Оптимізатор зображень</h2>
-            <p>Конвертує JPEG/PNG/WebP/AVIF/BMP, змінює розмір, дозволяє задавати нові назви файлів.</p>
-            <a href="tools/image-optimizer.html">Перейти →</a>
-        </article>
+<!-- Спільні стилі -->
+<link rel="stylesheet" href="assets/css/style.css">
+<!-- Специфічні стилі для головної сторінки -->
+<link rel="stylesheet" href="assets/css/home.css">
 
-        <!-- ==== Приклад 2 – (додайте нові інструменти тут) ==== -->
-        <!--
-        <article class="tool-card">
-            <h2>Назва інструмента</h2>
-            <p>Короткий опис…</p>
-            <a href="tools/your‑tool.html">Перейти →</a>
-        </article>
-        -->
-    </section>
-</main>
-
-<!-- Підвал (буде підключений скриптом) -->
-<div id="footer"></div>
-
-<!-- -------------------------------------------------------------
-     Підключення Header & Footer (клієнт‑side include)
-     ------------------------------------------------------------- -->
-<script>
-/*  Працює в будь‑якому статичному хостингу без бекенду   */
-(async () => {
-    // Якщо ви розміщуєте сайт у піддиректорії (GitHub Pages), вкажіть кореневий шлях:
-    const base = ''; // наприклад: '/my-tools'   (залиште порожнім, якщо корінь)
-
-    const headerHTML = await fetch(`${base}/header.html`).then(r=>r.text());
-    document.getElementById('header').innerHTML = headerHTML;
-
-    const footerHTML = await fetch(`${base}/footer.html`).then(r=>r.text());
-    document.getElementById('footer').innerHTML = footerHTML;
-})();
+<!-- JSON‑LD – структуровані дані (WebApplication) -->
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"WebApplication",
+  "name":"My Tools – каталог онлайн‑утиліт",
+  "url":"https://YOUR_GITHUB_USER.github.io/YOUR_REPO/",
+  "description":"Збірка безкоштовних веб‑утиліт, які працюють у браузері без серверу: оптимізатор зображень, генератор QR‑коду, PDF‑to‑image, редактор SVG тощо.",
+  "applicationCategory":"Utilities",
+  "operatingSystem":"WebBrowser",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+  "softwareVersion":"1.0",
+  "screenshot":"https://YOUR_GITHUB_USER.github.io/YOUR_REPO/assets/img/og-image.jpg"
+}
 </script>
 
+<!-- Скрипти – defer, не блокують рендеринг -->
+<script src="assets/js/main.js" defer></script>
+</head>
+
+<body class="has-fade">
+
+    <!-- ==================== HEADER (динамічно) ==================== -->
+    <div id="header"></div>
+
+    <!-- ==================== HERO ==================== -->
+    <section class="hero">
+        <div class="container hero__content">
+            <h1 class="hero__title">My Tools – онлайн‑утиліти</h1>
+            <p class="hero__subtitle">
+                Безкоштовні, швидкі та працюють у вашому браузері без реєстрації та реклами.
+                Кілька інструментів у одному місці – від оптимізації зображень до генератора QR‑коду.
+            </p>
+            <a href="#tools" class="btn btn--primary hero__cta">Переглянути інструменти</a>
+        </div>
+    </section>
+
+    <!-- ==================== TOOL CATALOG ==================== -->
+    <main class="container" id="tools">
+        <h2 class="section-title">Каталог інструментів</h2>
+
+        <section class="tools-grid">
+
+            <!-- 1️⃣ Оптимізатор зображень -->
+            <article class="tool-card">
+                <h3 class="tool-card__title">Оптимізатор зображень</h3>
+                <p class="tool-card__desc">
+                    Стискає, змінює розмір та конвертує JPEG, PNG, WebP, AVIF, BMP, GIF.
+                    Підтримка суфіксів, нових назв, пакетного ZIP‑завантаження.
+                </p>
+                <a href="tools/image-optimizer.html"
+                   class="btn btn--primary tool-card__link">
+                    Перейти →
+                </a>
+            </article>
+
+            <!-- 2️⃣ Генератор QR‑коду -->
+            <article class="tool-card">
+                <h3 class="tool-card__title">Генератор QR‑коду</h3>
+                <p class="tool-card__desc">
+                    Створює QR‑коди з будь‑яким текстом/URL, налаштовує колір, розмір, формати PNG чи SVG.
+                </p>
+                <a href="tools/qr-generator.html"
+                   class="btn btn--primary tool-card__link">
+                    Перейти →
+                </a>
+            </article>
+
+            <!-- 3️⃣ PDF → PNG / JPG -->
+            <article class="tool-card">
+                <h3 class="tool-card__title">PDF → PNG / JPG</h3>
+                <p class="tool-card__desc">
+                    Перетворює кожну сторінку PDF у PNG (або JPG) без втрати якості.
+                    Працює цілком у браузері.
+                </p>
+                <a href="tools/pdf-to-image.html"
+                   class="btn btn--primary tool-card__link">
+                    Перейти →
+                </a>
+            </article>
+
+            <!-- 4️⃣ (Ваш новий інструмент) -->
+            <!--
+            <article class="tool-card">
+                <h3 class="tool-card__title">Назва інструмента</h3>
+                <p class="tool-card__desc">Короткий опис.</p>
+                <a href="tools/your-tool.html"
+                   class="btn btn--primary tool-card__link">Перейти →</a>
+            </article>
+            -->
+        </section>
+
+        <!-- ==================== CTA – Підтримати автора ==================== -->
+        <section class="donate-section">
+            <h2 class="section-title">Підтримати проєкт</h2>
+            <p>
+                Якщо вам сподобалися інструменти, ви можете підтримати їх
+                фінансово (наприклад, через PayPal чи Buy‑Me‑A‑Coffee). Кожна копійка
+                допомагає розвивати нові утиліти.
+            </p>
+            <a href="https://send.monobank.ua/jar/98G5xr8APc"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="btn btn--accent donate-btn">
+                💖 Підтримати автора
+            </a>
+        </section>
+
+    </main>
+
+    <!-- ==================== FOOTER (динамічно) ==================== -->
+    <div id="footer"></div>
+
+    <!-- -------------------------------------------------------------
+         Підключення Header & Footer (client‑side include)
+         ------------------------------------------------------------- -->
+    <script>
+    (async () => {
+        const base = '';          // якщо ваш сайт розміщений у піддиректорії, вкажіть тут (наприклад '/my-tools')
+        const hdr  = await fetch(`${base}/header.html`).then(r => r.text());
+        const ftr  = await fetch(`${base}/footer.html`).then(r => r.text());
+        document.getElementById('header').innerHTML = hdr;
+        document.getElementById('footer').innerHTML = ftr;
+    })();
+
+    // Плавний fade‑in при завантаженні сторінки
+    document.addEventListener('DOMContentLoaded', () => {
+        document.body.classList.remove('has-fade');
+    });
+    </script>
 </body>
 </html>

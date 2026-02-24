@@ -1,8 +1,65 @@
-<header>
-    <div class="container">
-        <a href="/index.html"><strong>🛠️ My Tools</strong></a>
-        <nav style="float:right;">
-            <a href="https://github.com/your‑github‑user/your‑repo" target="_blank">GitHub</a>
+<!--  header.html  -->
+<header class="site-header">
+    <div class="container header__inner">
+        <!-- Логотип -->
+        <a href="/index.html" class="header__logo">
+            <strong>🛠️ My Tools</strong>
+        </a>
+
+        <!-- Кнопка‑гамбургер (мобільна навігація) -->
+        <button class="header__toggle"
+                aria-label="Відкрити/закрити меню"
+                aria-controls="headerNav"
+                aria-expanded="false">
+            <span class="sr-only">Меню</span>
+            <span class="header__toggle-bar"></span>
+            <span class="header__toggle-bar"></span>
+            <span class="header__toggle-bar"></span>
+        </button>
+
+        <!-- Навігація -->
+        <nav class="header__nav" id="headerNav">
+            <ul class="header__list">
+                <li class="header__item"><a href="/index.html" class="header__link">Головна</a></li>
+                <li class="header__item"><a href="/#tools" class="header__link">Інструменти</a></li>
+                <li class="header__item"><a href="/about.html" class="header__link">Про проєкт</a></li>
+                <li class="header__item">
+                    <a href="https://github.com/YOUR_GITHUB_USER/YOUR_REPO"
+                       class="header__link"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        GitHub
+                    </a>
+                </li>
+            </ul>
         </nav>
     </div>
 </header>
+
+<!-- Нічого зайвого – лише скрипт, який відкриває/закриває меню на мобільних. -->
+<script>
+/* -------------------------------------------------------------
+   ХЕНДЛЕР «ГАМБУРГЕР» – відкриває/закриває навігацію
+   ------------------------------------------------------------- */
+(() => {
+    const toggleBtn   = document.querySelector('.header__toggle');
+    const nav         = document.getElementById('headerNav');
+
+    if (!toggleBtn || !nav) return;
+
+    const toggleMenu = () => {
+        const expanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+        toggleBtn.setAttribute('aria-expanded', !expanded);
+        nav.classList.toggle('open', !expanded);
+    };
+
+    toggleBtn.addEventListener('click', toggleMenu);
+
+    // Закрити меню, коли клікнули поза ним (для мобільних)
+    document.addEventListener('click', e => {
+        if (!nav.contains(e.target) && !toggleBtn.contains(e.target) && nav.classList.contains('open')) {
+            toggleMenu();
+        }
+    });
+})();
+</script>
