@@ -103,7 +103,22 @@ function shouldSkipCompression(file,bmp,opts){
 /* ────────────────────── 3️⃣ Формування імені (ренейминг) ────────────────────── */
 function applyRenaming(originalFile, index, total, renameOpts){
     const origBase = originalFile.name.replace(/\.\w+$/,'');
-    const ext      = renameOpts.mimeOut ? renameOpts.mimeOut.split('/')[1] : originalFile.type.split('/')[1];
+    let ext = '';
+    
+    // Виправлення: правильно визначаємо розширення
+    if (renameOpts.mimeOut && renameOpts.mimeOut !== 'auto') {
+        ext = renameOpts.mimeOut.split('/')[1];
+    } else {
+        ext = originalFile.type.split('/')[1];
+    }
+    
+    // Додаткові виправлення для формату
+    if (ext === 'jpeg') ext = 'jpg';
+    
+    // Перевірка на undefined
+    if (!ext || ext === 'undefined') {
+        ext = originalFile.name.split('.').pop() || 'jpg';
+    }
 
     // -------------- СУФІКС (append) -----------------
     if (renameOpts.renameMode === 'append'){
@@ -115,25 +130,20 @@ function applyRenaming(originalFile, index, total, renameOpts){
     if (renameOpts.renameMode === 'replace'){
         const baseName = renameOpts.newName?.trim() ?? '';
         if (!baseName){
-            // fallback – залишаємо оригінальну назву
             return `${origBase}.${ext}`;
         }
 
-        // Якщо користувач залишив шаблони {orig} / {num} – обробляємо їх
         if (/\{orig\}|\{num\}/.test(baseName)){
             let name = baseName.replace(/\{orig\}/g, origBase);
-            name = name.replace(/\{num\}/g, index);   // індекс 0‑based
-            // Якщо в шаблоні немає {num} – для випадку, коли користувач сказав "newname{num}"
-            // додаємо номер лише коли індекс > 0
+            name = name.replace(/\{num\}/g, index + 1);   // індекс 1-based для користувача
             if (!/\{num\}/.test(baseName) && index>0){
-                name = `${name}${index}`;
+                name = `${name}${index + 1}`;
             }
             return `${name}.${ext}`;
         }
 
-        // Прості назви без шаблонів – нумерація від 2‑го файлу (index=1)
-        if (index===0) return `${baseName}.${ext}`;
-        return `${baseName}${index}.${ext}`;
+        if (index === 0) return `${baseName}.${ext}`;
+        return `${baseName}${index + 1}.${ext}`;
     }
 
     // -------------- NO RENAME (none) -----------------
@@ -151,8 +161,8 @@ async function processImage(file, opts){
         if (targetMime !== file.type){
             showAlert(`Формат ${targetMime.split('/')[1]} не підтримується – файл залишено без змін.`, 'warning');
         }
-        const copy = file.slice(0, file.size, file.type);
-        copy.name = applyRenaming(file,index,total,renameOpts);
+        const copy = new Blob([file], {type: file.type});
+        copy.name = applyRenaming(file,index,total,{...renameOpts, mimeOut: file.type});
         return {blob:copy, skipped:true, reason:'unsupported format'};
     }
 
@@ -160,8 +170,8 @@ async function processImage(file, opts){
     const decision = shouldSkipCompression(file,bmp,{maxWidth,quality,mimeOut:targetMime});
 
     if (decision.skip){
-        const copy = file.slice(0, file.size, file.type);
-        copy.name = applyRenaming(file,index,total,renameOpts);
+        const copy = new Blob([file], {type: file.type});
+        copy.name = applyRenaming(file,index,total,{...renameOpts, mimeOut: file.type});
         return {blob:copy, skipped:true, reason:decision.reason};
     }
 
@@ -182,13 +192,17 @@ async function processImage(file, opts){
     return new Promise((resolve,reject)=>{
         canvas.toBlob(blob=>{
             if(!blob){reject('toBlob failed');return;}
-            blob.name = applyRenaming(file,index,total,renameOpts);
-            resolve({blob, skipped:false, reason:null});
+            
+            // Створюємо новий Blob з правильним ім'ям
+            const namedBlob = new Blob([blob], {type: targetMime});
+            namedBlob.name = applyRenaming(file,index,total,renameOpts);
+            
+            resolve({blob:namedBlob, skipped:false, reason:null});
         }, targetMime, effectiveQuality);
     });
 }
 
-/* ────────────────────── 5️⃣ UI: drag&drop, прогрес, прев’ю ────────────────────── */
+/* ────────────────────── 5️⃣ UI: drag&drop, прогрес, прев'ю ────────────────────── */
 const dropzone        = document.getElementById('dropzone');
 const fileInput       = document.getElementById('files');
 const preview         = document.getElementById('preview');
@@ -198,7 +212,7 @@ const saveFolderBtn   = document.getElementById('saveFolder');
 const alertsContainer = document.getElementById('alerts');
 
 let generatedBlobs = [];   // масив готових Blob‑ів
-let generatedUrls  = [];   // URL‑и для прев’ю
+let generatedUrls  = [];   // URL‑и для прев'ю
 
 function setProgress(done,total){
     progress.style.display = 'block';
@@ -268,7 +282,7 @@ document.getElementById('run').addEventListener('click', async()=>{
             renameMode: renameModeEl.value,
             suffix:     document.getElementById('suffix').value,
             newName:    document.getElementById('newName').value,
-            mimeOut:    document.getElementById('format').value   // передаємо і тут для визначення розширення
+            mimeOut:    document.getElementById('format').value
         }
     };
 
@@ -301,7 +315,7 @@ document.getElementById('run').addEventListener('click', async()=>{
                 const url = URL.createObjectURL(blob);
                 generatedUrls[idx] = url;
 
-                // ---- прев’ю-картка ----
+                // ---- прев'ю-картка ----
                 const card = document.createElement('div');
                 card.className='card';
                 card.innerHTML = `
@@ -368,7 +382,7 @@ saveFolderBtn.addEventListener('click', async()=>{
     finally{ saveFolderBtn.disabled = false; }
 });
 
-/* ────────────────────── 10️⃣ ZIP‑fallback ────────────────────── */
+/* ────────────────────── 🔟 ZIP‑fallback ────────────────────── */
 downloadAllBtn.addEventListener('click', async()=>{
     if(!generatedBlobs.length) return;
     const zip = new JSZip();
@@ -391,79 +405,224 @@ downloadAllBtn.addEventListener('click', async()=>{
     downloadAllBtn.disabled = false;
 });
 
-/* ────────────────────── 11️⃣ Модальне вікно‑галерея ────────────────────── */
+/* ────────────────────── 1️⃣1️⃣ Модальне вікно‑галерея з свайпами ────────────────────── */
 const modal       = document.getElementById('modal');
 const modalImg    = document.getElementById('modalImg');
 const modalClose  = document.getElementById('modalClose');
 const modalPrev   = document.getElementById('modalPrev');
 const modalNext   = document.getElementById('modalNext');
+const modalCounter = document.getElementById('modalCounter');
 
 let currentIndex = 0;
+let startX = 0;
+let currentX = 0;
+let isSwiping = false;
+
+function updateCounter() {
+    const totalImages = generatedUrls.filter(u => u).length;
+    modalCounter.textContent = `${currentIndex + 1}/${totalImages}`;
+}
 
 function updateNavVisibility(){
     const visible = generatedUrls.filter(u=>u).length > 1 ? '' : 'none';
     modalPrev.style.display = visible;
     modalNext.style.display = visible;
 }
+
 function fitModalImg(){
     if (!modalImg.naturalWidth) return;
     const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
-    const gap = 4 * rem;                     // 2 rem зліва + 2 rem справа
-    const maxW = window.innerWidth  - gap;
+    const gap = 4 * rem;
+    const maxW = window.innerWidth - gap;
     const maxH = window.innerHeight - gap;
-    const ratio = Math.min(maxW / modalImg.naturalWidth,
-                          maxH / modalImg.naturalHeight, 1);
-    modalImg.style.width  = Math.round(modalImg.naturalWidth  * ratio) + 'px';
+    const ratio = Math.min(maxW / modalImg.naturalWidth, maxH / modalImg.naturalHeight, 1);
+    modalImg.style.width = Math.round(modalImg.naturalWidth * ratio) + 'px';
     modalImg.style.height = Math.round(modalImg.naturalHeight * ratio) + 'px';
 }
+
 function showImage(idx){
-    if (idx < 0 || idx >= generatedUrls.length) return;
+    if (idx < 0 || idx >= generatedUrls.length || !generatedUrls[idx]) return;
     currentIndex = idx;
     modalImg.style.opacity = 0;
+    modalImg.style.transform = 'translateX(0)';
     modalImg.onload = () => {
         fitModalImg();
         modalImg.style.opacity = 1;
+        updateCounter();
     };
     modalImg.src = generatedUrls[idx];
 }
+
 function openModal(idx){
     showImage(idx);
     modal.classList.add('open');
     updateNavVisibility();
+    document.body.style.overflow = 'hidden'; // Заборонити скрол сторінки
 }
+
 function closeModal(){
     modal.classList.remove('open');
     modalImg.src = '';
+    modalImg.style.transform = 'translateX(0)';
+    document.body.style.overflow = ''; // Дозволити скрол знову
 }
+
+// Touch events для свайпів
+modalContent.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].clientX;
+    currentX = startX;
+    isSwiping = true;
+});
+
+modalContent.addEventListener('touchmove', (e) => {
+    if (!isSwiping) return;
+    currentX = e.touches[0].clientX;
+    const diff = currentX - startX;
+    modalImg.style.transform = `translateX(${diff}px)`;
+});
+
+modalContent.addEventListener('touchend', (e) => {
+    if (!isSwiping) return;
+    isSwiping = false;
+    
+    const diff = currentX - startX;
+    const swipeThreshold = 50;
+    
+    if (Math.abs(diff) > swipeThreshold) {
+        if (diff > 0) {
+            // Свайп праворуч - попереднє зображення
+            const prev = (currentIndex - 1 + generatedUrls.length) % generatedUrls.length;
+            if (generatedUrls[prev]) {
+                modalImg.style.transition = 'transform 0.3s ease';
+                modalImg.style.transform = 'translateX(100%)';
+                setTimeout(() => showImage(prev), 300);
+            }
+        } else {
+            // Свайп ліворуч - наступне зображення
+            const next = (currentIndex + 1) % generatedUrls.length;
+            if (generatedUrls[next]) {
+                modalImg.style.transition = 'transform 0.3s ease';
+                modalImg.style.transform = 'translateX(-100%)';
+                setTimeout(() => showImage(next), 300);
+            }
+        }
+    } else {
+        // Якщо свайп замалий - повернути на місце
+        modalImg.style.transition = 'transform 0.2s ease';
+        modalImg.style.transform = 'translateX(0)';
+    }
+    
+    setTimeout(() => {
+        modalImg.style.transition = '';
+    }, 300);
+});
+
+// Mouse events для десктопу
+modalContent.addEventListener('mousedown', (e) => {
+    startX = e.clientX;
+    currentX = startX;
+    isSwiping = true;
+    modalContent.style.cursor = 'grabbing';
+});
+
+modalContent.addEventListener('mousemove', (e) => {
+    if (!isSwiping) return;
+    currentX = e.clientX;
+    const diff = currentX - startX;
+    modalImg.style.transform = `translateX(${diff}px)`;
+});
+
+modalContent.addEventListener('mouseup', (e) => {
+    if (!isSwiping) return;
+    isSwiping = false;
+    modalContent.style.cursor = '';
+    
+    const diff = currentX - startX;
+    const swipeThreshold = 50;
+    
+    if (Math.abs(diff) > swipeThreshold) {
+        if (diff > 0) {
+            // Свайп праворуч - попереднє зображення
+            const prev = (currentIndex - 1 + generatedUrls.length) % generatedUrls.length;
+            if (generatedUrls[prev]) {
+                modalImg.style.transition = 'transform 0.3s ease';
+                modalImg.style.transform = 'translateX(100%)';
+                setTimeout(() => showImage(prev), 300);
+            }
+        } else {
+            // Свайп ліворуч - наступне зображення
+            const next = (currentIndex + 1) % generatedUrls.length;
+            if (generatedUrls[next]) {
+                modalImg.style.transition = 'transform 0.3s ease';
+                modalImg.style.transform = 'translateX(-100%)';
+                setTimeout(() => showImage(next), 300);
+            }
+        }
+    } else {
+        // Якщо свайп замалий - повернути на місце
+        modalImg.style.transition = 'transform 0.2s ease';
+        modalImg.style.transform = 'translateX(0)';
+    }
+    
+    setTimeout(() => {
+        modalImg.style.transition = '';
+    }, 300);
+});
+
+// Події для кнопок навігації
 preview.addEventListener('click', e=>{
     const img = e.target.closest('.card__image');
     if (!img) return;
     const idx = Number(img.dataset.index);
     openModal(idx);
 });
+
 modalPrev.addEventListener('click', e=>{
     e.stopPropagation();
-    const prev = (currentIndex - 1 + generatedUrls.length) % generatedUrls.length;
-    showImage(prev);
+    let prev = currentIndex - 1;
+    while (prev >= 0 && !generatedUrls[prev]) prev--;
+    if (prev < 0) prev = generatedUrls.length - 1;
+    while (prev >= 0 && !generatedUrls[prev]) prev--;
+    if (prev >= 0) showImage(prev);
 });
+
 modalNext.addEventListener('click', e=>{
     e.stopPropagation();
-    const next = (currentIndex + 1) % generatedUrls.length;
-    showImage(next);
+    let next = currentIndex + 1;
+    while (next < generatedUrls.length && !generatedUrls[next]) next++;
+    if (next >= generatedUrls.length) next = 0;
+    while (next < generatedUrls.length && !generatedUrls[next]) next++;
+    if (next < generatedUrls.length) showImage(next);
 });
+
 modalClose.addEventListener('click', e=>{
     e.stopPropagation();
     closeModal();
 });
-modal.addEventListener('click', e=>{ if(e.target===modal) closeModal(); });
+
+modal.addEventListener('click', e=>{ 
+    if(e.target===modal) closeModal(); 
+});
+
+// Клавіатурна навігація
 document.addEventListener('keydown', e=>{
     if(!modal.classList.contains('open')) return;
     if(e.key==='ArrowLeft')  modalPrev.click();
     else if(e.key==='ArrowRight') modalNext.click();
     else if(e.key==='Escape') closeModal();
 });
-window.addEventListener('resize',()=>{ if(modal.classList.contains('open')) fitModalImg(); });
-window.addEventListener('unload',()=>{ generatedUrls.forEach(URL.revokeObjectURL); });
+
+// Адаптація до розміру вікна
+window.addEventListener('resize',()=>{ 
+    if(modal.classList.contains('open')) fitModalImg(); 
+});
+
+// Очищення пам'яті
+window.addEventListener('unload',()=>{ 
+    generatedUrls.forEach(url => {
+        if (url) URL.revokeObjectURL(url);
+    });
+});
 
 /* ────── Підтримувані формати для toBlob ────── */
 const SUPPORTED_OUTPUTS = new Set(['image/jpeg','image/png','image/webp','image/avif','image/bmp']);

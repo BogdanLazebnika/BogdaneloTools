@@ -1,9 +1,24 @@
 // ===== LOAD THEME =====
 (function () {
     const saved = localStorage.getItem('lb_theme');
-    if (saved === 'light') {
-        document.body.classList.add('light-theme');
+    
+    if (saved) {
+        // Якщо користувач вже обирав тему - використовуємо його вибір
+        if (saved === 'light') {
+            document.body.classList.add('light-theme');
+        }
+    } else {
+        // Авто-вибір на основі системних налаштувань
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+            document.body.classList.add('light-theme');
+            localStorage.setItem('lb_theme', 'light');
+        } else {
+            localStorage.setItem('lb_theme', 'dark');
+        }
     }
+    
+    // Оновити іконку кнопки при завантаженні
+    updateThemeButtonIcon();
 })();
 
 // ===== GLOBAL CLICK HANDLER =====
@@ -60,6 +75,31 @@ document.addEventListener('keydown', function (e) {
         closeMenu();
     }
 });
+
+// ===== THEME CHANGE LISTENER (опціонально) =====
+// Слідкує за зміною системної теми в реальному часі
+window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
+    const saved = localStorage.getItem('lb_theme');
+    // Змінюємо тему тільки якщо користувач ще не робив власний вибір
+    if (!saved) {
+        if (e.matches) {
+            document.body.classList.add('light-theme');
+            localStorage.setItem('lb_theme', 'light');
+        } else {
+            document.body.classList.remove('light-theme');
+            localStorage.setItem('lb_theme', 'dark');
+        }
+        updateThemeButtonIcon();
+    }
+});
+
+function updateThemeButtonIcon() {
+    const themeBtn = document.getElementById('themeToggle');
+    if (themeBtn) {
+        const isLight = document.body.classList.contains('light-theme');
+        themeBtn.textContent = isLight ? '☀️' : '🌙';
+    }
+}
 
 function toggleMenu(){
     const burger = document.getElementById('mobileMenuBtn');
