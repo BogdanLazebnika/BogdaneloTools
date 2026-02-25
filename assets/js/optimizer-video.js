@@ -1,164 +1,99 @@
-import { FFmpeg }
-from "https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/esm/index.js";
+// assets/js/optimizer-video.js
 
-import { fetchFile }
-from "https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/esm/index.js";
+const { createFFmpeg, fetchFile } = FFmpeg;
 
-const ffmpeg = new FFmpeg();
+const ffmpeg = createFFmpeg({
+    log: true,
+    corePath: "./assets/ffmpeg/ffmpeg-core.js"
+});
 
 const fileInput = document.getElementById("files");
 const runBtn = document.getElementById("run");
 const preview = document.getElementById("preview");
-const progressBox = document.getElementById("progress");
-const downloadAllBtn = document.getElementById("downloadAll");
+const progress = document.getElementById("progress");
 
-let generatedFiles = [];
+let ffmpegLoaded = false;
 
-/* ======================= */
-
-function applyRename(file, index, mode, suffix, template, ext) {
-
-    const base = file.name.replace(/\.\w+$/, "");
-
-    if (mode === "append")
-        return `${base}${suffix}.${ext}`;
-
-    if (mode === "replace")
-        return template
-            .replace(/\{orig\}/g, base)
-            .replace(/\{num\}/g, index + 1) + "." + ext;
-
-    return `${base}.${ext}`;
+async function loadFFmpeg() {
+    if (!ffmpegLoaded) {
+        progress.innerText = "Завантаження FFmpeg...";
+        await ffmpeg.load();
+        progress.innerText = "FFmpeg готовий ✅";
+        ffmpegLoaded = true;
+    }
 }
-
-/* ======================= */
 
 runBtn.addEventListener("click", async () => {
 
-    const files = fileInput.files;
-    if (!files.length) return alert("Виберіть файли");
+    if (!fileInput.files.length) {
+        alert("Оберіть відео");
+        return;
+    }
 
-    runBtn.disabled = true;
+    await loadFFmpeg();
+
     preview.innerHTML = "";
-    generatedFiles = [];
-    downloadAllBtn.disabled = true;
+    progress.innerText = "Обробка...";
 
-    progressBox.innerText = "Завантаження FFmpeg...";
-
-    if (!ffmpeg.loaded) {
-        await ffmpeg.load({
-            coreURL:
-                "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/ffmpeg-core.js"
-        });
+    for (const file of fileInput.files) {
+        await processVideo(file);
     }
 
-    const bitrate = document.getElementById("bitrate").value;
-    const fps = document.getElementById("fps").value;
-    const width = document.getElementById("width").value;
-    const format = document.getElementById("format").value;
-
-    const renameMode = document.getElementById("renameMode").value;
-    const suffix = document.getElementById("suffix").value;
-    const template = document.getElementById("newName").value;
-
-    for (let i = 0; i < files.length; i++) {
-
-        const file = files[i];
-
-        progressBox.innerText =
-            `Обробка ${i+1} з ${files.length}`;
-
-        await ffmpeg.writeFile(
-            file.name,
-            await fetchFile(file)
-        );
-
-        let filters = [];
-        if (width > 0)
-            filters.push(`scale=${width}:-2`);
-        if (fps > 0)
-            filters.push(`fps=${fps}`);
-
-        const ext = format === "mp4" ? "mp4" : "webm";
-        const output = `output_${i}.${ext}`;
-
-        const args = [
-            "-i", file.name,
-            "-b:v", `${bitrate}M`,
-            ...(filters.length ? ["-vf", filters.join(",")] : []),
-            output
-        ];
-
-        await ffmpeg.exec(args);
-
-        const data =
-            await ffmpeg.readFile(output);
-
-        const blob = new Blob(
-            [data.buffer],
-            { type: `video/${ext}` }
-        );
-
-        const newName = applyRename(
-            file,
-            i,
-            renameMode,
-            suffix,
-            template,
-            ext
-        );
-
-        generatedFiles.push({
-            blob,
-            name: newName
-        });
-
-        const url =
-            URL.createObjectURL(blob);
-
-        const card =
-            document.createElement("div");
-
-        card.className = "card";
-        card.innerHTML = `
-            <video controls width="100%" src="${url}"></video>
-            <p>${file.name} → ${newName}</p>
-            <a href="${url}"
-               download="${newName}"
-               class="btn btn--success">
-               Завантажити
-            </a>
-        `;
-
-        preview.appendChild(card);
-
-        await ffmpeg.deleteFile(file.name);
-        await ffmpeg.deleteFile(output);
-    }
-
-    progressBox.innerText = "Готово ✅";
-
-    if (generatedFiles.length)
-        downloadAllBtn.disabled = false;
-
-    runBtn.disabled = false;
+    progress.innerText = "Готово 🚀";
 });
 
-/* ======================= */
+async function processVideo(file) {
 
-downloadAllBtn.addEventListener("click", async () => {
+    const inputName = file.name;
+    const outputName = "compressed_" + file.name;
 
-    const zip = new JSZip();
+    // запис файлу у ffmpeg FS
+    ffmpeg.FS("writeFile", inputName, await fetchFile(file));
 
-    generatedFiles.forEach(file =>
-        zip.file(file.name, file.blob)
+    // просте стиснення
+    await ffmpeg.run(
+        "-i", inputName,
+        "-vcodec", "libx264",
+        "-crf", "28",
+        "-preset", "veryfast",
+        outputName
     );
 
-    const blob =
-        await zip.generateAsync({ type: "blob" });
+    // читаємо результат
+    const data = ffmpeg.FS("readFile", outputName);
 
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "optimized_videos.zip";
-    a.click();
-});
+    const blob = new Blob([data.buffer], {
+        type: "video/mp4"
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    createPreview(url, outputName);
+
+    // очищаємо памʼять
+    ffmpeg.FS("unlink", inputName);
+    ffmpeg.FS("unlink", outputName);
+}
+
+function createPreview(url, fileName) {
+
+    const wrapper = document.createElement("div");
+    wrapper.style.marginBottom = "20px";
+
+    const video = document.createElement("video");
+    video.src = url;
+    video.controls = true;
+    video.width = 320;
+
+    const download = document.createElement("a");
+    download.href = url;
+    download.download = fileName;
+    download.innerText = "⬇️ Завантажити";
+    download.style.display = "block";
+    download.style.marginTop = "10px";
+
+    wrapper.appendChild(video);
+    wrapper.appendChild(download);
+
+    preview.appendChild(wrapper);
+}
