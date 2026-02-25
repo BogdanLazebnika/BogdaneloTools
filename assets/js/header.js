@@ -6,14 +6,13 @@
     }
 })();
 
-
 // ===== GLOBAL CLICK HANDLER =====
 document.addEventListener('click', function (e) {
-
     const themeBtn = e.target.closest('#themeToggle');
     const burger = e.target.closest('#mobileMenuBtn');
     const overlay = document.getElementById('mobileOverlay');
     const mobileMenu = document.getElementById('mobileMenu');
+    const dropdownBtn = e.target.closest('.mobile-dropdown-btn');
 
     /* THEME */
     if (themeBtn) {
@@ -32,12 +31,28 @@ document.addEventListener('click', function (e) {
         return;
     }
 
+    /* MOBILE DROPDOWN */
+    if (dropdownBtn) {
+        const dropdown = dropdownBtn.closest('.mobile-dropdown');
+        dropdown.classList.toggle('active');
+        return;
+    }
+
     /* CLICK OUTSIDE (overlay) */
     if (overlay && e.target === overlay) {
         closeMenu();
+        return;
+    }
+
+    /* CLICK OUTSIDE DROPDOWN (in mobile menu) */
+    if (mobileMenu && mobileMenu.classList.contains('open') && 
+        !e.target.closest('.mobile-dropdown')) {
+        const activeDropdown = mobileMenu.querySelector('.mobile-dropdown.active');
+        if (activeDropdown) {
+            activeDropdown.classList.remove('active');
+        }
     }
 });
-
 
 // ===== ESC KEY =====
 document.addEventListener('keydown', function (e) {
@@ -45,7 +60,6 @@ document.addEventListener('keydown', function (e) {
         closeMenu();
     }
 });
-
 
 function toggleMenu(){
     const burger = document.getElementById('mobileMenuBtn');
@@ -71,4 +85,10 @@ function closeMenu(){
     mobileMenu.classList.remove('open');
     overlay.classList.remove('active');
     document.body.classList.remove('menu-open');
+    
+    // Закриваємо всі відкриті dropdown
+    const activeDropdowns = mobileMenu.querySelectorAll('.mobile-dropdown.active');
+    activeDropdowns.forEach(dropdown => {
+        dropdown.classList.remove('active');
+    });
 }

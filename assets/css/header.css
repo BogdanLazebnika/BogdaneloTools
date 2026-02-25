@@ -62,6 +62,7 @@
 }
 
 .mega-menu{
+
     position:absolute;
     top:100%;
     left:50%;
@@ -81,6 +82,9 @@
 }
 
 .mega-menu__content{
+    box-sizing: border-box;
+    max-height: calc(80vh - 70px);
+    overflow-y: scroll;
     background:var(--bg-primary);
     padding:30px;
     border-radius:20px;
@@ -142,10 +146,9 @@
 
 
 /* ================= BURGER BUTTON ================= */
-
 .mobile-btn{
-    width:42px;
-    height:42px;
+    width:44px;
+    height:44px;
 
     display:none;
     flex-direction:column;
@@ -155,20 +158,28 @@
 
     background:var(--card-bg);
     border:1px solid var(--border-color);
-    border-radius:12px;
-    cursor:pointer;
+    border-radius:14px;
 
-    transition:var(--transition);
+    cursor:pointer;
+    transition:0.25s ease;
+
     position:relative;
     z-index:1003;
 }
 
+/* Glow hover */
+.mobile-btn:hover{
+    border-color:var(--accent);
+    box-shadow:var(--glow);
+}
+
+/* Lines */
 .mobile-btn span{
     width:20px;
     height:2px;
     background:var(--text-primary);
     border-radius:2px;
-    transition:var(--transition);
+    transition:0.25s ease;
 }
 
 /* ACTIVE → X */
@@ -184,48 +195,106 @@
     transform:translateY(-8px) rotate(-45deg);
 }
 
-.mobile-btn:hover{
-    border-color:var(--accent);
-}
 
+/* ================= MOBILE MENU ================= */
 
 /* ================= MOBILE MENU ================= */
 
 .mobile-menu{
+    box-sizing: border-box;
     position:fixed;
     top:70px;
     right:-380px;
-    width:280px;
-    height:calc(100vh - 70px - 60px);
+
+    width:100%;
+    max-width:380px;
+    height:calc(100vh - 70px);
 
     background:var(--bg-secondary);
-    padding:30px 30px 30px;
+    padding:40px 24px;
 
     display:flex;
     flex-direction:column;
-    gap:25px;
+    gap:18px;
 
     transition:0.35s ease;
     z-index:1002;
 
     border-left:1px solid var(--border-color);
+    overflow-y:auto;
 }
 
 .mobile-menu.open{
     right:0;
 }
 
+/* Title inside mobile (optional if додаси) */
+.mobile-menu::before{
+    content:"Меню";
+    font-size:14px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:var(--text-muted);
+    margin-bottom:10px;
+}
+
+
+/* ==== MOBILE LINKS AS BUTTON CARDS ==== */
+
 .mobile-menu a{
-    color:var(--text-primary);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:16px 18px;
+    border-radius:14px;
+
     text-decoration:none;
     font-weight:500;
-    transition:var(--transition);
+    font-size:15px;
+
+    background:var(--card-bg);
+    border:1px solid var(--border-color);
+
+    color:var(--text-primary);
+
+    transition:0.25s ease;
+    position:relative;
 }
 
+/* Arrow */
+.mobile-menu a::after{
+    content:"›";
+    font-size:18px;
+    color:var(--text-muted);
+    transition:0.25s ease;
+}
+
+/* Hover */
 .mobile-menu a:hover{
-    color:var(--accent);
+    border-color:var(--accent);
+    background:var(--accent-soft);
+    transform:translateX(4px);
 }
 
+.mobile-menu a:hover::after{
+    color:var(--accent);
+    transform:translateX(4px);
+}
+
+/* Active press effect */
+.mobile-menu a:active{
+    transform:scale(0.98);
+}
+
+
+/* Divider (optional якщо захочеш групи) */
+.mobile-menu hr{
+    border:none;
+    height:1px;
+    background:var(--border-color);
+    margin:10px 0;
+}
 
 /* ================= OVERLAY ================= */
 
@@ -266,4 +335,93 @@ body.menu-open{
     .mobile-btn{
         display:flex;
     }
+}
+
+
+
+
+/* ================= MOBILE DROPDOWN ================= */
+
+.mobile-dropdown {
+    position: relative;
+}
+
+.mobile-dropdown-btn {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 18px;
+    border-radius: 14px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.mobile-dropdown-btn:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+}
+
+.dropdown-arrow {
+    transition: transform 0.3s ease;
+    font-size: 12px;
+}
+
+.mobile-dropdown.active .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.mobile-dropdown-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    margin-left: 20px;
+}
+
+.mobile-dropdown.active .mobile-dropdown-content {
+    max-height: 500px; /* Або достатньо для твоїх елементів */
+}
+
+.mobile-submenu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    margin: 8px 0;
+    border-radius: 12px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: 0.25s ease;
+}
+
+.mobile-submenu-item span {
+    font-size: 24px;
+}
+
+.mobile-submenu-item div {
+    flex: 1;
+}
+
+.mobile-submenu-item h4 {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.mobile-submenu-item p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.mobile-submenu-item:hover {
+    border-color: var(--accent);
+    transform: translateX(4px);
 }

@@ -35,7 +35,7 @@
                     </div>
                 </div>
 
-                <a href="#">Про нас</a>
+                <a href="./about.html">Про нас</a>
             </nav>
 
             <div class="header__actions">
@@ -51,9 +51,39 @@
     </div>
 
     <!-- MOBILE MENU -->
-    <div id="mobileMenu" class="mobile-menu">
-        <a href="./index.html">Головна</a>
-        <a href="./optimizer-img.html">Оптимізатор</a>
-        <a href="./another-app.html">Інший</a>
+    <!-- MOBILE MENU -->
+<div id="mobileMenu" class="mobile-menu">
+    <a href="./index.html">Головна</a>
+    
+    <!-- Додаємо випадаючий блок для застосунків -->
+    <div class="mobile-dropdown">
+        <button class="mobile-dropdown-btn">
+            <span>Застосунки</span>
+            <span class="dropdown-arrow">▼</span>
+        </button>
+        
+        <div class="mobile-dropdown-content">
+            <a href="./optimizer-img.html" class="mobile-submenu-item">
+                <span>🖼</span>
+                <div>
+                    <h4>Оптимізатор зображень</h4>
+                    <p>Стискай фото без втрати якості</p>
+                </div>
+            </a>
+            
+            <a href="./another-app.html" class="mobile-submenu-item">
+                <span>⚙️</span>
+                <div>
+                    <h4>Інший додаток</h4>
+                    <p>Новий інструмент у розробці</p>
+                </div>
+            </a>
+            
+            <!-- Додавай інші сервіси тут -->
+        </div>
     </div>
+    
+    <a href="./about.html">Про нас</a>
+</div>
 <div id="mobileOverlay" class="mobile-overlay"></div>
+
