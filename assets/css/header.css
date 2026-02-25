@@ -1,10 +1,10 @@
 /* ================= HEADER ================= */
 
 .header{
-    position:fixed;
-    top:0;
-    width:100%;
-    z-index:1000;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
 
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
@@ -12,7 +12,7 @@
     background: var(--header-bg);
     border-bottom: 1px solid var(--border-color);
 
-    transition: background var(--transition);
+    transition: var(--transition);
 }
 
 .header__inner{
@@ -29,7 +29,8 @@
     color:var(--text-primary);
 }
 
-/* NAV */
+
+/* ================= NAVIGATION ================= */
 
 .nav{
     display:flex;
@@ -45,6 +46,7 @@
     background:none;
     border:none;
     cursor:pointer;
+    transition:var(--transition);
 }
 
 .nav a:hover,
@@ -52,7 +54,8 @@
     color:var(--accent);
 }
 
-/* DROPDOWN */
+
+/* ================= MEGA MENU ================= */
 
 .nav__dropdown{
     position:relative;
@@ -60,26 +63,16 @@
 
 .mega-menu{
     position:absolute;
-    left:0;
     top:100%;
-    width:100vw;
-    transform:translateX(-50%);
     left:50%;
-    background:transparent;
+    transform:translateX(-50%);
+    width:100vw;
+
     padding:40px 0;
+
     opacity:0;
     visibility:hidden;
-    transition:all .25s ease;
-}
-.mega-menu__content{
-    background-color: var(--bg-primary);
-    padding: 20px;
-    border-radius: 20px;
-    border: 1px solid var(--border-color);
-}
-
-.nav__dropdown{
-    position:relative;
+    transition:0.25s ease;
 }
 
 .nav__dropdown:hover .mega-menu{
@@ -87,9 +80,16 @@
     visibility:visible;
 }
 
+.mega-menu__content{
+    background:var(--bg-primary);
+    padding:30px;
+    border-radius:20px;
+    border:1px solid var(--border-color);
+}
 
 .mega-menu h2{
     margin-bottom:40px;
+    color:var(--text-primary);
 }
 
 .mega-grid{
@@ -105,7 +105,7 @@
     border:1px solid var(--border-color);
     text-decoration:none;
     color:var(--text-primary);
-    transition:.3s;
+    transition:var(--transition);
 }
 
 .mega-card span{
@@ -117,7 +117,8 @@
     border-color:var(--accent);
 }
 
-/* ACTIONS */
+
+/* ================= ACTIONS ================= */
 
 .header__actions{
     display:flex;
@@ -125,40 +126,88 @@
     align-items:center;
 }
 
-.theme-toggle,
-.mobile-btn{
+.theme-toggle{
     background:var(--card-bg);
     border:1px solid var(--border-color);
     border-radius:12px;
     padding:8px 12px;
     cursor:pointer;
     color:var(--text-primary);
-    transition:.2s;
+    transition:var(--transition);
 }
 
-.theme-toggle:hover,
+.theme-toggle:hover{
+    border-color:var(--accent);
+}
+
+
+/* ================= BURGER BUTTON ================= */
+
+.mobile-btn{
+    width:42px;
+    height:42px;
+
+    display:none;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:6px;
+
+    background:var(--card-bg);
+    border:1px solid var(--border-color);
+    border-radius:12px;
+    cursor:pointer;
+
+    transition:var(--transition);
+    position:relative;
+    z-index:1003;
+}
+
+.mobile-btn span{
+    width:20px;
+    height:2px;
+    background:var(--text-primary);
+    border-radius:2px;
+    transition:var(--transition);
+}
+
+/* ACTIVE → X */
+.mobile-btn.active span:nth-child(1){
+    transform:translateY(8px) rotate(45deg);
+}
+
+.mobile-btn.active span:nth-child(2){
+    opacity:0;
+}
+
+.mobile-btn.active span:nth-child(3){
+    transform:translateY(-8px) rotate(-45deg);
+}
+
 .mobile-btn:hover{
     border-color:var(--accent);
 }
 
-/* MOBILE */
 
-.mobile-btn{
-    display:none;
-}
+/* ================= MOBILE MENU ================= */
 
 .mobile-menu{
     position:fixed;
-    top:70px;
-    right:-500px;
-    width:250px;
+    top:0;
+    right:-280px;
+    width:280px;
     height:100vh;
-    background:var(--bg-primary);
+
+    background:var(--bg-secondary);
+    padding:100px 30px 30px;
+
     display:flex;
     flex-direction:column;
-    padding:30px;
-    gap:20px;
-    transition:.3s;
+    gap:25px;
+
+    transition:0.35s ease;
+    z-index:1002;
+
     border-left:1px solid var(--border-color);
 }
 
@@ -170,13 +219,51 @@
     color:var(--text-primary);
     text-decoration:none;
     font-weight:500;
+    transition:var(--transition);
 }
 
+.mobile-menu a:hover{
+    color:var(--accent);
+}
+
+
+/* ================= OVERLAY ================= */
+
+.mobile-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.45);
+    backdrop-filter:blur(4px);
+
+    opacity:0;
+    pointer-events:none;
+    transition:0.3s ease;
+
+    z-index:1001;
+}
+
+.mobile-overlay.active{
+    opacity:1;
+    pointer-events:auto;
+}
+
+
+/* ================= LOCK SCROLL ================= */
+
+body.menu-open{
+    overflow:hidden;
+}
+
+
+/* ================= RESPONSIVE ================= */
+
 @media(max-width:900px){
+
     .nav{
         display:none;
     }
+
     .mobile-btn{
-        display:block;
+        display:flex;
     }
 }
