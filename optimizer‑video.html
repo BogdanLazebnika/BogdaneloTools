@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Оптимізатор відео</title>
+
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
+    <link rel="stylesheet" href="./assets/css/reset.css">
+    <link rel="stylesheet" href="./assets/css/vars.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <link rel="stylesheet" href="./assets/css/optimizer-video.css">
+</head>
+
+<body>
+
+<main class="container">
+
+<section class="tool-hero">
+    <h1>Оптимізатор відео</h1>
+    <p class="tool-subtitle">
+        Легка браузерна компресія відео без сервера.
+    </p>
+</section>
+
+<section class="controls">
+
+    <div class="form-group">
+        <label class="form-label">Файли</label>
+        <input type="file" id="files"
+               class="form-input"
+               accept="video/*" multiple>
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">Бітрейт (Mbps)</label>
+        <input type="number" id="bitrate"
+               class="form-input"
+               value="2" min="0.5" step="0.5">
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">FPS</label>
+        <input type="number" id="fps"
+               class="form-input" value="0">
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">Ширина</label>
+        <input type="number" id="width"
+               class="form-input" value="0">
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">Формат</label>
+        <select id="format" class="form-select">
+            <option value="mp4">MP4</option>
+            <option value="webm">WebM</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">Ренейминг</label>
+        <select id="renameMode" class="form-select">
+            <option value="none">Не змінювати</option>
+            <option value="append">Додати суфікс</option>
+            <option value="replace">Змінити</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <input type="text"
+               id="suffix"
+               class="form-input"
+               placeholder="_opt">
+    </div>
+
+    <div class="form-group">
+        <input type="text"
+               id="newName"
+               class="form-input"
+               placeholder="video_{num}">
+    </div>
+
+    <div class="form-actions">
+        <button id="run"
+                class="btn btn--primary">
+            Оптимізувати
+        </button>
+
+        <button id="downloadAll"
+                class="btn btn--success"
+                disabled>
+            ⬇️ Завантажити всі (ZIP)
+        </button>
+    </div>
+
+</section>
+
+<div id="progress" class="progress-box"></div>
+<div id="preview"></div>
+
+</main>
+
+<!-- JSZip -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<!-- ГОЛОВНИЙ СКРИПТ -->
+<script type="module" src="./assets/js/optimizer-video.js"></script>
+
+</body>
+</html>

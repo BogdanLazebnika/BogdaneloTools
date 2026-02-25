@@ -281,3 +281,29 @@ body.no-scroll { overflow:hidden; height:100vh; }
     .form-actions{flex-direction:column;}
     .btn{width:100%;}
 }
+.card__video {
+    width: 100%;
+    border-radius: 16px;
+}
+
+.file-progress {
+    width: 100%;
+    height: 8px;
+    background: #1e1e1e;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+.file-progress__bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg,#00ff88,#00ccff);
+    transition: width 0.1s linear;
+}
+
+.file-progress__text {
+    font-size: 12px;
+    margin-top: 4px;
+    opacity: .8;
+}

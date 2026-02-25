@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <title>Оптимізатор зображень</title>
 
-    <meta name="viewport" id="viewportMeta" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="viewport" id="viewportMeta"
+          content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 
-
-    <!-- Ваші стилі -->
+    <!-- Стилі -->
     <link rel="stylesheet" href="./assets/css/reset.css">
     <link rel="stylesheet" href="./assets/css/vars.css">
     <link rel="stylesheet" href="./assets/css/style.css">
@@ -21,6 +21,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
           rel="stylesheet">
 </head>
+
 <body>
     <header></header>
 
@@ -28,29 +29,35 @@
         <div class="container">
 
             <!-- HERO -->
-            <div class="tool-hero">
+            <section class="tool-hero">
                 <h1>Оптимізатор зображень</h1>
                 <p class="tool-subtitle">
-                    Стискай JPEG, PNG, WebP, AVIF без втрати якості.
+                    Стискайте JPEG, PNG, WebP, AVIF без втрати якості.
                     Усе відбувається прямо у браузері — файли не завантажуються на сервер.
                 </p>
-            </div>
+            </section>
 
             <!-- CONTROLS -->
-            <div class="controls">
+            <section class="controls">
+
                 <div class="form-group">
                     <label class="form-label" for="files">Файли</label>
-                    <input type="file" id="files" class="form-input" accept="image/*" multiple>
+                    <input type="file" id="files" class="form-input"
+                           accept="image/*" multiple>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="width">Ширина (px) – 0 = без зміни</label>
-                    <input type="number" id="width" class="form-input" min="0" value="0">
+                    <label class="form-label" for="width">
+                        Ширина (px) – 0 = без зміни
+                    </label>
+                    <input type="number" id="width" class="form-input"
+                           min="0" value="0">
                 </div>
 
                 <div class="form-group">
                     <label class="form-label" for="quality">Якість (0‑100)</label>
-                    <input type="number" id="quality" class="form-input" min="0" max="100" value="80">
+                    <input type="number" id="quality" class="form-input"
+                           min="0" max="100" value="80">
                 </div>
 
                 <div class="form-group">
@@ -59,10 +66,10 @@
                         <option value="auto">Авто (зберегти тип)</option>
                         <option value="image/jpeg">JPEG</option>
                         <option value="image/png">PNG</option>
-                        <option value="image/webp">WebP (може викликати попередження)</option>
-                        <option value="image/avif">AVIF (може викликати попередження)</option>
+                        <option value="image/webp">WebP</option>
+                        <option value="image/avif">AVIF</option>
                         <option value="image/bmp">BMP</option>
-                        <option value="image/gif">GIF (копіюється без зміни)</option>
+                        <option value="image/gif">GIF</option>
                     </select>
                 </div>
 
@@ -77,20 +84,26 @@
 
                 <div class="form-group rename-append hidden" id="appendGroup">
                     <label class="form-label" for="suffix">Суфікс</label>
-                    <input type="text" id="suffix" class="form-input" placeholder="_opt">
+                    <input type="text" id="suffix" class="form-input"
+                           placeholder="_opt">
                 </div>
 
                 <div class="form-group rename-replace hidden" id="replaceGroup">
-                    <label class="form-label" for="newName">Нова назва (без розширення)</label>
-                    <input type="text" id="newName" class="form-input" placeholder="newname">
+                    <label class="form-label" for="newName">
+                        Нова назва (без розширення)
+                    </label>
+                    <input type="text" id="newName" class="form-input"
+                           placeholder="newname">
                 </div>
 
                 <div class="form-actions">
                     <button id="run" class="btn btn--primary">Оптимізувати</button>
-                    <button id="downloadAll" class="btn btn--success" disabled>⬇️ Завантажити всі (ZIP)</button>
-                    <button id="saveFolder" class="btn btn--accent" disabled>📁 Зберегти у папку</button>
+                    <button id="downloadAll" class="btn btn--success"
+                            disabled>⬇️ Завантажити всі (ZIP)</button>
+                    <button id="saveFolder" class="btn btn--accent"
+                            disabled>📁 Зберегти у папку</button>
                 </div>
-            </div>
+            </section>
 
             <div id="dropzone" class="dropzone">
                 Перетягніть файли сюди або виберіть їх вище
@@ -107,11 +120,12 @@
         <div id="modal" class="modal" role="dialog" aria-modal="true">
             <button id="modalClose" class="modal__close">✖</button>
             <button id="modalPrev" class="modal__nav modal__nav--prev">&#9664;</button>
+
             <div id="modalContent" class="modal__content">
                 <img id="modalImg" class="modal__img" src="" alt="preview">
-                <!-- СЧЕТЧИК -->
                 <div id="modalCounter" class="modal__counter"></div>
             </div>
+
             <button id="modalNext" class="modal__nav modal__nav--next">&#9654;</button>
         </div>
     </main>
@@ -121,7 +135,7 @@
     <!-- JS‑залежності -->
     <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 
-    <!-- Основний скрипт -->
+    <!-- Модулі -->
     <script type="module" src="./assets/js/main.js"></script>
     <script type="module" src="./assets/js/header.js"></script>
     <script type="module" src="./assets/js/optimizer-img.js"></script>
