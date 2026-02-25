@@ -20,6 +20,22 @@ main {
     text-align: center;
 }
 
+/* Забороняємо «збільшення» при подвійному клацанні на всій сторінці */
+html, body {
+    touch-action: manipulation;            /* в iOS/Android убирає double‑tap zoom */
+}
+
+/* У модалі дозволяємо pinch‑zoom */
+.modal__content {
+    touch-action: pinch-zoom;               /* дозволяє лише в модальному вікні */
+}
+
+/* За бажанням – плавна анімація масштабування картинки */
+.modal__img {
+    transition: transform .2s ease;
+}
+
+
 
 
 /*=================================================================
