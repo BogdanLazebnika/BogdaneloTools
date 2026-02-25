@@ -412,6 +412,7 @@ const modalClose  = document.getElementById('modalClose');
 const modalPrev   = document.getElementById('modalPrev');
 const modalNext   = document.getElementById('modalNext');
 const modalCounter = document.getElementById('modalCounter');
+const modalContent = document.getElementById('modalContent');
 
 let currentIndex = 0;
 let startX = 0;
@@ -424,7 +425,8 @@ function updateCounter() {
 }
 
 function updateNavVisibility(){
-    const visible = generatedUrls.filter(u=>u).length > 1 ? '' : 'none';
+    const totalImages = generatedUrls.filter(u => u).length;
+    const visible = totalImages > 1 ? '' : 'none';
     modalPrev.style.display = visible;
     modalNext.style.display = visible;
 }
@@ -441,37 +443,66 @@ function fitModalImg(){
 }
 
 function showImage(idx){
+    const availableImages = generatedUrls.filter(u => u);
     if (idx < 0 || idx >= generatedUrls.length || !generatedUrls[idx]) return;
+    
     currentIndex = idx;
     modalImg.style.opacity = 0;
     modalImg.style.transform = 'translateX(0)';
+    modalImg.style.transition = 'opacity 0.3s ease';
+    
     modalImg.onload = () => {
         fitModalImg();
         modalImg.style.opacity = 1;
         updateCounter();
+        setTimeout(() => {
+            modalImg.style.transition = '';
+        }, 300);
     };
+    
     modalImg.src = generatedUrls[idx];
+}
+
+function navigateToImage(newIndex) {
+    if (newIndex < 0 || newIndex >= generatedUrls.length || !generatedUrls[newIndex]) return;
+    
+    modalImg.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+    
+    if (newIndex > currentIndex) {
+        // Рух праворуч
+        modalImg.style.transform = 'translateX(-100%)';
+        setTimeout(() => {
+            showImage(newIndex);
+        }, 300);
+    } else {
+        // Рух ліворуч
+        modalImg.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            showImage(newIndex);
+        }, 300);
+    }
 }
 
 function openModal(idx){
     showImage(idx);
     modal.classList.add('open');
     updateNavVisibility();
-    document.body.style.overflow = 'hidden'; // Заборонити скрол сторінки
+    document.body.style.overflow = 'hidden';
 }
 
 function closeModal(){
     modal.classList.remove('open');
     modalImg.src = '';
     modalImg.style.transform = 'translateX(0)';
-    document.body.style.overflow = ''; // Дозволити скрол знову
+    document.body.style.overflow = '';
 }
 
-// Touch events для свайпів
+// Touch events для мобільних пристроїв
 modalContent.addEventListener('touchstart', (e) => {
     startX = e.touches[0].clientX;
     currentX = startX;
     isSwiping = true;
+    e.preventDefault();
 });
 
 modalContent.addEventListener('touchmove', (e) => {
@@ -479,6 +510,8 @@ modalContent.addEventListener('touchmove', (e) => {
     currentX = e.touches[0].clientX;
     const diff = currentX - startX;
     modalImg.style.transform = `translateX(${diff}px)`;
+    modalImg.style.transition = 'none';
+    e.preventDefault();
 });
 
 modalContent.addEventListener('touchend', (e) => {
@@ -487,24 +520,23 @@ modalContent.addEventListener('touchend', (e) => {
     
     const diff = currentX - startX;
     const swipeThreshold = 50;
+    const swipeThresholdPercent = window.innerWidth * 0.1; // 10% ширини екрану
     
-    if (Math.abs(diff) > swipeThreshold) {
+    if (Math.abs(diff) > swipeThreshold && Math.abs(diff) > swipeThresholdPercent) {
         if (diff > 0) {
             // Свайп праворуч - попереднє зображення
-            const prev = (currentIndex - 1 + generatedUrls.length) % generatedUrls.length;
-            if (generatedUrls[prev]) {
-                modalImg.style.transition = 'transform 0.3s ease';
-                modalImg.style.transform = 'translateX(100%)';
-                setTimeout(() => showImage(prev), 300);
-            }
+            let prev = currentIndex - 1;
+            while (prev >= 0 && !generatedUrls[prev]) prev--;
+            if (prev < 0) return;
+            
+            navigateToImage(prev);
         } else {
             // Свайп ліворуч - наступне зображення
-            const next = (currentIndex + 1) % generatedUrls.length;
-            if (generatedUrls[next]) {
-                modalImg.style.transition = 'transform 0.3s ease';
-                modalImg.style.transform = 'translateX(-100%)';
-                setTimeout(() => showImage(next), 300);
-            }
+            let next = currentIndex + 1;
+            while (next < generatedUrls.length && !generatedUrls[next]) next++;
+            if (next >= generatedUrls.length) return;
+            
+            navigateToImage(next);
         }
     } else {
         // Якщо свайп замалий - повернути на місце
@@ -512,113 +544,131 @@ modalContent.addEventListener('touchend', (e) => {
         modalImg.style.transform = 'translateX(0)';
     }
     
-    setTimeout(() => {
-        modalImg.style.transition = '';
-    }, 300);
+    e.preventDefault();
 });
 
-// Mouse events для десктопу
+// Mouse events для десктопу - ФІКСОВАНІ
+let isMouseDown = false;
+let mouseStartX = 0;
+
 modalContent.addEventListener('mousedown', (e) => {
-    startX = e.clientX;
-    currentX = startX;
-    isSwiping = true;
+    isMouseDown = true;
+    mouseStartX = e.clientX;
+    modalImg.style.transition = 'none';
     modalContent.style.cursor = 'grabbing';
+    e.preventDefault();
 });
 
-modalContent.addEventListener('mousemove', (e) => {
-    if (!isSwiping) return;
-    currentX = e.clientX;
-    const diff = currentX - startX;
+// Додаємо обробники на весь документ для правильного відстеження миші
+document.addEventListener('mousemove', (e) => {
+    if (!isMouseDown) return;
+    
+    const diff = e.clientX - mouseStartX;
     modalImg.style.transform = `translateX(${diff}px)`;
 });
 
-modalContent.addEventListener('mouseup', (e) => {
-    if (!isSwiping) return;
-    isSwiping = false;
+document.addEventListener('mouseup', (e) => {
+    if (!isMouseDown) return;
+    isMouseDown = false;
     modalContent.style.cursor = '';
     
-    const diff = currentX - startX;
+    const diff = e.clientX - mouseStartX;
     const swipeThreshold = 50;
+    const swipeThresholdPercent = window.innerWidth * 0.1;
     
-    if (Math.abs(diff) > swipeThreshold) {
+    if (Math.abs(diff) > swipeThreshold && Math.abs(diff) > swipeThresholdPercent) {
         if (diff > 0) {
             // Свайп праворуч - попереднє зображення
-            const prev = (currentIndex - 1 + generatedUrls.length) % generatedUrls.length;
-            if (generatedUrls[prev]) {
-                modalImg.style.transition = 'transform 0.3s ease';
-                modalImg.style.transform = 'translateX(100%)';
-                setTimeout(() => showImage(prev), 300);
+            let prev = currentIndex - 1;
+            while (prev >= 0 && !generatedUrls[prev]) prev--;
+            if (prev < 0) {
+                // Якщо немає попереднього - повернути на місце
+                modalImg.style.transition = 'transform 0.2s ease';
+                modalImg.style.transform = 'translateX(0)';
+                return;
             }
+            
+            navigateToImage(prev);
         } else {
             // Свайп ліворуч - наступне зображення
-            const next = (currentIndex + 1) % generatedUrls.length;
-            if (generatedUrls[next]) {
-                modalImg.style.transition = 'transform 0.3s ease';
-                modalImg.style.transform = 'translateX(-100%)';
-                setTimeout(() => showImage(next), 300);
+            let next = currentIndex + 1;
+            while (next < generatedUrls.length && !generatedUrls[next]) next++;
+            if (next >= generatedUrls.length) {
+                // Якщо немає наступного - повернути на місце
+                modalImg.style.transition = 'transform 0.2s ease';
+                modalImg.style.transform = 'translateX(0)';
+                return;
             }
+            
+            navigateToImage(next);
         }
     } else {
         // Якщо свайп замалий - повернути на місце
         modalImg.style.transition = 'transform 0.2s ease';
         modalImg.style.transform = 'translateX(0)';
     }
-    
-    setTimeout(() => {
-        modalImg.style.transition = '';
-    }, 300);
 });
 
 // Події для кнопок навігації
-preview.addEventListener('click', e=>{
+preview.addEventListener('click', e => {
     const img = e.target.closest('.card__image');
     if (!img) return;
     const idx = Number(img.dataset.index);
     openModal(idx);
 });
 
-modalPrev.addEventListener('click', e=>{
+modalPrev.addEventListener('click', e => {
     e.stopPropagation();
     let prev = currentIndex - 1;
     while (prev >= 0 && !generatedUrls[prev]) prev--;
     if (prev < 0) prev = generatedUrls.length - 1;
     while (prev >= 0 && !generatedUrls[prev]) prev--;
-    if (prev >= 0) showImage(prev);
+    if (prev >= 0) navigateToImage(prev);
 });
 
-modalNext.addEventListener('click', e=>{
+modalNext.addEventListener('click', e => {
     e.stopPropagation();
     let next = currentIndex + 1;
     while (next < generatedUrls.length && !generatedUrls[next]) next++;
     if (next >= generatedUrls.length) next = 0;
     while (next < generatedUrls.length && !generatedUrls[next]) next++;
-    if (next < generatedUrls.length) showImage(next);
+    if (next < generatedUrls.length) navigateToImage(next);
 });
 
-modalClose.addEventListener('click', e=>{
+modalClose.addEventListener('click', e => {
     e.stopPropagation();
     closeModal();
 });
 
-modal.addEventListener('click', e=>{ 
-    if(e.target===modal) closeModal(); 
+modal.addEventListener('click', e => { 
+    if (e.target === modal) closeModal(); 
 });
 
 // Клавіатурна навігація
-document.addEventListener('keydown', e=>{
-    if(!modal.classList.contains('open')) return;
-    if(e.key==='ArrowLeft')  modalPrev.click();
-    else if(e.key==='ArrowRight') modalNext.click();
-    else if(e.key==='Escape') closeModal();
+document.addEventListener('keydown', e => {
+    if (!modal.classList.contains('open')) return;
+    
+    if (e.key === 'ArrowLeft') {
+        modalPrev.click();
+    } else if (e.key === 'ArrowRight') {
+        modalNext.click();
+    } else if (e.key === 'Escape') {
+        closeModal();
+    }
 });
 
 // Адаптація до розміру вікна
-window.addEventListener('resize',()=>{ 
-    if(modal.classList.contains('open')) fitModalImg(); 
+window.addEventListener('resize', () => { 
+    if (modal.classList.contains('open')) fitModalImg(); 
+});
+
+// Заборонити контекстне меню на зображенні
+modalContent.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
 });
 
 // Очищення пам'яті
-window.addEventListener('unload',()=>{ 
+window.addEventListener('unload', () => { 
     generatedUrls.forEach(url => {
         if (url) URL.revokeObjectURL(url);
     });
@@ -626,3 +676,4 @@ window.addEventListener('unload',()=>{
 
 /* ────── Підтримувані формати для toBlob ────── */
 const SUPPORTED_OUTPUTS = new Set(['image/jpeg','image/png','image/webp','image/avif','image/bmp']);
+
