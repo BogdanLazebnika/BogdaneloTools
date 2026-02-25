@@ -303,7 +303,7 @@
     pointer-events:none;
     transition:all .25s ease;
     backdrop-filter:blur(10px);
-    z-index:1000;
+    z-index:2000;
 }
 
 .modal.open{
