@@ -2,9 +2,10 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Оптимізатор зображень JPEG, PNG, AVIF, WEBP, BMP</title>
+    <title>Оптимізатор зображень</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
 
+    <!-- Ваші CSS‑файли -->
     <link rel="stylesheet" href="./assets/css/reset.css">
     <link rel="stylesheet" href="./assets/css/vars.css">
     <link rel="stylesheet" href="./assets/css/style.css">
@@ -12,9 +13,11 @@
     <link rel="stylesheet" href="./assets/css/header.css">
     <link rel="stylesheet" href="./assets/css/footer.css">
 
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
 
 </head>
 <body>
@@ -32,7 +35,6 @@
             </div>
 
             <div class="controls">
-
                 <!-- Файли -->
                 <div class="form-group">
                     <label class="form-label" for="files">Файли</label>
@@ -59,13 +61,13 @@
                         <option value="image/jpeg">JPEG</option>
                         <option value="image/png">PNG</option>
                         <option value="image/webp">WebP (може викликати попередження)</option>
-                        <option value="image/avif">AVIF (можe викликати попередження)</option>
+                        <option value="image/avif">AVIF (може викликати попередження)</option>
                         <option value="image/bmp">BMP</option>
                         <option value="image/gif">GIF (копіюється без зміни)</option>
                     </select>
                 </div>
 
-                <!-- Ренейминг – режим -->
+                <!-- Ренейминг -->
                 <div class="form-group">
                     <label class="form-label" for="renameMode">Ренейминг</label>
                     <select id="renameMode" class="form-select">
@@ -75,13 +77,13 @@
                     </select>
                 </div>
 
-                <!-- Суфікс (додається після назви) -->
+                <!-- Суфікс -->
                 <div class="form-group rename-append hidden" id="appendGroup">
                     <label class="form-label" for="suffix">Суфікс</label>
                     <input type="text" id="suffix" class="form-input" placeholder="_opt">
                 </div>
 
-                <!-- Нова назва без розширення (для заміни) -->
+                <!-- Нова назва -->
                 <div class="form-group rename-replace hidden" id="replaceGroup">
                     <label class="form-label" for="newName">Нова назва (без розширення)</label>
                     <input type="text" id="newName" class="form-input" placeholder="newname">
@@ -111,7 +113,6 @@
             <button id="modalPrev" class="modal__nav modal__nav--prev">&#9664;</button>
             <div id="modalContent" class="modal__content">
                 <img id="modalImg" class="modal__img" src="" alt="preview">
-                <div id="modalCounter" class="modal__counter">1/1</div>
             </div>
             <button id="modalNext" class="modal__nav modal__nav--next">&#9654;</button>
         </div>
@@ -120,13 +121,14 @@
 
     <footer></footer>
 
-    <!-- Спільні функції (завантаження header/footer, toast-и) -->
+    <!-- Спільні скрипти (header, main) -->
     <script type="module" src="./assets/js/header.js"></script>
     <script type="module" src="./assets/js/main.js"></script>
 
-    <!-- Специфічний скрипт -->
-    <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+    <!-- Бібліотека JSZip (для ZIP‑вивантаження) -->
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+
+    <!-- Основний скрипт -->
     <script type="module" src="./assets/js/optimizer-img.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </body>
 </html>
