@@ -5,7 +5,7 @@
     <title>Оптимізатор зображень</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
 
-    <!-- Ваші CSS‑файли -->
+    <!-- Ваші стилі -->
     <link rel="stylesheet" href="./assets/css/reset.css">
     <link rel="stylesheet" href="./assets/css/vars.css">
     <link rel="stylesheet" href="./assets/css/style.css">
@@ -18,7 +18,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
           rel="stylesheet">
-
 </head>
 <body>
     <header></header>
@@ -26,6 +25,7 @@
     <main class="container">
         <div class="container">
 
+            <!-- HERO -->
             <div class="tool-hero">
                 <h1>Оптимізатор зображень</h1>
                 <p class="tool-subtitle">
@@ -34,26 +34,23 @@
                 </p>
             </div>
 
+            <!-- CONTROLS -->
             <div class="controls">
-                <!-- Файли -->
                 <div class="form-group">
                     <label class="form-label" for="files">Файли</label>
                     <input type="file" id="files" class="form-input" accept="image/*" multiple>
                 </div>
 
-                <!-- Ширина -->
                 <div class="form-group">
                     <label class="form-label" for="width">Ширина (px) – 0 = без зміни</label>
                     <input type="number" id="width" class="form-input" min="0" value="0">
                 </div>
 
-                <!-- Якість -->
                 <div class="form-group">
                     <label class="form-label" for="quality">Якість (0‑100)</label>
                     <input type="number" id="quality" class="form-input" min="0" max="100" value="80">
                 </div>
 
-                <!-- Формат -->
                 <div class="form-group">
                     <label class="form-label" for="format">Формат</label>
                     <select id="format" class="form-select">
@@ -67,7 +64,6 @@
                     </select>
                 </div>
 
-                <!-- Ренейминг -->
                 <div class="form-group">
                     <label class="form-label" for="renameMode">Ренейминг</label>
                     <select id="renameMode" class="form-select">
@@ -77,19 +73,16 @@
                     </select>
                 </div>
 
-                <!-- Суфікс -->
                 <div class="form-group rename-append hidden" id="appendGroup">
                     <label class="form-label" for="suffix">Суфікс</label>
                     <input type="text" id="suffix" class="form-input" placeholder="_opt">
                 </div>
 
-                <!-- Нова назва -->
                 <div class="form-group rename-replace hidden" id="replaceGroup">
                     <label class="form-label" for="newName">Нова назва (без розширення)</label>
                     <input type="text" id="newName" class="form-input" placeholder="newname">
                 </div>
 
-                <!-- Кнопки -->
                 <div class="form-actions">
                     <button id="run" class="btn btn--primary">Оптимізувати</button>
                     <button id="downloadAll" class="btn btn--success" disabled>⬇️ Завантажити всі (ZIP)</button>
@@ -108,24 +101,22 @@
 
         <div id="progress"></div>
 
+        <!-- МОДАЛЬНЕ ВІКНО -->
         <div id="modal" class="modal" role="dialog" aria-modal="true">
             <button id="modalClose" class="modal__close">✖</button>
             <button id="modalPrev" class="modal__nav modal__nav--prev">&#9664;</button>
             <div id="modalContent" class="modal__content">
                 <img id="modalImg" class="modal__img" src="" alt="preview">
+                <!-- СЧЕТЧИК -->
+                <div id="modalCounter" class="modal__counter"></div>
             </div>
             <button id="modalNext" class="modal__nav modal__nav--next">&#9654;</button>
         </div>
-
     </main>
 
     <footer></footer>
 
-    <!-- Спільні скрипти (header, main) -->
-    <script type="module" src="./assets/js/header.js"></script>
-    <script type="module" src="./assets/js/main.js"></script>
-
-    <!-- Бібліотека JSZip (для ZIP‑вивантаження) -->
+    <!-- JS‑залежності -->
     <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 
     <!-- Основний скрипт -->
