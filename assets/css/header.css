@@ -1,0 +1,182 @@
+/* ================= HEADER ================= */
+
+.header{
+    position:fixed;
+    top:0;
+    width:100%;
+    z-index:1000;
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--border-color);
+
+    transition: background var(--transition);
+}
+
+.header__inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    height:70px;
+}
+
+.logo{
+    font-weight:700;
+    font-size:20px;
+    text-decoration:none;
+    color:var(--text-primary);
+}
+
+/* NAV */
+
+.nav{
+    display:flex;
+    gap:30px;
+    align-items:center;
+}
+
+.nav a,
+.nav__link{
+    color:var(--text-secondary);
+    text-decoration:none;
+    font-weight:500;
+    background:none;
+    border:none;
+    cursor:pointer;
+}
+
+.nav a:hover,
+.nav__link:hover{
+    color:var(--accent);
+}
+
+/* DROPDOWN */
+
+.nav__dropdown{
+    position:relative;
+}
+
+.mega-menu{
+    position:absolute;
+    left:0;
+    top:100%;
+    width:100vw;
+    transform:translateX(-50%);
+    left:50%;
+    background:transparent;
+    padding:40px 0;
+    opacity:0;
+    visibility:hidden;
+    transition:all .25s ease;
+}
+.mega-menu__content{
+    background-color: var(--bg-primary);
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.nav__dropdown{
+    position:relative;
+}
+
+.nav__dropdown:hover .mega-menu{
+    opacity:1;
+    visibility:visible;
+}
+
+
+.mega-menu h2{
+    margin-bottom:40px;
+}
+
+.mega-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:40px;
+}
+
+.mega-card{
+    padding:30px;
+    border-radius:20px;
+    background:var(--card-bg);
+    border:1px solid var(--border-color);
+    text-decoration:none;
+    color:var(--text-primary);
+    transition:.3s;
+}
+
+.mega-card span{
+    font-size:32px;
+}
+
+.mega-card:hover{
+    transform:translateY(-6px);
+    border-color:var(--accent);
+}
+
+/* ACTIONS */
+
+.header__actions{
+    display:flex;
+    gap:15px;
+    align-items:center;
+}
+
+.theme-toggle,
+.mobile-btn{
+    background:var(--card-bg);
+    border:1px solid var(--border-color);
+    border-radius:12px;
+    padding:8px 12px;
+    cursor:pointer;
+    color:var(--text-primary);
+    transition:.2s;
+}
+
+.theme-toggle:hover,
+.mobile-btn:hover{
+    border-color:var(--accent);
+}
+
+/* MOBILE */
+
+.mobile-btn{
+    display:none;
+}
+
+.mobile-menu{
+    position:fixed;
+    top:70px;
+    right:-500px;
+    width:250px;
+    height:100vh;
+    background:var(--bg-primary);
+    display:flex;
+    flex-direction:column;
+    padding:30px;
+    gap:20px;
+    transition:.3s;
+    border-left:1px solid var(--border-color);
+}
+
+.mobile-menu.open{
+    right:0;
+}
+
+.mobile-menu a{
+    color:var(--text-primary);
+    text-decoration:none;
+    font-weight:500;
+}
+
+@media(max-width:900px){
+    .nav{
+        display:none;
+    }
+    .mobile-btn{
+        display:block;
+    }
+}

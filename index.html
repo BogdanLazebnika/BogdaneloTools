@@ -2,29 +2,68 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Мої застосунки</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LB Tools — Онлайн інструменти</title>
 
     <link rel="stylesheet" href="./assets/css/reset.css">
     <link rel="stylesheet" href="./assets/css/vars.css">
     <link rel="stylesheet" href="./assets/css/style.css">
     <link rel="stylesheet" href="./assets/css/index.css">
-
 </head>
 <body>
-    <header></header>
-    <main class="container">
-        
-        
-        <h1>Список застосунків</h1>
-        <ul>
-            <li><a href="./optimizer-img.html">Оптимізатор зображень</a></li>
-            <li><a href="./another-app.html">Інший додаток</a></li>
-        </ul>
-    </main>
-    <footer></footer>
 
-    <script type="module" src="./assets/js/main.js"></script>
-    <script type="module" src="./assets/js/index.js"></script>
+<header></header>
+
+<main class="home">
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>LB Tools</h1>
+            <p class="hero-subtitle">
+                Потужні онлайн інструменти для роботи з файлами та зображеннями.
+                Швидко. Просто. Безкоштовно.
+            </p>
+
+            <div class="hero-buttons">
+                <a href="#apps" class="btn btn-primary">Переглянути інструменти</a>
+                <a href="./optimizer-img.html" class="btn btn-secondary">Оптимізатор зображень</a>
+            </div>
+        </div>
+
+        <div class="hero-bg"></div>
+    </section>
+
+
+    <!-- APPS -->
+    <section id="apps" class="apps-section container">
+        <h2 class="section-title">Наші інструменти</h2>
+
+        <div class="apps-grid">
+
+            <a href="./optimizer-img.html" class="app-card">
+                <div class="app-icon">🖼️</div>
+                <h3>Оптимізатор зображень</h3>
+                <p>Стискай фото без втрати якості прямо в браузері.</p>
+                <span class="app-link">Відкрити →</span>
+            </a>
+
+            <a href="./another-app.html" class="app-card">
+                <div class="app-icon">⚙️</div>
+                <h3>Інший додаток</h3>
+                <p>Опис твого наступного інструменту.</p>
+                <span class="app-link">Відкрити →</span>
+            </a>
+
+        </div>
+    </section>
+
+</main>
+
+<footer></footer>
+
+<script type="module" src="./assets/js/main.js"></script>
+<script type="module" src="./assets/js/index.js"></script>
 
 </body>
 </html>

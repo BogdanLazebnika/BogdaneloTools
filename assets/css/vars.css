@@ -1,25 +1,58 @@
-:root{
-    --radius:12px;
-    --gap:1rem;
-    --font:'Inter',system-ui,sans-serif;
-    --transition:.25s ease;
+:root {
 
-    /* Palette */
-    --bg:#f5f7fa;
-    --surface:#fff;
-    --text:#212529;
-    --muted:#6c757d;
-    --primary:#3b82f6;
-    --primary-dark:#2563eb;
-    --accent:#ff6b00;
-    --success:#28a745;
-    --success-dark:#218838;
-    --danger:#d9534f;
-    --danger-dark:#c9302c;
-    --warning:#ffbc00;
-    --warning-dark:#e0a800;
+    /* ===== BACKGROUND ===== */
+    --bg-primary: #0a0f1f;
+    --bg-secondary: #0f172a;
+    --bg-tertiary: #162033;
 
-    /* Shadows */
-    --shadow-sm:0 2px 6px rgba(0,0,0,.08);
-    --shadow-md:0 6px 20px rgba(0,0,0,.12);
+    /* ===== TEXT ===== */
+    --text-primary: #e6edf3;
+    --text-secondary: #9aa4b2;
+    --text-muted: #6b7280;
+
+    /* ===== ACCENT (CYAN TECH) ===== */
+    --accent: #06b6d4;
+    --accent-hover: #0891b2;
+    --accent-soft: rgba(6, 182, 212, 0.15);
+
+    /* ===== UI ===== */
+    --card-bg: rgba(255, 255, 255, 0.035);
+    --border-color: rgba(255, 255, 255, 0.08);
+
+    /* ===== HEADER GLASS ===== */
+    --header-bg: rgba(10, 15, 31, 0.75);
+
+    /* ===== EFFECTS ===== */
+    --glow: 0 0 30px rgba(6, 182, 212, 0.45);
+    --radius: 18px;
+    --transition: 0.25s ease;
+}
+
+
+/* 🌞 LIGHT THEME */
+.light-theme {
+
+    /* ===== BACKGROUND ===== */
+    --bg-primary: #f4f7fb;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #eef2f7;
+
+    /* ===== TEXT ===== */
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+
+    /* ===== ACCENT ===== */
+    --accent: #0891b2;
+    --accent-hover: #0e7490;
+    --accent-soft: rgba(8, 145, 178, 0.12);
+
+    /* ===== UI ===== */
+    --card-bg: rgba(0, 0, 0, 0.035);
+    --border-color: rgba(0, 0, 0, 0.08);
+
+    /* 🔥 ВАЖЛИВО ДЛЯ ШАПКИ */
+    --header-bg: rgba(255, 255, 255, 0.8);
+
+    --glow: 0 0 20px rgba(8, 145, 178, 0.35);
 }
