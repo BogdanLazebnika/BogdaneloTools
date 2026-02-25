@@ -1,52 +1,53 @@
 <!-- partials/header.html -->
-<link rel="stylesheet" href="./assets/css/header.css">
 
-<header class="header">
-    <div class="header__inner container">
 
-        <a href="./index.html" class="logo">LB Tools</a>
+    <div class="header">
+        <div class="header__inner  container">
 
-        <nav class="nav">
-            <a href="./index.html">Головна</a>
+            <a href="./index.html" class="logo">LB Tools</a>
 
-            <div class="nav__dropdown">
-                <button class="nav__link nav__apps-btn">
-                    Застосунки
-                </button>
+            <nav class="nav">
+                <a href="./index.html">Головна</a>
 
-                <div class="mega-menu">
-                    <div class="mega-menu__content container">
-                        <h2>Наші інструменти</h2>
+                <div class="nav__dropdown">
+                    <button class="nav__link nav__apps-btn">
+                        Застосунки
+                    </button>
 
-                        <div class="mega-grid">
-                            <a href="./optimizer-img.html" class="mega-card">
-                                <span>🖼</span>
-                                <h3>Оптимізатор зображень</h3>
-                                <p>Стискай фото без втрати якості</p>
-                            </a>
+                    <div class="mega-menu">
+                        <div class="mega-menu__content container">
+                            <h2>Наші інструменти</h2>
 
-                            <a href="./another-app.html" class="mega-card">
-                                <span>⚙️</span>
-                                <h3>Інший додаток</h3>
-                                <p>Новий інструмент у розробці</p>
-                            </a>
+                            <div class="mega-grid">
+                                <a href="./optimizer-img.html" class="mega-card">
+                                    <span>🖼</span>
+                                    <h3>Оптимізатор зображень</h3>
+                                    <p>Стискай фото без втрати якості</p>
+                                </a>
+
+                                <a href="./another-app.html" class="mega-card">
+                                    <span>⚙️</span>
+                                    <h3>Інший додаток</h3>
+                                    <p>Новий інструмент у розробці</p>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <a href="#">Про нас</a>
+            </nav>
+
+            <div class="header__actions">
+                <button id="themeToggle" class="theme-toggle">🌙</button>
+                <button id="mobileMenuBtn" class="mobile-btn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
             </div>
 
-            <a href="#">Про нас</a>
-        </nav>
-
-        <div class="header__actions">
-            <button id="themeToggle" class="theme-toggle">🌙</button>
-            <button id="mobileMenuBtn" class="mobile-btn">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
         </div>
-
     </div>
 
     <!-- MOBILE MENU -->
@@ -55,8 +56,4 @@
         <a href="./optimizer-img.html">Оптимізатор</a>
         <a href="./another-app.html">Інший</a>
     </div>
-    <div id="mobileOverlay" class="mobile-overlay"></div>
-
-</header>
-
-<script type="module" src="./assets/js/header.js"></script>
+<div id="mobileOverlay" class="mobile-overlay"></div>

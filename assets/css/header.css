@@ -4,7 +4,7 @@
     position: fixed;
     top: 0;
     width: 100%;
-    z-index: 1000;
+    z-index: 1003;
 
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
@@ -193,13 +193,13 @@
 
 .mobile-menu{
     position:fixed;
-    top:0;
-    right:-280px;
+    top:70px;
+    right:-380px;
     width:280px;
-    height:100vh;
+    height:calc(100vh - 70px - 60px);
 
     background:var(--bg-secondary);
-    padding:100px 30px 30px;
+    padding:30px 30px 30px;
 
     display:flex;
     flex-direction:column;
