@@ -1,13 +1,30 @@
 /* --------------------------------------------------------------
-   ВСІ ОПЕРАЦІЇ ПРИВ'ЯЗАНІ ДО DOM ПРИ ПОДІЇ DOMContentLoaded
+   optimizer‑img.js
+   – збереження/завантаження налаштувань
+   – обробка зображень (з урахуванням EXIF, зміна розмірів, якість)
+   – UI: drag‑&‑drop, прогрес, прев’ю, alerts, ренейм‑підтримка
+   – модальне вікно: нумерація, swipe, масштабування лише в модалі
+   – вимкнення масштабування (двоклік, pinch‑zoom) на всій сторінці
    -------------------------------------------------------------- */
+
 document.addEventListener('DOMContentLoaded', () => {
-    /* ==========================================================
-       0️⃣ localStorage – збереження/завантаження налаштувань
-       ========================================================== */
+    /* ==================== 0️⃣ METADATA ==================== */
     const SETTINGS_KEY = 'img_opt_settings';
     const RENAME_KEY   = 'img_opt_rename_settings';
 
+    const viewportMeta = document.getElementById('viewportMeta');
+    const originalViewportContent = viewportMeta.getAttribute('content'); // збереження оригіналу
+
+    /* -------------------------------------------------
+       0.1  Заборона глобального масштабування
+       ------------------------------------------------- */
+    // 1) в meta‑тегі вже задано user‑scalable=no (див. HTML)
+    // 2) запобігаємо «double‑tap» на десктопі
+    document.addEventListener('dblclick', e => e.preventDefault());
+
+    /* -------------------------------------------------
+       0.2  Функції роботи з localStorage
+       ------------------------------------------------- */
     function loadSettings() {
         try {
             const s = JSON.parse(localStorage.getItem(SETTINGS_KEY) ?? '{}');
@@ -44,17 +61,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadSettings();
 
-    /* ==========================================================
-       1️⃣ Підтримувані типи (вхід/вихід)
-       ========================================================== */
+    /* ==================== 1️⃣ ПІДТРИМУВАНІ ТИПИ ==================== */
     const SUPPORTED_INPUTS = new Set([
         'image/jpeg',
         'image/png',
         'image/webp',
         'image/avif',
         'image/bmp',
-        'image/gif'          // GIF – лише перший кадр
+        'image/gif'          // лише перший кадр
     ]);
+
     const SUPPORTED_OUTPUTS = new Set([
         'image/jpeg',
         'image/png',
@@ -63,9 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'image/bmp'
     ]);
 
-    /* ==========================================================
-       2️⃣ Утиліти – readFile, bitmapFromFile
-       ========================================================== */
+    /* ==================== 2️⃣ УТИЛІТИ ==================== */
     function readFile(file) {
         return new Promise((resolve, reject) => {
             const fr = new FileReader();
@@ -74,6 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
             fr.readAsDataURL(file);
         });
     }
+
     /** Повертає ImageBitmap; EXIF‑орієнтація вже врахована браузером. */
     async function bitmapFromFile(file) {
         const dataURL = await readFile(file);
@@ -81,16 +96,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return await createImageBitmap(blob);
     }
 
-    /* ==========================================================
-       3️⃣ Оцінка біт/піксель
-       ========================================================== */
     function bitsPerPixel(file, bmp) {
         const total = bmp.width * bmp.height;
         return (file.size * 8) / total;
     }
     function shouldSkipCompression(file, bmp, opts) {
         const bpp        = bitsPerPixel(file, bmp);
-        const LOW        = 0.30;
+        const LOW        = 0.30;                 // <0.3 bpp – вже «мале»
         const needResize = opts.maxWidth > 0 && bmp.width > opts.maxWidth;
         const lowQuality = bpp <= LOW;
         if (lowQuality && !needResize && opts.mimeOut === file.type) {
@@ -99,9 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return { skip: false, lowQuality, needResize };
     }
 
-    /* ==========================================================
-       4️⃣ Ренейминг (імена файлів)
-       ========================================================== */
     function applyRenaming(originalFile, index, total, renameOpts) {
         const origBase = originalFile.name.replace(/\.\w+$/, '');
         const ext = (renameOpts.mimeOut && renameOpts.mimeOut !== 'auto')
@@ -127,28 +136,25 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${origBase}.${ext}`;
     }
 
-    /* ==========================================================
-       5️⃣ Основна обробка файлу
-       ========================================================== */
     async function processImage(file, opts) {
         const { maxWidth, quality, mimeOut, renameOpts, index, total } = opts;
 
-        /* 5.1 Перевірка вхідного типу */
+        /* ----- перевірка вхідного типу ----- */
         if (!SUPPORTED_INPUTS.has(file.type.toLowerCase())) {
             return { blob: null, skipped: true, reason: 'unsupported input format' };
         }
 
-        /* 5.2 Визначення вихідного MIME */
+        /* ----- визначення вихідного MIME ----- */
         const desiredMime = mimeOut === 'auto' ? file.type : mimeOut;
         const finalMime   = SUPPORTED_OUTPUTS.has(desiredMime) ? desiredMime : null;
         if (!finalMime) {
             return { blob: null, skipped: true, reason: 'unsupported output format' };
         }
 
-        /* 5.3 Створюємо bitmap (EXIF‑орієнтація врахована) */
+        /* ----- bitmap (EXIF вже враховано) ----- */
         const bmp = await bitmapFromFile(file);
 
-        /* 5.4 Чи треба стискати? */
+        /* ----- чи треба стискати? ----- */
         const decision = shouldSkipCompression(file, bmp, {
             maxWidth,
             quality,
@@ -161,13 +167,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return { blob: copy, skipped: true, reason: decision.reason };
         }
 
-        /* 5.5 Якість для toBlob */
+        /* ----- якість для toBlob ----- */
         const effectiveQuality =
             decision.lowQuality && !decision.needResize && finalMime === file.type
                 ? 1
                 : quality / 100;
 
-        /* 5.6 Масштабування */
+        /* ----- масштабування ----- */
         const scale = maxWidth > 0 ? Math.min(1, maxWidth / bmp.width) : 1;
         const outW  = Math.round(bmp.width * scale);
         const outH  = Math.round(bmp.height * scale);
@@ -178,7 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(bmp, 0, 0, outW, outH);
 
-        /* 5.7 Повертаємо Blob */
         return new Promise((resolve, reject) => {
             canvas.toBlob(
                 blob => {
@@ -193,9 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /* ==========================================================
-       6️⃣ UI – drag&drop, прогрес, прев’ю, alerts, ренейм‑UI
-       ========================================================== */
+    /* ==================== 3️⃣ UI – елементи ==================== */
     const dropzone        = document.getElementById('dropzone');
     const fileInput       = document.getElementById('files');
     const preview         = document.getElementById('preview');
@@ -204,22 +207,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveFolderBtn   = document.getElementById('saveFolder');
     const alertsContainer = document.getElementById('alerts');
 
-    // елементи модального вікна
-    const modal       = document.getElementById('modal');
-    const modalImg    = document.getElementById('modalImg');
-    const modalClose  = document.getElementById('modalClose');
-    const modalPrev   = document.getElementById('modalPrev');
-    const modalNext   = document.getElementById('modalNext');
-    const modalCounter= document.getElementById('modalCounter');
+    // модальне вікно
+    const modal        = document.getElementById('modal');
+    const modalImg     = document.getElementById('modalImg');
+    const modalClose   = document.getElementById('modalClose');
+    const modalPrev    = document.getElementById('modalPrev');
+    const modalNext    = document.getElementById('modalNext');
+    const modalCounter = document.getElementById('modalCounter');
 
-    // ренейм‑елементи
+    // ренейм UI
     const renameModeEl = document.getElementById('renameMode');
     const appendGroup  = document.getElementById('appendGroup');
     const replaceGroup = document.getElementById('replaceGroup');
 
-    let generatedBlobs = []; // лише успішно оброблені файли (компактний масив)
+    let generatedBlobs = []; // успішно оброблені файли (компактний масив)
     let generatedUrls  = []; // їх URL‑и (компактний масив)
-    let currentIndex = 0;    // індекс у *компактному* масиві (для модального)
+    let currentIndex = 0;    // індекс у цьому компактному масиві
 
     function setProgress(done, total) {
         progress.style.display = 'block';
@@ -227,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (done === total) setTimeout(() => (progress.style.display = 'none'), 1500);
     }
 
-    /* Drag‑&‑drop */
+    /* ------------------- Drag‑&‑Drop ------------------- */
     ['dragenter','dragover'].forEach(ev =>
         dropzone.addEventListener(ev, e => {
             e.preventDefault(); e.stopPropagation(); dropzone.classList.add('dragover');
@@ -245,6 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fileInput.files = dt.files;
     });
 
+    /* ------------------- Alerts ------------------- */
     function showAlert(message, type = 'warning') {
         const alertDiv = document.createElement('div');
         alertDiv.className = `alert alert--${type}`;
@@ -253,6 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
         alertsContainer.appendChild(alertDiv);
     }
 
+    /* ------------------- Ренейм‑UI ------------------- */
     function updateRenameGroups() {
         const mode = renameModeEl.value;
         appendGroup.classList.toggle('hidden', mode !== 'append');
@@ -260,13 +265,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     renameModeEl.addEventListener('change', updateRenameGroups);
     updateRenameGroups();
-    loadRenameSettings();
+    loadRenameSettings();   // після того, як renameModeEl вже існує
     ['renameMode','suffix','newName'].forEach(id =>
         document.getElementById(id).addEventListener('change', saveRenameSettings)
     );
 
     /* ==========================================================
-       7️⃣ Кнопка «Оптимізувати»
+       4️⃣ КНОПКА «Оптимізувати»
        ========================================================== */
     document.getElementById('run').addEventListener('click', async () => {
         const files = fileInput.files;
@@ -291,11 +296,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 renameMode: renameModeEl.value,
                 suffix:     document.getElementById('suffix').value,
                 newName:    document.getElementById('newName').value,
-                mimeOut:    document.getElementById('format').value
+                mimeOut:    document.getElementById('format').value   // auto / mime
             }
         };
 
-        // Приклад попередження про WebP/AVIF
+        // Попередження про WebP/AVIF у Windows
         if (['image/webp','image/avif'].includes(globalOpts.mimeOut)) {
             showAlert(
                 `<strong>Увага!</strong> Windows може показати діалог 
@@ -321,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     const {blob, skipped, reason} = result;
 
-                    // ------- НЕ ПІДТРИМУЄ ТИПУ -------
+                    // ----- НЕ ПІДТРИМУЄ ТИПУ -----
                     if (!blob) {
                         if (reason === 'unsupported input format') {
                             showAlert(`Формат ${file.type.split('/')[1]} не підтримується – файл пропущено.`, 'error');
@@ -333,9 +338,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         continue;
                     }
 
-                    // ------- УСПІШНО ОБРОБЛЕНО -------
-                    // Пишемо у компактні масиви (push – без пустих ячик)
-                    const previewIdx = generatedBlobs.length; // порядок у масиві
+                    // ----- УСПІШНО ОБРОБЛЕНО -----
+                    const previewIdx = generatedBlobs.length; // індекс у компактному масиві
                     generatedBlobs.push(blob);
                     const url = URL.createObjectURL(blob);
                     generatedUrls.push(url);
@@ -370,11 +374,11 @@ document.addEventListener('DOMContentLoaded', () => {
             downloadAllBtn.disabled = false;
             if (window.showDirectoryPicker) saveFolderBtn.disabled = false;
         }
-        updateModalNavVisibility();   // оновлюємо навігацію в модальному вікні
+        updateModalNavVisibility();   // навігація в модалі (з’явився/зник під час обробки)
     });
 
     /* ==========================================================
-       8️⃣ Запис у папку (Filesystem Access API)
+       5️⃣ Запис у папку (Filesystem Access API)
        ========================================================== */
     async function saveFileToFolder(blob, dirHandle) {
         const fileHandle = await dirHandle.getFileHandle(blob.name,{create:true});
@@ -414,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /* ==========================================================
-       9️⃣ ZIP‑fallback
+       6️⃣ ZIP‑fallback
        ========================================================== */
     downloadAllBtn.addEventListener('click', async () => {
         if (!generatedBlobs.length) return;
@@ -439,7 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /* ==========================================================
-       10️⃣ МОДАЛЬНЕ ВІКНО – навігація, нумерація, свайпи
+       7️⃣ МОДАЛЬНЕ ВІКНО – навігація, нумерація, swipe, zoom
        ========================================================== */
     function updateModalNavVisibility(){
         const visible = generatedUrls.length > 1 ? '' : 'none';
@@ -480,14 +484,20 @@ document.addEventListener('DOMContentLoaded', () => {
     function openModal(idx){
         showImage(idx);
         modal.classList.add('open');
-        document.body.classList.add('no-scroll');   // блокуємо скрол сторінки
-        updateModalNavVisibility();
+        document.body.classList.add('no-scroll');   // блокування скролу
+
+        /* ---- Дозволяємо масштабування всередині модалі ---- */
+        viewportMeta.setAttribute('content',
+            'width=device-width,initial-scale=1,maximum-scale=5,user-scalable=yes');
     }
 
     function closeModal(){
         modal.classList.remove('open');
         modalImg.src = '';
         document.body.classList.remove('no-scroll');
+
+        /* ---- Повертаємо оригінальні обмеження ---- */
+        viewportMeta.setAttribute('content', originalViewportContent);
     }
 
     /* Клік по прев’ю‑картці → відкриття галереї */
@@ -522,7 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (e.key === 'Escape') closeModal();
     });
 
-    /* ---------- Свайпи (мобіль + десктоп) ---------- */
+    /* --------------------- Swipe (desktop + mobile) --------------------- */
     const SWIPE_THRESHOLD = 50; // px
     let startX = 0;
     let isSwiping = false;
@@ -552,19 +562,19 @@ document.addEventListener('DOMContentLoaded', () => {
         modalImg.classList.remove('grabbing');
     }
 
-    /* mouse (desktop) */
+    // mouse (desktop)
     modalImg.addEventListener('mousedown', e => swipeStart(e.clientX));
     window.addEventListener('mousemove', e => swipeMove(e.clientX));
     window.addEventListener('mouseup', swipeEnd);
 
-    /* touch (mobile) */
+    // touch (mobile)
     modalImg.addEventListener('touchstart', e => swipeStart(e.touches[0].clientX));
     window.addEventListener('touchmove', e => {
         if (e.touches.length) swipeMove(e.touches[0].clientX);
     }, {passive:true});
     window.addEventListener('touchend', swipeEnd);
 
-    /* При зміні розмірів вікна – підганяємо розмір картинки */
+    /* Підгонка під розмір вікна */
     window.addEventListener('resize', () => {
         if (modal.classList.contains('open')) fitModalImg();
     });
@@ -575,7 +585,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /* ==========================================================
-       Додаткові слухачі (зміна width/quality/format)
+       8️⃣ Слухачі зміни налаштувань (width, quality, format)
        ========================================================== */
     ['width','quality','format'].forEach(id =>
         document.getElementById(id).addEventListener('change', saveSettings)
