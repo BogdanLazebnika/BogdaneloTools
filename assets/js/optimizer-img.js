@@ -1,6 +1,7 @@
 /* ────────────────────── 0️⃣ Збереження налаштувань у localStorage ────────────────────── */
 const SETTINGS_KEY   = 'img_opt_settings';
 const RENAME_KEY     = 'img_opt_rename_settings';
+
 function loadSettings(){
     try{
         const s = JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}');
@@ -9,6 +10,7 @@ function loadSettings(){
         document.getElementById('format').value   = s.format  ?? 'auto';
     }catch(e){ console.error(e); }
 }
+
 function saveSettings(){
     const s = {
         width:   +document.getElementById('width').value,
@@ -17,6 +19,7 @@ function saveSettings(){
     };
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
 }
+
 function loadRenameSettings(){
     try{
         const s = JSON.parse(localStorage.getItem(RENAME_KEY)||'{}');
@@ -26,6 +29,7 @@ function loadRenameSettings(){
         updateRenameGroups();
     }catch(e){ console.error(e); }
 }
+
 function saveRenameSettings(){
     const s = {
         renameMode: document.getElementById('renameMode').value,
@@ -34,8 +38,10 @@ function saveRenameSettings(){
     };
     localStorage.setItem(RENAME_KEY, JSON.stringify(s));
 }
+
 loadSettings();
 loadRenameSettings();
+
 ['width','quality','format'].forEach(id=>document.getElementById(id).addEventListener('change',saveSettings));
 ['renameMode','suffix','newName'].forEach(id=>document.getElementById(id).addEventListener('change',saveRenameSettings));
 
@@ -48,6 +54,7 @@ function readFile(file){
         fr.readAsDataURL(file);
     });
 }
+
 function getOrientation(file){
     return new Promise(resolve=>{
         EXIF.getData(file,function(){
@@ -55,32 +62,48 @@ function getOrientation(file){
         });
     });
 }
+
 async function bitmapFromFile(file){
     const dataURL = await readFile(file);
     const orientation = await getOrientation(file);
     const blob = await (await fetch(dataURL)).blob();
-    const rawBmp = await createImageBitmap(blob);
-    if (orientation===1) return rawBmp;
-
+    
+    // Створюємо тимчасове зображення для правильного обертання
+    const img = new Image();
     const canvas = document.createElement('canvas');
-    const ctx    = canvas.getContext('2d');
-    const w = rawBmp.width, h = rawBmp.height;
-    if (orientation>=5 && orientation<=8){
-        canvas.width = h; canvas.height = w;
-    }else{
-        canvas.width = w; canvas.height = h;
-    }
-    switch (orientation){
-        case 2: ctx.transform(-1,0,0,1,w,0); break;
-        case 3: ctx.transform(-1,0,0,-1,w,h); break;
-        case 4: ctx.transform(1,0,0,-1,0,h); break;
-        case 5: ctx.transform(0,1,1,0,0,0); break;
-        case 6: ctx.transform(0,1,-1,0,w,0); break;
-        case 7: ctx.transform(0,-1,-1,0,w,h); break;
-        case 8: ctx.transform(0,-1,1,0,0,h); break;
-    }
-    ctx.drawImage(rawBmp,0,0);
-    return await createImageBitmap(canvas);
+    const ctx = canvas.getContext('2d');
+    
+    return new Promise((resolve) => {
+        img.onload = function() {
+            let width = img.width;
+            let height = img.height;
+            
+            // Корекція орієнтації
+            if (orientation >= 5 && orientation <= 8) {
+                [width, height] = [height, width];
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            
+            // Застосовуємо трансформації для корекції орієнтації
+            switch(orientation) {
+                case 2: ctx.transform(-1, 0, 0, 1, width, 0); break;
+                case 3: ctx.transform(-1, 0, 0, -1, width, height); break;
+                case 4: ctx.transform(1, 0, 0, -1, 0, height); break;
+                case 5: ctx.transform(0, 1, 1, 0, 0, 0); break;
+                case 6: ctx.transform(0, 1, -1, 0, height, 0); break;
+                case 7: ctx.transform(0, -1, -1, 0, height, width); break;
+                case 8: ctx.transform(0, -1, 1, 0, 0, width); break;
+                default: ctx.transform(1, 0, 0, 1, 0, 0);
+            }
+            
+            ctx.drawImage(img, 0, 0);
+            createImageBitmap(canvas).then(resolve);
+        };
+        
+        img.src = dataURL;
+    });
 }
 
 /* ────────────────────── 2️⃣ Оцінка біт/піксель ────────────────────── */
@@ -88,6 +111,7 @@ function bitsPerPixel(file,bmp){
     const total = bmp.width * bmp.height;
     return (file.size * 8) / total;
 }
+
 function shouldSkipCompression(file,bmp,opts){
     const bpp    = bitsPerPixel(file,bmp);
     const LOW    = 0.30;
@@ -101,41 +125,37 @@ function shouldSkipCompression(file,bmp,opts){
 }
 
 /* ────────────────────── 3️⃣ Формування імені (ренейминг) ────────────────────── */
-function applyRenaming(originalFile, index, total, renameOpts){
-    const origBase = originalFile.name.replace(/\.\w+$/,'');
-    let ext = '';
+function getFileExtension(mimeType, originalName) {
+    const extMap = {
+        'image/jpeg': 'jpg',
+        'image/png': 'png',
+        'image/webp': 'webp',
+        'image/avif': 'avif',
+        'image/bmp': 'bmp',
+        'image/gif': 'gif'
+    };
     
-    // Виправлення: правильно визначаємо розширення
-    if (renameOpts.mimeOut && renameOpts.mimeOut !== 'auto') {
-        ext = renameOpts.mimeOut.split('/')[1];
-    } else {
-        ext = originalFile.type.split('/')[1];
-    }
-    
-    // Додаткові виправлення для формату
-    if (ext === 'jpeg') ext = 'jpg';
-    
-    // Перевірка на undefined
-    if (!ext || ext === 'undefined') {
-        ext = originalFile.name.split('.').pop() || 'jpg';
-    }
+    return extMap[mimeType] || originalName.split('.').pop() || 'jpg';
+}
 
-    // -------------- СУФІКС (append) -----------------
+function applyRenaming(originalFile, index, total, renameOpts){
+    const origBase = originalFile.name.replace(/\.[^/.]+$/, "");
+    let targetMime = renameOpts.mimeOut === 'auto' ? originalFile.type : renameOpts.mimeOut;
+    
+    const ext = getFileExtension(targetMime, originalFile.name);
+
     if (renameOpts.renameMode === 'append'){
         const suffix = renameOpts.suffix ?? '';
         return `${origBase}${suffix}.${ext}`;
     }
 
-    // -------------- ЗАМІНА (replace) -----------------
     if (renameOpts.renameMode === 'replace'){
         const baseName = renameOpts.newName?.trim() ?? '';
-        if (!baseName){
-            return `${origBase}.${ext}`;
-        }
+        if (!baseName) return `${origBase}.${ext}`;
 
         if (/\{orig\}|\{num\}/.test(baseName)){
             let name = baseName.replace(/\{orig\}/g, origBase);
-            name = name.replace(/\{num\}/g, index + 1);   // індекс 1-based для користувача
+            name = name.replace(/\{num\}/g, index + 1);
             if (!/\{num\}/.test(baseName) && index>0){
                 name = `${name}${index + 1}`;
             }
@@ -146,7 +166,6 @@ function applyRenaming(originalFile, index, total, renameOpts){
         return `${baseName}${index + 1}.${ext}`;
     }
 
-    // -------------- NO RENAME (none) -----------------
     return `${origBase}.${ext}`;
 }
 
@@ -156,50 +175,60 @@ async function processImage(file, opts){
     const targetMime = mimeOut === 'auto' ? file.type : mimeOut;
     const canConvert = SUPPORTED_OUTPUTS.has(targetMime);
 
-    // Якщо формат не підтримується – копіюємо без зміни
     if (!canConvert){
         if (targetMime !== file.type){
             showAlert(`Формат ${targetMime.split('/')[1]} не підтримується – файл залишено без змін.`, 'warning');
         }
-        const copy = new Blob([file], {type: file.type});
-        copy.name = applyRenaming(file,index,total,{...renameOpts, mimeOut: file.type});
-        return {blob:copy, skipped:true, reason:'unsupported format'};
+        const copy = new Blob([await file.arrayBuffer()], {type: file.type});
+        const fileName = applyRenaming(file, index, total, {...renameOpts, mimeOut: file.type});
+        return {blob: Object.assign(copy, {name: fileName}), skipped:true, reason:'unsupported format'};
     }
 
-    const bmp = await bitmapFromFile(file);
-    const decision = shouldSkipCompression(file,bmp,{maxWidth,quality,mimeOut:targetMime});
+    try {
+        const bmp = await bitmapFromFile(file);
+        const decision = shouldSkipCompression(file,bmp,{maxWidth,quality,mimeOut:targetMime});
 
-    if (decision.skip){
-        const copy = new Blob([file], {type: file.type});
-        copy.name = applyRenaming(file,index,total,{...renameOpts, mimeOut: file.type});
-        return {blob:copy, skipped:true, reason:decision.reason};
+        if (decision.skip){
+            const copy = new Blob([await file.arrayBuffer()], {type: file.type});
+            const fileName = applyRenaming(file, index, total, {...renameOpts, mimeOut: file.type});
+            return {blob: Object.assign(copy, {name: fileName}), skipped:true, reason:decision.reason};
+        }
+
+        const effectiveQuality = (decision.lowQuality && !decision.needResize && targetMime===file.type)
+            ? 1
+            : quality/100;
+
+        const scale = maxWidth>0 ? Math.min(1, maxWidth / bmp.width) : 1;
+        const outW = Math.round(bmp.width * scale);
+        const outH = Math.round(bmp.height * scale);
+
+        const canvas = document.createElement('canvas');
+        canvas.width  = outW;
+        canvas.height = outH;
+        const ctx = canvas.getContext('2d');
+        
+        // Забезпечуємо якісне масштабування
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(bmp, 0, 0, outW, outH);
+
+        return new Promise((resolve,reject)=>{
+            canvas.toBlob(blob=>{
+                if(!blob){reject('toBlob failed');return;}
+                
+                const fileName = applyRenaming(file, index, total, renameOpts);
+                const namedBlob = Object.assign(new Blob([blob], {type: targetMime}), {name: fileName});
+                
+                resolve({blob:namedBlob, skipped:false, reason:null});
+            }, targetMime, effectiveQuality);
+        });
+    } catch (error) {
+        console.error('Помилка обробки зображення:', error);
+        // Якщо сталася помилка - повертаємо оригінал
+        const copy = new Blob([await file.arrayBuffer()], {type: file.type});
+        const fileName = applyRenaming(file, index, total, {...renameOpts, mimeOut: file.type});
+        return {blob: Object.assign(copy, {name: fileName}), skipped:true, reason:'processing error'};
     }
-
-    const effectiveQuality = (decision.lowQuality && !decision.needResize && targetMime===file.type)
-        ? 1
-        : quality/100;
-
-    const scale = maxWidth>0 ? Math.min(1, maxWidth / bmp.width) : 1;
-    const outW = Math.round(bmp.width * scale);
-    const outH = Math.round(bmp.height * scale);
-
-    const canvas = document.createElement('canvas');
-    canvas.width  = outW;
-    canvas.height = outH;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(bmp,0,0,outW,outH);
-
-    return new Promise((resolve,reject)=>{
-        canvas.toBlob(blob=>{
-            if(!blob){reject('toBlob failed');return;}
-            
-            // Створюємо новий Blob з правильним ім'ям
-            const namedBlob = new Blob([blob], {type: targetMime});
-            namedBlob.name = applyRenaming(file,index,total,renameOpts);
-            
-            resolve({blob:namedBlob, skipped:false, reason:null});
-        }, targetMime, effectiveQuality);
-    });
 }
 
 /* ────────────────────── 5️⃣ UI: drag&drop, прогрес, прев'ю ────────────────────── */
@@ -211,8 +240,8 @@ const downloadAllBtn  = document.getElementById('downloadAll');
 const saveFolderBtn   = document.getElementById('saveFolder');
 const alertsContainer = document.getElementById('alerts');
 
-let generatedBlobs = [];   // масив готових Blob‑ів
-let generatedUrls  = [];   // URL‑и для прев'ю
+let generatedBlobs = [];
+let generatedUrls  = [];
 
 function setProgress(done,total){
     progress.style.display = 'block';
@@ -234,7 +263,6 @@ dropzone.addEventListener('drop',e=>{
     fileInput.files = dt.files;
 });
 
-/* ────────────────────── 6️⃣ Alerts (warnings / errors) ────────────────────── */
 function showAlert(message, type='warning'){
     const alertDiv = document.createElement('div');
     alertDiv.className = `alert alert--${type}`;
@@ -258,14 +286,12 @@ updateRenameGroups();
 
 /* ────────────────────── 8️⃣ Кнопка «Оптимізувати» ────────────────────── */
 document.getElementById('run').addEventListener('click', async()=>{
-
     const files = fileInput.files;
     if(!files.length){
         alert('Виберіть хоча б одне зображення');
         return;
     }
 
-    // Очищення UI
     preview.innerHTML = '';
     alertsContainer.innerHTML = '';
     generatedBlobs = [];
@@ -273,7 +299,6 @@ document.getElementById('run').addEventListener('click', async()=>{
     downloadAllBtn.disabled = true;
     saveFolderBtn.disabled   = true;
 
-    // Параметри, які спільні для всіх файлів
     const globalOpts = {
         maxWidth: +document.getElementById('width').value,
         quality:  +document.getElementById('quality').value,
@@ -286,7 +311,6 @@ document.getElementById('run').addEventListener('click', async()=>{
         }
     };
 
-    // Попередження про WebP/AVIF
     if (['image/webp','image/avif'].includes(globalOpts.mimeOut)){
         showAlert(`
             <strong>Увага!</strong> Windows може показати діалог 
@@ -315,11 +339,10 @@ document.getElementById('run').addEventListener('click', async()=>{
                 const url = URL.createObjectURL(blob);
                 generatedUrls[idx] = url;
 
-                // ---- прев'ю-картка ----
                 const card = document.createElement('div');
                 card.className='card';
                 card.innerHTML = `
-                    <img class="card__image" src="${url}" alt="${blob.name}" data-index="${idx}">
+                    <img class="card__image" src="${url}" alt="${blob.name}" data-index="${idx}" loading="lazy">
                     <p class="card__info"><strong>${file.name}</strong> → <strong>${blob.name}</strong></p>
                     <p class="card__info">${(file.size/1024).toFixed(1)} KB → ${(blob.size/1024).toFixed(1)} KB</p>
                     <a class="card__download" href="${url}" download="${blob.name}">⬇️ Завантажити</a>
@@ -349,13 +372,14 @@ document.getElementById('run').addEventListener('click', async()=>{
     updateNavVisibility();
 });
 
-/* ────────────────────── 9️⃣ Запис у папку (Filesystem Access API) ────────────────────── */
+/* ────────────────────── 9️⃣ Запис у папку ────────────────────── */
 async function saveFileToFolder(blob, dirHandle){
     const fileHandle = await dirHandle.getFileHandle(blob.name,{create:true});
     const writable = await fileHandle.createWritable();
     await writable.write(blob);
     await writable.close();
 }
+
 async function saveAllToFolder(blobs){
     let dirHandle;
     try{ dirHandle = await window.showDirectoryPicker(); }
@@ -374,6 +398,7 @@ async function saveAllToFolder(blobs){
     }
     alert(`✅ Всі ${blobs.length} файл(ів) записано у обрану папку`);
 }
+
 saveFolderBtn.addEventListener('click', async()=>{
     if(!generatedBlobs.length) return;
     saveFolderBtn.disabled = true;
@@ -405,12 +430,12 @@ downloadAllBtn.addEventListener('click', async()=>{
     downloadAllBtn.disabled = false;
 });
 
-/* ────────────────────── 1️⃣1️⃣ Модальне вікно‑галерея з свайпами ────────────────────── */
-const modal       = document.getElementById('modal');
-const modalImg    = document.getElementById('modalImg');
-const modalClose  = document.getElementById('modalClose');
-const modalPrev   = document.getElementById('modalPrev');
-const modalNext   = document.getElementById('modalNext');
+/* ────────────────────── 1️⃣1️⃣ Модальне вікно‑галерея ────────────────────── */
+const modal = document.getElementById('modal');
+const modalImg = document.getElementById('modalImg');
+const modalClose = document.getElementById('modalClose');
+const modalPrev = document.getElementById('modalPrev');
+const modalNext = document.getElementById('modalNext');
 const modalCounter = document.getElementById('modalCounter');
 const modalContent = document.getElementById('modalContent');
 
@@ -418,193 +443,179 @@ let currentIndex = 0;
 let startX = 0;
 let currentX = 0;
 let isSwiping = false;
+let isAnimating = false;
 
 function updateCounter() {
     const totalImages = generatedUrls.filter(u => u).length;
     modalCounter.textContent = `${currentIndex + 1}/${totalImages}`;
 }
 
-function updateNavVisibility(){
+function updateNavVisibility() {
     const totalImages = generatedUrls.filter(u => u).length;
     const visible = totalImages > 1 ? '' : 'none';
     modalPrev.style.display = visible;
     modalNext.style.display = visible;
 }
 
-function fitModalImg(){
+function fitModalImg() {
     if (!modalImg.naturalWidth) return;
-    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
-    const gap = 4 * rem;
-    const maxW = window.innerWidth - gap;
-    const maxH = window.innerHeight - gap;
-    const ratio = Math.min(maxW / modalImg.naturalWidth, maxH / modalImg.naturalHeight, 1);
-    modalImg.style.width = Math.round(modalImg.naturalWidth * ratio) + 'px';
-    modalImg.style.height = Math.round(modalImg.naturalHeight * ratio) + 'px';
-}
-
-function showImage(idx){
-    const availableImages = generatedUrls.filter(u => u);
-    if (idx < 0 || idx >= generatedUrls.length || !generatedUrls[idx]) return;
     
-    currentIndex = idx;
-    modalImg.style.opacity = 0;
-    modalImg.style.transform = 'translateX(0)';
-    modalImg.style.transition = 'opacity 0.3s ease';
+    const imgAspect = modalImg.naturalWidth / modalImg.naturalHeight;
+    const windowAspect = window.innerWidth / window.innerHeight;
     
-    modalImg.onload = () => {
-        fitModalImg();
-        modalImg.style.opacity = 1;
-        updateCounter();
-        setTimeout(() => {
-            modalImg.style.transition = '';
-        }, 300);
-    };
-    
-    modalImg.src = generatedUrls[idx];
-}
-
-function navigateToImage(newIndex) {
-    if (newIndex < 0 || newIndex >= generatedUrls.length || !generatedUrls[newIndex]) return;
-    
-    modalImg.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
-    
-    if (newIndex > currentIndex) {
-        // Рух праворуч
-        modalImg.style.transform = 'translateX(-100%)';
-        setTimeout(() => {
-            showImage(newIndex);
-        }, 300);
+    if (imgAspect > windowAspect) {
+        // Широке зображення
+        modalImg.style.width = '90vw';
+        modalImg.style.height = 'auto';
     } else {
-        // Рух ліворуч
-        modalImg.style.transform = 'translateX(100%)';
-        setTimeout(() => {
-            showImage(newIndex);
-        }, 300);
+        // Високе зображення
+        modalImg.style.width = 'auto';
+        modalImg.style.height = '90vh';
     }
 }
 
-function openModal(idx){
-    showImage(idx);
-    modal.classList.add('open');
-    updateNavVisibility();
-    document.body.style.overflow = 'hidden';
+function preloadImages() {
+    // Попереднє завантаження сусідніх зображень
+    const preloadIndexes = [
+        (currentIndex - 1 + generatedUrls.length) % generatedUrls.length,
+        (currentIndex + 1) % generatedUrls.length
+    ];
+    
+    preloadIndexes.forEach(idx => {
+        if (generatedUrls[idx] && idx !== currentIndex) {
+            const img = new Image();
+            img.src = generatedUrls[idx];
+        }
+    });
 }
 
-function closeModal(){
-    modal.classList.remove('open');
-    modalImg.src = '';
-    modalImg.style.transform = 'translateX(0)';
-    document.body.style.overflow = '';
+function showImage(idx, direction = 0) {
+    if (isAnimating) return;
+    if (idx < 0 || idx >= generatedUrls.length || !generatedUrls[idx]) return;
+    
+    isAnimating = true;
+    currentIndex = idx;
+    
+    // Анімація переходу
+    if (direction !== 0) {
+        modalImg.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s ease';
+        modalImg.style.transform = `translateX(${direction * 100}%)`;
+        modalImg.style.opacity = '0';
+    }
+    
+    setTimeout(() => {
+        modalImg.onload = () => {
+            fitModalImg();
+            modalImg.style.opacity = '1';
+            updateCounter();
+            preloadImages();
+            
+            setTimeout(() => {
+                modalImg.style.transition = '';
+                isAnimating = false;
+            }, 100);
+        };
+        
+        modalImg.src = generatedUrls[idx];
+        
+        if (!direction) {
+            modalImg.style.opacity = '1';
+            modalImg.style.transform = 'translateX(0)';
+            isAnimating = false;
+        }
+    }, direction ? 50 : 0);
+}
+
+function navigate(direction) {
+    if (isAnimating) return;
+    
+    let newIndex = currentIndex;
+    const total = generatedUrls.filter(u => u).length;
+    
+    if (direction === 'next') {
+        do {
+            newIndex = (newIndex + 1) % generatedUrls.length;
+        } while (!generatedUrls[newIndex] && newIndex !== currentIndex);
+    } else {
+        do {
+            newIndex = (newIndex - 1 + generatedUrls.length) % generatedUrls.length;
+        } while (!generatedUrls[newIndex] && newIndex !== currentIndex);
+    }
+    
+    if (newIndex !== currentIndex && generatedUrls[newIndex]) {
+        showImage(newIndex, direction === 'next' ? -1 : 1);
+    }
 }
 
 // Touch events для мобільних пристроїв
 modalContent.addEventListener('touchstart', (e) => {
+    if (isAnimating) return;
     startX = e.touches[0].clientX;
     currentX = startX;
     isSwiping = true;
-    e.preventDefault();
 });
 
 modalContent.addEventListener('touchmove', (e) => {
-    if (!isSwiping) return;
+    if (!isSwiping || isAnimating) return;
     currentX = e.touches[0].clientX;
     const diff = currentX - startX;
-    modalImg.style.transform = `translateX(${diff}px)`;
     modalImg.style.transition = 'none';
-    e.preventDefault();
+    modalImg.style.transform = `translateX(${diff}px)`;
 });
 
 modalContent.addEventListener('touchend', (e) => {
-    if (!isSwiping) return;
+    if (!isSwiping || isAnimating) return;
     isSwiping = false;
     
     const diff = currentX - startX;
-    const swipeThreshold = 50;
-    const swipeThresholdPercent = window.innerWidth * 0.1; // 10% ширини екрану
+    const threshold = window.innerWidth * 0.15; // 15% ширини екрану
     
-    if (Math.abs(diff) > swipeThreshold && Math.abs(diff) > swipeThresholdPercent) {
+    if (Math.abs(diff) > threshold) {
         if (diff > 0) {
-            // Свайп праворуч - попереднє зображення
-            let prev = currentIndex - 1;
-            while (prev >= 0 && !generatedUrls[prev]) prev--;
-            if (prev < 0) return;
-            
-            navigateToImage(prev);
+            navigate('prev');
         } else {
-            // Свайп ліворуч - наступне зображення
-            let next = currentIndex + 1;
-            while (next < generatedUrls.length && !generatedUrls[next]) next++;
-            if (next >= generatedUrls.length) return;
-            
-            navigateToImage(next);
+            navigate('next');
         }
     } else {
-        // Якщо свайп замалий - повернути на місце
-        modalImg.style.transition = 'transform 0.2s ease';
+        modalImg.style.transition = 'transform 0.3s ease';
         modalImg.style.transform = 'translateX(0)';
     }
-    
-    e.preventDefault();
 });
 
-// Mouse events для десктопу - ФІКСОВАНІ
-let isMouseDown = false;
+// Mouse events для десктопу
+let mouseIsDown = false;
 let mouseStartX = 0;
 
 modalContent.addEventListener('mousedown', (e) => {
-    isMouseDown = true;
+    if (isAnimating) return;
+    mouseIsDown = true;
     mouseStartX = e.clientX;
     modalImg.style.transition = 'none';
     modalContent.style.cursor = 'grabbing';
-    e.preventDefault();
 });
 
-// Додаємо обробники на весь документ для правильного відстеження миші
 document.addEventListener('mousemove', (e) => {
-    if (!isMouseDown) return;
-    
+    if (!mouseIsDown || isAnimating) return;
     const diff = e.clientX - mouseStartX;
     modalImg.style.transform = `translateX(${diff}px)`;
 });
 
 document.addEventListener('mouseup', (e) => {
-    if (!isMouseDown) return;
-    isMouseDown = false;
+    if (!mouseIsDown || isAnimating) return;
+    mouseIsDown = false;
     modalContent.style.cursor = '';
     
     const diff = e.clientX - mouseStartX;
-    const swipeThreshold = 50;
-    const swipeThresholdPercent = window.innerWidth * 0.1;
+    const threshold = 100; // Фіксований поріг для ПК
     
-    if (Math.abs(diff) > swipeThreshold && Math.abs(diff) > swipeThresholdPercent) {
+    if (Math.abs(diff) > threshold) {
         if (diff > 0) {
-            // Свайп праворуч - попереднє зображення
-            let prev = currentIndex - 1;
-            while (prev >= 0 && !generatedUrls[prev]) prev--;
-            if (prev < 0) {
-                // Якщо немає попереднього - повернути на місце
-                modalImg.style.transition = 'transform 0.2s ease';
-                modalImg.style.transform = 'translateX(0)';
-                return;
-            }
-            
-            navigateToImage(prev);
+            navigate('prev');
         } else {
-            // Свайп ліворуч - наступне зображення
-            let next = currentIndex + 1;
-            while (next < generatedUrls.length && !generatedUrls[next]) next++;
-            if (next >= generatedUrls.length) {
-                // Якщо немає наступного - повернути на місце
-                modalImg.style.transition = 'transform 0.2s ease';
-                modalImg.style.transform = 'translateX(0)';
-                return;
-            }
-            
-            navigateToImage(next);
+            navigate('next');
         }
     } else {
-        // Якщо свайп замалий - повернути на місце
-        modalImg.style.transition = 'transform 0.2s ease';
+        modalImg.style.transition = 'transform 0.3s ease';
         modalImg.style.transform = 'translateX(0)';
     }
 });
@@ -617,57 +628,57 @@ preview.addEventListener('click', e => {
     openModal(idx);
 });
 
-modalPrev.addEventListener('click', e => {
+modalPrev.addEventListener('click', (e) => {
     e.stopPropagation();
-    let prev = currentIndex - 1;
-    while (prev >= 0 && !generatedUrls[prev]) prev--;
-    if (prev < 0) prev = generatedUrls.length - 1;
-    while (prev >= 0 && !generatedUrls[prev]) prev--;
-    if (prev >= 0) navigateToImage(prev);
+    navigate('prev');
 });
 
-modalNext.addEventListener('click', e => {
+modalNext.addEventListener('click', (e) => {
     e.stopPropagation();
-    let next = currentIndex + 1;
-    while (next < generatedUrls.length && !generatedUrls[next]) next++;
-    if (next >= generatedUrls.length) next = 0;
-    while (next < generatedUrls.length && !generatedUrls[next]) next++;
-    if (next < generatedUrls.length) navigateToImage(next);
+    navigate('next');
 });
 
-modalClose.addEventListener('click', e => {
+modalClose.addEventListener('click', (e) => {
     e.stopPropagation();
     closeModal();
 });
 
-modal.addEventListener('click', e => { 
+modal.addEventListener('click', (e) => { 
     if (e.target === modal) closeModal(); 
 });
 
+function openModal(idx) {
+    showImage(idx);
+    modal.classList.add('open');
+    updateNavVisibility();
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+    modal.classList.remove('open');
+    modalImg.src = '';
+    modalImg.style.transform = 'translateX(0)';
+    document.body.style.overflow = '';
+    isAnimating = false;
+}
+
 // Клавіатурна навігація
-document.addEventListener('keydown', e => {
-    if (!modal.classList.contains('open')) return;
+document.addEventListener('keydown', (e) => {
+    if (!modal.classList.contains('open') || isAnimating) return;
     
     if (e.key === 'ArrowLeft') {
-        modalPrev.click();
+        navigate('prev');
     } else if (e.key === 'ArrowRight') {
-        modalNext.click();
+        navigate('next');
     } else if (e.key === 'Escape') {
         closeModal();
     }
 });
 
-// Адаптація до розміру вікна
 window.addEventListener('resize', () => { 
     if (modal.classList.contains('open')) fitModalImg(); 
 });
 
-// Заборонити контекстне меню на зображенні
-modalContent.addEventListener('contextmenu', (e) => {
-    e.preventDefault();
-});
-
-// Очищення пам'яті
 window.addEventListener('unload', () => { 
     generatedUrls.forEach(url => {
         if (url) URL.revokeObjectURL(url);
@@ -676,4 +687,3 @@ window.addEventListener('unload', () => {
 
 /* ────── Підтримувані формати для toBlob ────── */
 const SUPPORTED_OUTPUTS = new Set(['image/jpeg','image/png','image/webp','image/avif','image/bmp']);
-
