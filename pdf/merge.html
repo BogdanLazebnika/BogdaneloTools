@@ -14,222 +14,524 @@
 <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
 
 <style>
-/* -------------------------------------------------
-   1️⃣  ТИПОГРАФІЯ
-   ------------------------------------------------- */
-:root{
-    --fs-base: clamp(0.875rem,1.5vw,1rem);
-    --fs-lg  : clamp(1.25rem,3vw,1.5rem);
-    --fs-xl  : clamp(1.75rem,4vw,2.25rem);
+/* =====================================================
+   💎 LB TOOLS – PREMIUM PDF MERGE UI
+   ===================================================== */
+
+.tool-page{
+    padding:120px 20px 100px;
 }
 
-/* -------------------------------------------------
-   2️⃣  БАЗОВІ БЛОКИ
-   ------------------------------------------------- */
-.tool-page{padding:2rem 1rem 3rem;}
-.tool-container{max-width:38rem;margin:0 auto;}
-.tool-back{margin-bottom:1.5rem;}
-.tool-back a{color:var(--accent);font-weight:600;}
-.tool-header{text-align:center;margin-bottom:2rem;}
+.tool-container{
+    max-width:900px;
+    margin:0 auto;
+}
+
+/* ================= BACK BUTTON ================= */
+
+.tool-back{
+    margin-bottom:30px;
+}
+
+.tool-back a{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 16px;
+    border-radius:10px;
+    background:var(--card-bg);
+    border:1px solid var(--border-color);
+    text-decoration:none;
+    font-size:14px;
+    transition:.25s;
+}
+
+.tool-back a:hover{
+    border-color:var(--accent);
+    color:var(--accent);
+    transform:translateX(-3px);
+}
+
+.tool-back a{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:12px 18px;
+    border-radius:12px;
+    background:rgba(255,255,255,0.03);
+    border:1px solid var(--border-color);
+    text-decoration:none;
+    font-size:14px;
+    font-weight:600;
+    color:var(--text-primary);
+    transition:.25s;
+}
+
+.tool-back a:hover{
+    border-color:var(--accent);
+    color:var(--accent);
+    box-shadow:0 0 15px rgba(99,102,241,0.25);
+}
+
+/* ================= HEADER ================= */
+
+.tool-header{
+    text-align:center;
+    margin-bottom:50px;
+}
+
 .tool-header h1{
-    font-size:var(--fs-xl);
+    font-size:clamp(28px,4vw,42px);
+    font-weight:800;
+    background:linear-gradient(90deg,#6366f1,#22d3ee);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    margin-bottom:15px;
+}
+
+.tool-header p{
+    font-size:16px;
+    color:var(--text-secondary);
+}
+
+/* ================= CARD ================= */
+
+.tool-card-wrapper{
+    background:var(--card-bg);
+    border:1px solid var(--border-color);
+    border-radius:22px;
+    padding:45px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.35);
+    backdrop-filter:blur(8px);
+}
+
+/* ================= SETTINGS ================= */
+
+.output-config{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    margin-bottom:35px;
+}
+/* ===== INPUT FIX DARK MODE ===== */
+
+.output-config input[type="text"]{
+    color:var(--text-primary);
+}
+
+.output-config input[type="text"]::placeholder{
+    color:var(--text-secondary);
+    opacity:.6;
+}
+
+.output-config label{
+    font-size:14px;
+    font-weight:500;
+    color:var(--text-secondary);
+}
+
+.output-config input[type="text"]{
+    padding:14px;
+    border-radius:12px;
+    border:1px solid var(--border-color);
+    background:rgba(255,255,255,0.03);
+    font-size:14px;
+    transition:.25s;
+}
+
+.output-config input[type="text"]:focus{
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px rgba(99,102,241,0.2);
+    outline:none;
+}
+
+/* ================= CUSTOM SWITCH ================= */
+
+.switch{
+    position:relative;
+    display:inline-block;
+    width:46px;
+    height:24px;
+}
+
+.switch input{
+    opacity:0;
+    width:0;
+    height:0;
+}
+
+.slider{
+    position:absolute;
+    cursor:pointer;
+    inset:0;
+    background:#374151;
+    border-radius:50px;
+    transition:.3s;
+}
+
+.slider:before{
+    content:"";
+    position:absolute;
+    height:18px;
+    width:18px;
+    left:3px;
+    top:3px;
+    background:white;
+    border-radius:50%;
+    transition:.3s;
+}
+
+.switch input:checked + .slider{
+    background:var(--accent);
+}
+
+.switch input:checked + .slider:before{
+    transform:translateX(22px);
+}
+
+/* ================= DROPZONE ================= */
+
+.dropzone{
+    border:2px dashed var(--border-color);
+    padding:70px 20px;
+    text-align:center;
+    border-radius:18px;
+    cursor:pointer;
+    transition:.3s;
+    background:rgba(255,255,255,0.02);
+    font-size:15px;
+    margin-bottom:30px;
+}
+
+.dropzone:hover{
+    border-color:var(--accent);
+    background:rgba(99,102,241,0.07);
+}
+
+.dropzone.dragover{
+    border-color:var(--accent);
+    background:rgba(99,102,241,0.12);
+    transform:scale(1.02);
+}
+
+/* ================= MODE SWITCH ================= */
+
+.mode-switch{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:25px;
+    padding:14px 18px;
+    border-radius:14px;
+    background:rgba(255,255,255,0.03);
+    border:1px solid var(--border-color);
+    font-size:14px;
+}
+
+/* ================= FILE ITEM ================= */
+
+.file-item{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:16px;
+    border-radius:16px;
+    border:1px solid var(--border-color);
+    margin-bottom:14px;
+    transition:.25s;
+    background:rgba(255,255,255,0.02);
+}
+
+.file-item:hover{
+    border-color:var(--accent);
+    background:rgba(255,255,255,0.04);
+}
+
+.drag-handle{
+    cursor:grab;
+    font-size:18px;
+    opacity:.6;
+}
+
+.thumb{
+    width:48px;
+    height:64px;
+    border-radius:8px;
+    background:#1f2937;
+    overflow:hidden;
+    flex-shrink:0;
+}
+
+.thumb img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.info{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+}
+
+.name{
+    font-weight:600;
+    font-size:14px;
+}
+
+.size{
+    font-size:12px;
+    color:var(--text-secondary);
+}
+
+/* ================= FILE ACTIONS ================= */
+
+.file-actions{
+    display:flex;
+    gap:8px;
+}
+
+.file-actions button{
+    width:36px;
+    height:36px;
+    border-radius:10px;
+    border:1px solid var(--border-color);
+    background:transparent;
+    cursor:pointer;
+    transition:.2s;
+    font-size:14px;
+}
+
+.file-actions button:hover{
+    border-color:var(--accent);
+    color:var(--accent);
+}
+
+/* ================= MAIN BUTTONS ================= */
+
+.tool-actions{
+    display:flex;
+    gap:18px;
+    justify-content:center;
+    margin-top:35px;
+    flex-wrap:wrap;
+}
+
+.merge-btn{
+    background:linear-gradient(135deg,#6366f1,#4f46e5);
+    border:none;
+    padding:15px 40px;
+    border-radius:14px;
+    font-weight:700;
+    font-size:15px;
+    cursor:pointer;
+    transition:.25s;
+    color:#fff;
+    min-width:220px;
+}
+
+.merge-btn:hover{
+    transform:translateY(-4px);
+    box-shadow:0 12px 25px rgba(79,70,229,0.5);
+}
+.merge-btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+    box-shadow:none;
+    transform:none;
+}
+
+.clear-btn{
+    background:transparent;
+    border:1px solid var(--border-color);
+    padding:15px 30px;
+    border-radius:14px;
+    font-weight:500;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.clear-btn:hover{
+    border-color:#ef4444;
+    color:#ef4444;
+}
+
+
+.clear-btn{
+    background:rgba(255,255,255,0.04);
+    border:1px solid var(--border-color);
+    padding:15px 30px;
+    border-radius:14px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.25s;
+    color:var(--text-primary);
+}
+
+.clear-btn:hover{
+    background:rgba(239,68,68,0.1);
+    border-color:#ef4444;
+    color:#ef4444;
+}
+
+.clear-btn:disabled{
+    opacity:.4;
+    cursor:not-allowed;
+}
+
+/* ================= PROGRESS ================= */
+
+.progress-wrapper{
+    width:100%;
+    height:10px;
+    background:var(--border-color);
+    border-radius:50px;
+    margin-top:25px;
+    overflow:hidden;
+    display:none;
+}
+
+.progress-bar{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#6366f1,#22d3ee);
+    box-shadow:0 0 15px rgba(99,102,241,0.7);
+    transition:.3s;
+}
+
+/* ================= SEO BLOCK ================= */
+
+.seo-content{
+    margin-top:80px;
+    padding:40px;
+    border-radius:20px;
+    background:rgba(255,255,255,0.02);
+    border:1px solid var(--border-color);
+}
+
+.seo-content h2{
+    font-size:20px;
+    margin-bottom:12px;
+    margin-top:30px;
+}
+
+.seo-content p{
+    color:var(--text-secondary);
+    line-height:1.6;
+}
+
+.seo-content ul{
+    margin-top:15px;
+    padding-left:18px;
+}
+
+.seo-content li{
+    margin-bottom:8px;
+}
+
+/* ================= TOAST ================= */
+
+.toast{
+    position:fixed;
+    bottom:30px;
+    right:30px;
+    background:#111827;
+    border:1px solid var(--border-color);
+    padding:14px 20px;
+    border-radius:12px;
+    opacity:0;
+    transform:translateY(20px);
+    transition:.3s;
+    z-index:9999;
+}
+
+.toast.show{
+    opacity:1;
+    transform:translateY(0);
+}
+
+.toast-success{
+    border-color:#22c55e;
+}
+
+
+/* ================= OTHER TOOLS ================= */
+
+.other-tools{
+    margin-top:120px;
+}
+
+.other-tools h2{
+    text-align:center;
+    font-size:26px;
+    margin-bottom:40px;
     background:linear-gradient(90deg,#6366f1,#22d3ee);
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
 }
-.tool-header p{font-size:var(--fs-base);color:var(--text-secondary);}
 
-/* -------------------------------------------------
-   3️⃣  Dropzone
-   ------------------------------------------------- */
-.dropzone{
-    border:2px dashed var(--border-color);
-    background:var(--card-bg);
-    padding:2.5rem 1rem;
-    text-align:center;
-    border-radius:var(--radius);
-    margin-bottom:1.5rem;
-    cursor:pointer;
-    transition:var(--transition);
-}
-.dropzone:hover{border-color:var(--accent);}
-.dropzone.dragover{border-color:var(--accent);background:var(--accent-soft);}
-
-/* -------------------------------------------------
-   4️⃣  Список файлів
-   ------------------------------------------------- */
-.file-item{
-    display:flex;align-items:center;gap:0.75rem;
-    background:var(--card-bg);
-    border:1px solid var(--border-color);
-    border-radius:var(--radius);
-    padding:.75rem 1rem;
-    margin-bottom:.75rem;
-    transition:background-color var(--transition);
-}
-.file-item.dragging{opacity:0.5;}
-.file-item.over{background:var(--accent-soft);}
-
-/* ручка drag‑&‑drop */
-.drag-handle{font-size:1.2rem;cursor:grab;user-select:none;}
-.drag-handle:active{cursor:grabbing;}
-
-/* прев’ю */
-.thumb{
-    width:48px;height:60px;flex-shrink:0;
-    background:var(--border-color);
-    border-radius:4px;overflow:hidden;
-    display:flex;align-items:center;justify-content:center;
-}
-.thumb img{width:100%;height:auto;}
-
-/* інформація */
-.info{flex:1;min-width:0;}
-.info .name{
-    font-weight:500;
-    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-}
-.info .size{font-size:0.85rem;color:var(--text-secondary);}
-
-/* кнопки дії */
-.file-actions{
-    display:flex;gap:0.25rem;flex-wrap:wrap;
-}
-.file-actions button{
-    min-height:44px;padding:0 .5rem;
-    background:none;border:1px solid var(--border-color);
-    border-radius:0.5rem;font-size:var(--fs-base);
-    color:var(--text-primary);cursor:pointer;
-    transition:var(--transition);
-}
-.file-actions button:hover{
-    border-color:var(--accent);color:var(--accent);
-}
-
-/* ховати кнопки в режимі drag */
-.file-actions.drag-mode button{display:none;}
-.drag-handle.drag-mode{display:block;}
-
-/* -------------------------------------------------
-   5️⃣  Кнопки дій (merge / clear)
-   ------------------------------------------------- */
-.tool-actions{
-    text-align:center;margin-top:2rem;
-    display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:center;
-}
-.merge-btn,.clear-btn{
-    flex:1;max-width:18rem;padding:0.875rem 0;
-    border:none;border-radius:var(--radius);
-    font-weight:600;font-size:var(--fs-base);cursor:pointer;
-    transition:var(--transition);
-}
-.merge-btn{background:var(--accent);color:#fff;}
-.merge-btn:hover{background:var(--accent-hover);transform:translateY(-3px);}
-.merge-btn:disabled{opacity:.5;cursor:not-allowed;}
-.clear-btn{background:var(--border-color);color:var(--text-primary);}
-.clear-btn:hover{background:var(--accent-soft);}
-
-/* -------------------------------------------------
-   6️⃣  Прогрес‑бар
-   ------------------------------------------------- */
-.progress-wrapper{
-    width:100%;max-width:18rem;background:var(--border-color);
-    border-radius:var(--radius);overflow:hidden;
-    margin:0.75rem auto 0;height:0.75rem;display:none;
-}
-.progress-bar{
-    height:100%;width:0%;background:var(--accent);
-    transition:width .3s ease;
-}
-
-/* -------------------------------------------------
-   7️⃣  Toast
-   ------------------------------------------------- */
-.toast{
-    position:fixed;left:50%;bottom:-4rem;
-    transform:translateX(-50%);
-    background:#333;color:#fff;
-    padding:.75rem 1.25rem;border-radius:var(--radius);
-    opacity:0;transition:bottom .3s,opacity .3s;
-    z-index:1000;
-}
-.toast.show{bottom:2rem;opacity:1;}
-.toast-success{background:#28a745;}
-.toast-info{background:#17a2b8;}
-
-/* -------------------------------------------------
-   8️⃣  Перемикач режиму (кнопки ↔ drag)
-   ------------------------------------------------- */
-.mode-switch{
-    display:flex;align-items:center;gap:0.5rem;
-    margin:0 auto 1rem;font-size:var(--fs-base);
-}
-.mode-switch input{width:1rem;height:1rem;}
-
-/* -------------------------------------------------
-   9️⃣  Налаштування імені вихідного файлу
-   ------------------------------------------------- */
-.output-config{
-    display:flex;flex-direction:column;gap:0.5rem;
-    max-width:18rem;margin:0 auto 1rem;
-}
-.output-config label{font-size:var(--fs-base);}
-.output-config input[type="text"]{
-    padding:.5rem;border:1px solid var(--border-color);
-    border-radius:var(--radius);font-size:var(--fs-base);
-}
-.output-config input[type="checkbox"]{width:1rem;height:1rem;}
-
-/* -------------------------------------------------
-   🔟  Інші інструменти (grid → list)
-   ------------------------------------------------- */
-.other-tools{margin-top:4rem;}
-.other-tools h2{text-align:center;margin-bottom:2rem;}
 .tools-grid{
-    display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));
-    gap:1rem;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:24px;
 }
+
 .tool-card{
-    background:var(--card-bg);border:1px solid var(--border-color);
-    border-radius:var(--radius);padding:1.5rem;
-    text-align:center;text-decoration:none;color:inherit;
-    transition:var(--transition);
-    display:flex;flex-direction:column;align-items:center;word-break:break-word;
-}
-.tool-card:hover{border-color:var(--accent);transform:translateY(-5px);}
-.tool-card span{font-size:2rem;}
-.tool-card h3{margin:0.75rem 0 0.5rem;font-size:var(--fs-lg);}
-.tool-card p{font-size:var(--fs-base);color:var(--text-secondary);}
-
-/* -------------------------------------------------
-   1️⃣1️⃣  SEO‑текст
-   ------------------------------------------------- */
-.seo-content{
-    margin-top:4rem;padding:2rem;
-    background:var(--card-bg);border-radius:var(--radius);
+    padding:30px;
+    border-radius:18px;
     border:1px solid var(--border-color);
-}
-.seo-content h2{margin:2rem 0 .75rem;font-size:var(--fs-lg);}
-.seo-content p,
-.seo-content li{
-    font-size:var(--fs-base);
-    color:var(--text-secondary);
-    line-height:1.7;
+    transition:.3s;
+    text-decoration:none;
+    color:var(--text-primary);
+    background:rgba(255,255,255,0.02);
+    display:flex;
+    flex-direction:column;
+    gap:10px;
 }
 
-/* -------------------------------------------------
-   1️⃣2️⃣  Media queries
-   ------------------------------------------------- */
-@media (min-width:600px){
-    .tool-page{padding:3rem 2rem 5rem;}
-    .tool-header h1{font-size:2.5rem;}
-    .dropzone{padding:3rem 2rem;}
-    .file-item{flex-direction:row;}
-    .merge-btn,.clear-btn{width:auto;}
+.tool-card:hover{
+    border-color:var(--accent);
+    transform:translateY(-8px);
+    box-shadow:0 20px 35px rgba(0,0,0,0.35);
 }
-@media (max-width:359px){
-    .tool-header h1{font-size:1.75rem;}
-    .tool-header p{font-size:0.875rem;}
+
+.tool-card span{
+    font-size:32px;
+}
+
+.tool-card h3{
+    font-size:18px;
+    margin:0;
+}
+
+.tool-card p{
+    font-size:14px;
+    color:var(--text-secondary);
+    margin:0;
+}
+/* ================= MOBILE ================= */
+
+@media(max-width:600px){
+
+    .tool-card-wrapper{
+        padding:28px;
+    }
+
+    .file-item{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .file-actions{
+        margin-top:12px;
+    }
+
+    .merge-btn,
+    .clear-btn{
+        width:100%;
+    }
+
 }
 </style>
 </head>
@@ -253,7 +555,13 @@
   <div class="output-config">
     <label for="outputName">Назва результату (без .pdf):</label>
     <input type="text" id="outputName" placeholder="merged">
-    <label><input type="checkbox" id="randomNameToggle"> Випадкове ім’я</label>
+    <div style="display:flex;align-items:center;gap:12px;">
+        <span>Випадкове ім’я</span>
+        <label class="switch">
+            <input type="checkbox" id="randomNameToggle">
+            <span class="slider"></span>
+        </label>
+    </div>
   </div>
 
   <!-- Dropzone -->
@@ -264,9 +572,12 @@
 
   <!-- Перемикач режиму -->
   <div class="mode-switch">
-    <label for="modeToggle">Режим переміщення:</label>
-    <input type="checkbox" id="modeToggle" title="Перемикач: Кнопки ↔ Drag">
-  </div>
+    <span>Режим перетягування</span>
+    <label class="switch">
+        <input type="checkbox" id="modeToggle">
+        <span class="slider"></span>
+    </label>
+    </div>
 
   <!-- Список файлів -->
   <div id="fileList"></div>
@@ -330,11 +641,11 @@
 
 <script>
 /* =========================================================
-   1️⃣ Підготовка – отримуємо елементи, читаємо localStorage
+   1️⃣ Підготовка – елементи UI, localStorage, глобальна модель
    ========================================================= */
 const { PDFDocument } = PDFLib;
 
-/* ---- елементи UI ---- */
+/* ---- UI‑елементи ---- */
 const dropzone        = document.getElementById('dropzone');
 const fileInput       = document.getElementById('fileInput');
 const fileList       = document.getElementById('fileList');
@@ -346,23 +657,16 @@ const progressBar    = document.getElementById('progressBar');
 const outputNameInp  = document.getElementById('outputName');
 const randomNameChk  = document.getElementById('randomNameToggle');
 
-/* ---- локальне сховище ---- */
+/* ---- localStorage ---- */
 const SETTINGS_KEY = 'pdfMergeSettings';
-const DEFAULT_SETTINGS = {
-    outputName: 'merged',
-    randomName: false,
-    dragMode: false
-};
+const DEFAULT_SETTINGS = {outputName:'merged',randomName:false,dragMode:false};
 let settings = (() => {
-    try {
-        const stored = localStorage.getItem(SETTINGS_KEY);
-        return stored ? JSON.parse(stored) : {...DEFAULT_SETTINGS};
-    } catch (e){ return {...DEFAULT_SETTINGS}; }
+    try{
+        const s = localStorage.getItem(SETTINGS_KEY);
+        return s ? JSON.parse(s) : {...DEFAULT_SETTINGS};
+    }catch(e){return {...DEFAULT_SETTINGS};}
 })();
-
-function saveSettings(){
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-}
+function saveSettings(){localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));}
 
 /* ---- застосовуємо збережені налаштування ---- */
 outputNameInp.value = settings.outputName;
@@ -370,7 +674,7 @@ randomNameChk.checked = settings.randomName;
 modeToggle.checked   = settings.dragMode;
 
 /* ---- глобальна модель ---- */
-let files = [];                // масив File‑об’єктів
+let files = [];                 // масив File‑об’єктів
 let isDragMode = settings.dragMode;
 
 /* =========================================================
@@ -380,26 +684,23 @@ function enableButtons(state){
     mergeBtn.disabled = !state;
     clearBtn.disabled = !state;
 }
-function toast(msg, type='info', timeout=3000){
+function toast(msg,type='info',timeout=3000){
     const el = document.createElement('div');
     el.className = `toast toast-${type}`;
     el.textContent = msg;
     document.body.appendChild(el);
     requestAnimationFrame(()=>el.classList.add('show'));
-    setTimeout(()=>{
-        el.classList.remove('show');
-        setTimeout(()=>el.remove(),300);
-    }, timeout);
+    setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),300);},timeout);
 }
 
 /* =========================================================
    3️⃣ Створення елементу списку
    ========================================================= */
-function createFileItem(file, index){
+function createFileItem(file,index){
     const item = document.createElement('div');
     item.className = 'file-item';
     item.dataset.idx = index;
-    item.draggable = true;               // для drag‑mode
+    item.draggable = true;                      // drag‑mode
 
     item.innerHTML = `
         <div class="drag-handle"${!isDragMode ? ' style="display:none;"' : ''}>☰</div>
@@ -416,20 +717,20 @@ function createFileItem(file, index){
         </div>
     `;
 
-    // ------ кнопки ------
+    // ---- кнопки ----
     item.querySelector('.up-btn').addEventListener('click',()=>moveFile(index,-1));
     item.querySelector('.down-btn').addEventListener('click',()=>moveFile(index,1));
     item.querySelector('.rm-btn').addEventListener('click',()=>removeFile(index));
     item.querySelector('.rename-btn').addEventListener('click',()=>renameFile(index));
 
-    // ------ drag‑&‑drop (тільки в drag‑mode) ------
+    // ---- drag‑&‑drop (тільки в drag‑mode) ----
     if (isDragMode){
-        item.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', index); item.classList.add('dragging'); });
-        item.addEventListener('dragend',   ()=>item.classList.remove('dragging'));
-        item.addEventListener('dragover',  e=>e.preventDefault());
+        item.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',index);item.classList.add('dragging');});
+        item.addEventListener('dragend',()=>item.classList.remove('dragging'));
+        item.addEventListener('dragover',e=>e.preventDefault());
         item.addEventListener('dragenter',()=>item.classList.add('over'));
         item.addEventListener('dragleave',()=>item.classList.remove('over'));
-        item.addEventListener('drop', e=>{
+        item.addEventListener('drop',e=>{
             e.preventDefault();
             const from = Number(e.dataTransfer.getData('text/plain'));
             const to   = index;
@@ -437,10 +738,10 @@ function createFileItem(file, index){
         });
     }
 
-    // ------ прев’ю (не обов’язково) ------
+    // ---- прев’ю (не обов’язково) ----
     generateThumbnail(file).then(src=>{
         const thumb = item.querySelector('.thumb');
-        if (src) thumb.innerHTML = `<img src="${src}" alt="preview">`;
+        if(src) thumb.innerHTML = `<img src="${src}" alt="preview">`;
     }).catch(()=>{});
 
     return item;
@@ -452,32 +753,28 @@ function createFileItem(file, index){
 function renderList(){
     fileList.innerHTML = '';
     files.forEach((f,i)=>fileList.appendChild(createFileItem(f,i)));
-    const haveFiles = files.length > 0;
-    enableButtons(haveFiles);
+    enableButtons(files.length>0);
 }
 
 /* =========================================================
    5️⃣ Операції над масивом
    ========================================================= */
 function addFiles(selected){
-    for (const f of selected){
-        if (f.type !== 'application/pdf') continue;
-        if (!files.some(it=>it.name===f.name && it.size===f.size)) files.push(f);
+    for(const f of selected){
+        if(f.type!=='application/pdf') continue;
+        if(!files.some(it=>it.name===f.name && it.size===f.size)) files.push(f);
     }
     renderList();
 }
-function removeFile(idx){
-    files.splice(idx,1);
-    renderList();
-}
-function moveFile(idx, delta){
-    const newIdx = idx + delta;
-    if (newIdx < 0 || newIdx >= files.length) return;
-    [files[idx], files[newIdx]] = [files[newIdx], files[idx]];
+function removeFile(idx){files.splice(idx,1);renderList();}
+function moveFile(idx,delta){
+    const newIdx = idx+delta;
+    if(newIdx<0 || newIdx>=files.length) return;
+    [files[idx],files[newIdx]]=[files[newIdx],files[idx]];
     renderList();
 }
 function moveFileAbsolute(from,to){
-    if (from===to) return;
+    if(from===to) return;
     const [el] = files.splice(from,1);
     files.splice(to,0,el);
     renderList();
@@ -487,17 +784,14 @@ function moveFileAbsolute(from,to){
    6️⃣ Перейменування окремого файлу
    --------------------------------------------------------- */
 async function renameFile(idx){
-    const oldFile   = files[idx];
-    const newNameRaw = prompt('Введіть нову назву (з розширенням .pdf)', oldFile.name);
-    if (!newNameRaw) return;               // скасовано
-
+    const oldFile = files[idx];
+    const newNameRaw = prompt('Введіть нову назву (з розширенням .pdf)',oldFile.name);
+    if(!newNameRaw) return;
     let newName = newNameRaw.trim();
-    if (!newName.toLowerCase().endsWith('.pdf')) newName += '.pdf';
-
-    const arrayBuf = await oldFile.arrayBuffer();
-    const newFile  = new File([arrayBuf], newName, {type: oldFile.type});
-
-    files[idx] = newFile;
+    if(!newName.toLowerCase().endsWith('.pdf')) newName+='.pdf';
+    const buf = await oldFile.arrayBuffer();
+    const newFile = new File([buf],newName,{type:oldFile.type});
+    files[idx]=newFile;
     renderList();
 }
 
@@ -505,127 +799,113 @@ async function renameFile(idx){
    7️⃣ Формат розміру файлу
    --------------------------------------------------------- */
 function formatBytes(b){
-    const units = ['B','KB','MB','GB','TB'];
-    let i=0;
-    while (b>=1024 && i<units.length-1){ b/=1024; i++; }
-    return `${b.toFixed(1)} ${units[i]}`;
+    const u=['B','KB','MB','GB','TB'];let i=0;
+    while(b>=1024 && i<u.length-1){b/=1024;i++;}
+    return `${b.toFixed(1)} ${u[i]}`;
 }
 
 /* ---------------------------------------------------------
    8️⃣ Прев’ю (PDF.js)
    --------------------------------------------------------- */
 async function generateThumbnail(file){
-    const arrayBuf = await file.arrayBuffer();
-
-    if (!window.pdfjsLib){
+    const arr = await file.arrayBuffer();
+    if(!window.pdfjsLib){
         await new Promise(res=>{
             const s=document.createElement('script');
             s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
             s.onload=res;
             document.head.appendChild(s);
         });
-        pdfjsLib.GlobalWorkerOptions.workerSrc=
-            'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     }
-
-    const loadingTask = pdfjsLib.getDocument({data:arrayBuf});
-    const pdf = await loadingTask.promise;
+    const loading = pdfjsLib.getDocument({data:arr});
+    const pdf = await loading.promise;
     const page = await pdf.getPage(1);
-    const viewport = page.getViewport({scale:0.5});
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-    await page.render({canvasContext:ctx, viewport}).promise;
+    const vp = page.getViewport({scale:0.5});
+    const canvas=document.createElement('canvas');
+    const ctx=canvas.getContext('2d');
+    canvas.width=vp.width;canvas.height=vp.height;
+    await page.render({canvasContext:ctx,viewport:vp}).promise;
     return canvas.toDataURL('image/png');
 }
 
 /* ---------------------------------------------------------
    9️⃣ Drag‑&‑Drop у Dropzone
    --------------------------------------------------------- */
-dropzone.addEventListener('click', ()=>fileInput.click());
-
-dropzone.addEventListener('dragover', e=>{ e.preventDefault(); dropzone.classList.add('dragover'); });
-dropzone.addEventListener('dragleave', ()=>dropzone.classList.remove('dragover'));
-dropzone.addEventListener('drop', e=>{
+dropzone.addEventListener('click',()=>fileInput.click());
+dropzone.addEventListener('dragover',e=>{e.preventDefault();dropzone.classList.add('dragover');});
+dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('dragover'));
+dropzone.addEventListener('drop',e=>{
     e.preventDefault();
     dropzone.classList.remove('dragover');
     addFiles(e.dataTransfer.files);
 });
-
-fileInput.addEventListener('change', e=>addFiles(e.target.files));
+fileInput.addEventListener('change',e=>addFiles(e.target.files));
 
 /* ---------------------------------------------------------
    🔟 Кнопка “Очистити”
    --------------------------------------------------------- */
 clearBtn.addEventListener('click',()=>{
-    if (!files.length) return;
-    if (confirm('Видалити всі файли?')){ files=[]; renderList(); }
+    if(!files.length) return;
+    if(confirm('Видалити всі файли?')){files=[];renderList();}
 });
 
 /* ---------------------------------------------------------
    1️⃣1️⃣ Перемикач режиму (кнопки ↔ drag)
    --------------------------------------------------------- */
-modeToggle.addEventListener('change', e=>{
-    isDragMode = e.target.checked;
-    settings.dragMode = isDragMode;
+modeToggle.addEventListener('change',e=>{
+    isDragMode=e.target.checked;
+    settings.dragMode=isDragMode;
     saveSettings();
-    renderList();          // пере‑рендер, бо змінились кнопки/ручка
+    renderList();
 });
 
 /* ---------------------------------------------------------
    1️⃣2️⃣ Генерація випадкового імені
    --------------------------------------------------------- */
 function randomFileName(){
-    const ts = Date.now();
-    const rnd = Math.floor(Math.random()*1000);
+    const ts=Date.now();
+    const rnd=Math.floor(Math.random()*1000);
     return `merged_${ts}_${rnd}.pdf`;
 }
 
 /* ---------------------------------------------------------
    1️⃣3️⃣ Об’єднання PDF + назва файлу
    --------------------------------------------------------- */
-mergeBtn.addEventListener('click', async ()=>{
-    mergeBtn.disabled = true;
-    clearBtn.disabled = true;
-    progressWr.style.display = 'block';
-    progressBar.style.width = '0%';
+mergeBtn.addEventListener('click',async()=>{
+    mergeBtn.disabled=true;clearBtn.disabled=true;
+    progressWr.style.display='block';progressBar.style.width='0%';
 
     const mergedPdf = await PDFDocument.create();
 
-    for (let i=0; i<files.length; i++){
+    for(let i=0;i<files.length;i++){
         const buf = await files[i].arrayBuffer();
         const pdf = await PDFDocument.load(buf);
-        const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+        const pages = await mergedPdf.copyPages(pdf,pdf.getPageIndices());
         pages.forEach(p=>mergedPdf.addPage(p));
-
         const perc = Math.round(((i+1)/files.length)*100);
-        progressBar.style.width = perc+'%';
+        progressBar.style.width=perc+'%';
     }
 
-    const finalBytes = await mergedPdf.save();
-    const blob = new Blob([finalBytes],{type:'application/pdf'});
+    const outBytes = await mergedPdf.save();
+    const blob = new Blob([outBytes],{type:'application/pdf'});
 
-    // ---------- назва вихідного файлу ----------
-    let outName = '';
-    if (randomNameChk.checked){
+    // ---------- назва файлу ----------
+    let outName;
+    if(randomNameChk.checked){
         outName = randomFileName();
     }else{
-        const userName = outputNameInp.value.trim() || 'merged';
-        outName = userName.toLowerCase().endsWith('.pdf') ? userName : `${userName}.pdf`;
+        const user = outputNameInp.value.trim()||'merged';
+        outName = user.toLowerCase().endsWith('.pdf')?user:`${user}.pdf`;
     }
 
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = outName;
-    a.click();
+    a.href=url;a.download=outName;a.click();
     URL.revokeObjectURL(url);
 
-    // ---------- повертаємо UI в нормальний стан ----------
-    progressWr.style.display = 'none';
-    mergeBtn.disabled = false;
-    clearBtn.disabled = false;
+    progressWr.style.display='none';
+    mergeBtn.disabled=false;clearBtn.disabled=false;
     toast('✅ PDF успішно об’єднано!','success');
 });
 
@@ -633,7 +913,7 @@ mergeBtn.addEventListener('click', async ()=>{
    1️⃣4️⃣ Синхронізація полів з localStorage
    --------------------------------------------------------- */
 outputNameInp.addEventListener('input',()=>{
-    settings.outputName = outputNameInp.value.trim() || 'merged';
+    settings.outputName = outputNameInp.value.trim()||'merged';
     saveSettings();
 });
 randomNameChk.addEventListener('change',()=>{
@@ -642,7 +922,7 @@ randomNameChk.addEventListener('change',()=>{
 });
 
 /* ---------------------------------------------------------
-   1️⃣5️⃣ Перший рендер після завантаження
+   1️⃣5️⃣ Перший рендер
    --------------------------------------------------------- */
 renderList();
 </script>
