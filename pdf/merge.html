@@ -1,45 +1,9 @@
+<!DOCTYPE html>
+<html lang="uk">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Об'єднати PDF онлайн безкоштовно — З'єднати PDF файли | LB Tools</title>
-
-<meta name="description" content="Об'єднати PDF онлайн безкоштовно та без реєстрації. З'єднай кілька PDF файлів в один документ прямо у браузері. Без завантаження на сервер. Швидко, безпечно, без обмежень.">
-
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://твійдомен.com/pdf/merge.html">
-
-<!-- Open Graph -->
-<meta property="og:type" content="website">
-<meta property="og:title" content="Об'єднати PDF онлайн безкоштовно — LB Tools">
-<meta property="og:description" content="З'єднай кілька PDF файлів в один документ прямо у браузері. Безкоштовно та без реєстрації.">
-<meta property="og:url" content="https://твійдомен.com/pdf/merge.html">
-<meta property="og:image" content="https://твійдомен.com/assets/img/og-merge.jpg">
-
-<!-- Twitter -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Об'єднати PDF онлайн — LB Tools">
-<meta name="twitter:description" content="Безкоштовне онлайн об'єднання PDF файлів прямо у браузері.">
-<meta name="twitter:image" content="https://твійдомен.com/assets/img/og-merge.jpg">
-
-<!-- Schema.org -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "Об'єднати PDF — LB Tools",
-  "url": "https://твійдомен.com/pdf/merge.html",
-  "applicationCategory": "UtilitiesApplication",
-  "operatingSystem": "Any",
-  "browserRequirements": "Requires JavaScript",
-  "description": "Безкоштовний онлайн інструмент для об'єднання PDF файлів прямо у браузері без завантаження на сервер.",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD"
-  }
-}
-</script>
+<title>Об'єднати PDF онлайн безкоштовно — LB Tools</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
 <link rel="stylesheet" href="./../assets/css/reset.css">
 <link rel="stylesheet" href="./../assets/css/vars.css">
@@ -50,269 +14,311 @@
 <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
 
 <style>
-
-/* ===== PAGE WRAPPER ===== */
-
-.tool-page {
-    padding: 120px 20px 100px;
+/* -------------------------------------------------
+   1️⃣  ТИПОГРАФІЯ
+   ------------------------------------------------- */
+:root{
+    --fs-base: clamp(0.875rem,1.5vw,1rem);
+    --fs-lg  : clamp(1.25rem,3vw,1.5rem);
+    --fs-xl  : clamp(1.75rem,4vw,2.25rem);
 }
 
-.tool-container {
-    max-width: 900px;
-    margin: 0 auto;
+/* -------------------------------------------------
+   2️⃣  БАЗОВІ БЛОКИ
+   ------------------------------------------------- */
+.tool-page{padding:2rem 1rem 3rem;}
+.tool-container{max-width:38rem;margin:0 auto;}
+.tool-back{margin-bottom:1.5rem;}
+.tool-back a{color:var(--accent);font-weight:600;}
+.tool-header{text-align:center;margin-bottom:2rem;}
+.tool-header h1{
+    font-size:var(--fs-xl);
+    background:linear-gradient(90deg,#6366f1,#22d3ee);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+.tool-header p{font-size:var(--fs-base);color:var(--text-secondary);}
+
+/* -------------------------------------------------
+   3️⃣  Dropzone
+   ------------------------------------------------- */
+.dropzone{
+    border:2px dashed var(--border-color);
+    background:var(--card-bg);
+    padding:2.5rem 1rem;
+    text-align:center;
+    border-radius:var(--radius);
+    margin-bottom:1.5rem;
+    cursor:pointer;
+    transition:var(--transition);
+}
+.dropzone:hover{border-color:var(--accent);}
+.dropzone.dragover{border-color:var(--accent);background:var(--accent-soft);}
+
+/* -------------------------------------------------
+   4️⃣  Список файлів
+   ------------------------------------------------- */
+.file-item{
+    display:flex;align-items:center;gap:0.75rem;
+    background:var(--card-bg);
+    border:1px solid var(--border-color);
+    border-radius:var(--radius);
+    padding:.75rem 1rem;
+    margin-bottom:.75rem;
+    transition:background-color var(--transition);
+}
+.file-item.dragging{opacity:0.5;}
+.file-item.over{background:var(--accent-soft);}
+
+/* ручка drag‑&‑drop */
+.drag-handle{font-size:1.2rem;cursor:grab;user-select:none;}
+.drag-handle:active{cursor:grabbing;}
+
+/* прев’ю */
+.thumb{
+    width:48px;height:60px;flex-shrink:0;
+    background:var(--border-color);
+    border-radius:4px;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+}
+.thumb img{width:100%;height:auto;}
+
+/* інформація */
+.info{flex:1;min-width:0;}
+.info .name{
+    font-weight:500;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.info .size{font-size:0.85rem;color:var(--text-secondary);}
+
+/* кнопки дії */
+.file-actions{
+    display:flex;gap:0.25rem;flex-wrap:wrap;
+}
+.file-actions button{
+    min-height:44px;padding:0 .5rem;
+    background:none;border:1px solid var(--border-color);
+    border-radius:0.5rem;font-size:var(--fs-base);
+    color:var(--text-primary);cursor:pointer;
+    transition:var(--transition);
+}
+.file-actions button:hover{
+    border-color:var(--accent);color:var(--accent);
 }
 
-/* ===== TOP BACK BUTTON ===== */
+/* ховати кнопки в режимі drag */
+.file-actions.drag-mode button{display:none;}
+.drag-handle.drag-mode{display:block;}
 
-.tool-back {
-    margin-bottom: 40px;
+/* -------------------------------------------------
+   5️⃣  Кнопки дій (merge / clear)
+   ------------------------------------------------- */
+.tool-actions{
+    text-align:center;margin-top:2rem;
+    display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:center;
+}
+.merge-btn,.clear-btn{
+    flex:1;max-width:18rem;padding:0.875rem 0;
+    border:none;border-radius:var(--radius);
+    font-weight:600;font-size:var(--fs-base);cursor:pointer;
+    transition:var(--transition);
+}
+.merge-btn{background:var(--accent);color:#fff;}
+.merge-btn:hover{background:var(--accent-hover);transform:translateY(-3px);}
+.merge-btn:disabled{opacity:.5;cursor:not-allowed;}
+.clear-btn{background:var(--border-color);color:var(--text-primary);}
+.clear-btn:hover{background:var(--accent-soft);}
+
+/* -------------------------------------------------
+   6️⃣  Прогрес‑бар
+   ------------------------------------------------- */
+.progress-wrapper{
+    width:100%;max-width:18rem;background:var(--border-color);
+    border-radius:var(--radius);overflow:hidden;
+    margin:0.75rem auto 0;height:0.75rem;display:none;
+}
+.progress-bar{
+    height:100%;width:0%;background:var(--accent);
+    transition:width .3s ease;
 }
 
-.tool-back a {
-    color: var(--accent);
-    text-decoration: none;
-    font-weight: 600;
+/* -------------------------------------------------
+   7️⃣  Toast
+   ------------------------------------------------- */
+.toast{
+    position:fixed;left:50%;bottom:-4rem;
+    transform:translateX(-50%);
+    background:#333;color:#fff;
+    padding:.75rem 1.25rem;border-radius:var(--radius);
+    opacity:0;transition:bottom .3s,opacity .3s;
+    z-index:1000;
 }
+.toast.show{bottom:2rem;opacity:1;}
+.toast-success{background:#28a745;}
+.toast-info{background:#17a2b8;}
 
-/* ===== TITLE ===== */
-
-.tool-header {
-    text-align: center;
-    margin-bottom: 50px;
+/* -------------------------------------------------
+   8️⃣  Перемикач режиму (кнопки ↔ drag)
+   ------------------------------------------------- */
+.mode-switch{
+    display:flex;align-items:center;gap:0.5rem;
+    margin:0 auto 1rem;font-size:var(--fs-base);
 }
+.mode-switch input{width:1rem;height:1rem;}
 
-.tool-header h1 {
-    font-size: 42px;
-    margin-bottom: 15px;
-    background: linear-gradient(90deg,#6366f1,#22d3ee);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+/* -------------------------------------------------
+   9️⃣  Налаштування імені вихідного файлу
+   ------------------------------------------------- */
+.output-config{
+    display:flex;flex-direction:column;gap:0.5rem;
+    max-width:18rem;margin:0 auto 1rem;
 }
-
-.tool-header p {
-    color: var(--text-secondary);
+.output-config label{font-size:var(--fs-base);}
+.output-config input[type="text"]{
+    padding:.5rem;border:1px solid var(--border-color);
+    border-radius:var(--radius);font-size:var(--fs-base);
 }
+.output-config input[type="checkbox"]{width:1rem;height:1rem;}
 
-/* ===== DROPZONE ===== */
-
-.dropzone {
-    border: 2px dashed var(--border-color);
-    background: var(--card-bg);
-    padding: 60px 30px;
-    text-align: center;
-    border-radius: var(--radius);
-    margin-bottom: 40px;
-    cursor: pointer;
-    transition: var(--transition);
+/* -------------------------------------------------
+   🔟  Інші інструменти (grid → list)
+   ------------------------------------------------- */
+.other-tools{margin-top:4rem;}
+.other-tools h2{text-align:center;margin-bottom:2rem;}
+.tools-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));
+    gap:1rem;
 }
-
-.dropzone:hover {
-    border-color: var(--accent);
+.tool-card{
+    background:var(--card-bg);border:1px solid var(--border-color);
+    border-radius:var(--radius);padding:1.5rem;
+    text-align:center;text-decoration:none;color:inherit;
+    transition:var(--transition);
+    display:flex;flex-direction:column;align-items:center;word-break:break-word;
 }
+.tool-card:hover{border-color:var(--accent);transform:translateY(-5px);}
+.tool-card span{font-size:2rem;}
+.tool-card h3{margin:0.75rem 0 0.5rem;font-size:var(--fs-lg);}
+.tool-card p{font-size:var(--fs-base);color:var(--text-secondary);}
 
-.dropzone.dragover {
-    border-color: var(--accent);
-    background: var(--accent-soft);
+/* -------------------------------------------------
+   1️⃣1️⃣  SEO‑текст
+   ------------------------------------------------- */
+.seo-content{
+    margin-top:4rem;padding:2rem;
+    background:var(--card-bg);border-radius:var(--radius);
+    border:1px solid var(--border-color);
 }
-
-/* ===== FILE LIST ===== */
-
-.file-item {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    padding: 14px 18px;
-    border-radius: var(--radius);
-    margin-bottom: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.file-actions button {
-    background: none;
-    border: 1px solid var(--border-color);
-    padding: 6px 10px;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-left: 6px;
-    color: var(--text-primary);
-}
-
-.file-actions button:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-}
-
-/* ===== MAIN BUTTON ===== */
-
-.tool-actions {
-    text-align: center;
-    margin-top: 40px;
-}
-
-.merge-btn {
-    background: var(--accent);
-    border: none;
-    padding: 14px 32px;
-    border-radius: var(--radius);
-    color: #fff;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.merge-btn:hover {
-    background: var(--accent-hover);
-    transform: translateY(-3px);
-}
-
-.merge-btn:disabled {
-    opacity: .5;
-    cursor: not-allowed;
-}
-
-/* ===== OTHER TOOLS ===== */
-
-.other-tools {
-    margin-top: 100px;
-}
-
-.other-tools h2 {
-    text-align: center;
-    margin-bottom: 40px;
-}
-
-.tools-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
-    gap: 20px;
-}
-
-.tool-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    padding: 25px;
-    border-radius: var(--radius);
-    text-decoration: none;
-    color: inherit;
-    transition: var(--transition);
-}
-
-.tool-card:hover {
-    border-color: var(--accent);
-    transform: translateY(-5px);
-}
-
-.tool-card span {
-    font-size: 30px;
-}
-
-.tool-card h3 {
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-.tool-card p {
-    color: var(--text-secondary);
-    font-size: 14px;
-}
-
-.seo-content {
-    margin-top: 80px;
-    padding: 40px;
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    border: 1px solid var(--border-color);
-}
-
-.seo-content h2 {
-    margin-top: 30px;
-    margin-bottom: 10px;
-}
-
+.seo-content h2{margin:2rem 0 .75rem;font-size:var(--fs-lg);}
 .seo-content p,
-.seo-content li {
-    color: var(--text-secondary);
-    line-height: 1.7;
+.seo-content li{
+    font-size:var(--fs-base);
+    color:var(--text-secondary);
+    line-height:1.7;
 }
 
+/* -------------------------------------------------
+   1️⃣2️⃣  Media queries
+   ------------------------------------------------- */
+@media (min-width:600px){
+    .tool-page{padding:3rem 2rem 5rem;}
+    .tool-header h1{font-size:2.5rem;}
+    .dropzone{padding:3rem 2rem;}
+    .file-item{flex-direction:row;}
+    .merge-btn,.clear-btn{width:auto;}
+}
+@media (max-width:359px){
+    .tool-header h1{font-size:1.75rem;}
+    .tool-header p{font-size:0.875rem;}
+}
 </style>
 </head>
-
 <body>
 
 <header></header>
 
 <main class="tool-page">
-
 <div class="tool-container">
 
-<div class="tool-back">
-    <a href="#" data-link="pdf/pdf-tools.html">← До всіх PDF інструментів</a>
-</div>
+  <!-- Повернення -->
+  <div class="tool-back"><a href="#" data-link="pdf/pdf-tools.html">← До всіх PDF інструментів</a></div>
 
-<div class="tool-header">
+  <!-- Хедер -->
+  <div class="tool-header">
     <h1>Об'єднати PDF</h1>
     <p>З'єднай кілька PDF файлів в один документ прямо у браузері</p>
-</div>
+  </div>
 
-<div class="dropzone" id="dropzone">
+  <!-- Налаштування імені вихідного файлу -->
+  <div class="output-config">
+    <label for="outputName">Назва результату (без .pdf):</label>
+    <input type="text" id="outputName" placeholder="merged">
+    <label><input type="checkbox" id="randomNameToggle"> Випадкове ім’я</label>
+  </div>
+
+  <!-- Dropzone -->
+  <div class="dropzone" id="dropzone">
     Перетягніть PDF сюди або натисніть для вибору
     <input type="file" id="fileInput" accept="application/pdf" multiple hidden>
-</div>
+  </div>
 
-<div id="fileList"></div>
+  <!-- Перемикач режиму -->
+  <div class="mode-switch">
+    <label for="modeToggle">Режим переміщення:</label>
+    <input type="checkbox" id="modeToggle" title="Перемикач: Кнопки ↔ Drag">
+  </div>
 
-<div class="tool-actions">
-    <button class="merge-btn" id="mergeBtn"; disabled>
-        Об'єднати PDF
-    </button>
-</div>
+  <!-- Список файлів -->
+  <div id="fileList"></div>
 
-<section class="seo-content">
-    <h2>Як об'єднати PDF файли онлайн?</h2>
-    <p>Щоб об'єднати PDF файли, просто перетягніть документи у зону завантаження або виберіть їх вручну. Після цього натисніть кнопку "Об'єднати PDF" — інструмент миттєво з'єднає файли в один документ.</p>
+  <!-- Кнопки дій -->
+  <div class="tool-actions">
+    <button class="clear-btn" id="clearBtn" disabled>🗑 Очистити</button>
+    <button class="merge-btn" id="mergeBtn" disabled>Об'єднати PDF</button>
+  </div>
 
-    <h2>Безпечне об'єднання PDF без завантаження на сервер</h2>
+  <!-- Прогрес‑бар -->
+  <div class="progress-wrapper" id="progressWrapper"><div class="progress-bar" id="progressBar"></div></div>
+
+  <!-- SEO‑контент -->
+  <section class="seo-content">
+    <h2>Як об’єднати PDF файли онлайн?</h2>
+    <p>Щоб об’єднати PDF файли, просто перетягніть документи у зону завантаження або виберіть їх вручну. Після цього натисніть кнопку «Об’єднати PDF» — інструмент миттєво з’єднає файли в один документ.</p>
+
+    <h2>Безпечне об’єднання PDF без завантаження на сервер</h2>
     <p>Усі файли обробляються прямо у вашому браузері. Документи не передаються на сервер, що гарантує повну конфіденційність та безпеку даних.</p>
 
     <h2>Переваги інструменту</h2>
     <ul>
-        <li>100% безкоштовно</li>
-        <li>Без реєстрації</li>
-        <li>Без обмежень</li>
-        <li>Працює на будь-якому пристрої</li>
-        <li>Миттєва обробка</li>
+      <li>100 % безкоштовно</li>
+      <li>Без реєстрації</li>
+      <li>Без обмежень</li>
+      <li>Працює на будь‑якому пристрої</li>
+      <li>Миттєва обробка</li>
     </ul>
-</section>
+  </section>
 
-<!-- OTHER TOOLS -->
-
-<div class="other-tools">
+  <!-- Інші інструменти -->
+  <div class="other-tools">
     <h2>Інші PDF інструменти</h2>
-
     <div class="tools-grid">
-
-        <a href="#" data-link="pdf/split.html" class="tool-card">
-            <span>✂</span>
-            <h3>Розділити PDF</h3>
-            <p>Розбий PDF на окремі сторінки</p>
-        </a>
-
-        <a href="#" data-link="pdf/compress.html" class="tool-card">
-            <span>🗜</span>
-            <h3>Стиснути PDF</h3>
-            <p>Зменшити розмір PDF файлу</p>
-        </a>
-
-        <a href="#" data-link="pdf/password.html" class="tool-card">
-            <span>🔒</span>
-            <h3>Поставити пароль</h3>
-            <p>Захистити PDF документ</p>
-        </a>
-
+      <a href="#" data-link="pdf/split.html" class="tool-card">
+        <span>✂</span>
+        <h3>Розділити PDF</h3>
+        <p>Розбий PDF на окремі сторінки</p>
+      </a>
+      <a href="#" data-link="pdf/compress.html" class="tool-card">
+        <span>🗜</span>
+        <h3>Стиснути PDF</h3>
+        <p>Зменшити розмір PDF файлу</p>
+      </a>
+      <a href="#" data-link="pdf/password.html" class="tool-card">
+        <span>🔒</span>
+        <h3>Поставити пароль</h3>
+        <p>Захистити PDF документ</p>
+      </a>
     </div>
-</div>
+  </div>
 
 </div>
 </main>
@@ -323,110 +329,322 @@
 <script type="module" src="./../assets/js/main.js"></script>
 
 <script>
+/* =========================================================
+   1️⃣ Підготовка – отримуємо елементи, читаємо localStorage
+   ========================================================= */
 const { PDFDocument } = PDFLib;
 
-const dropzone = document.getElementById('dropzone');
-const fileInput = document.getElementById('fileInput');
-const fileList = document.getElementById('fileList');
-const mergeBtn = document.getElementById('mergeBtn');
+/* ---- елементи UI ---- */
+const dropzone        = document.getElementById('dropzone');
+const fileInput       = document.getElementById('fileInput');
+const fileList       = document.getElementById('fileList');
+const mergeBtn       = document.getElementById('mergeBtn');
+const clearBtn       = document.getElementById('clearBtn');
+const modeToggle     = document.getElementById('modeToggle');
+const progressWr     = document.getElementById('progressWrapper');
+const progressBar    = document.getElementById('progressBar');
+const outputNameInp  = document.getElementById('outputName');
+const randomNameChk  = document.getElementById('randomNameToggle');
 
-let files = [];
+/* ---- локальне сховище ---- */
+const SETTINGS_KEY = 'pdfMergeSettings';
+const DEFAULT_SETTINGS = {
+    outputName: 'merged',
+    randomName: false,
+    dragMode: false
+};
+let settings = (() => {
+    try {
+        const stored = localStorage.getItem(SETTINGS_KEY);
+        return stored ? JSON.parse(stored) : {...DEFAULT_SETTINGS};
+    } catch (e){ return {...DEFAULT_SETTINGS}; }
+})();
 
-dropzone.addEventListener('click', () => fileInput.click());
+function saveSettings(){
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+}
 
-dropzone.addEventListener('dragover', e => {
-    e.preventDefault();
-    dropzone.classList.add('dragover');
-});
+/* ---- застосовуємо збережені налаштування ---- */
+outputNameInp.value = settings.outputName;
+randomNameChk.checked = settings.randomName;
+modeToggle.checked   = settings.dragMode;
 
-dropzone.addEventListener('dragleave', () => {
-    dropzone.classList.remove('dragover');
-});
+/* ---- глобальна модель ---- */
+let files = [];                // масив File‑об’єктів
+let isDragMode = settings.dragMode;
 
-dropzone.addEventListener('drop', e => {
-    e.preventDefault();
-    dropzone.classList.remove('dragover');
-    handleFiles(e.dataTransfer.files);
-});
+/* =========================================================
+   2️⃣ UI‑Helpers
+   ========================================================= */
+function enableButtons(state){
+    mergeBtn.disabled = !state;
+    clearBtn.disabled = !state;
+}
+function toast(msg, type='info', timeout=3000){
+    const el = document.createElement('div');
+    el.className = `toast toast-${type}`;
+    el.textContent = msg;
+    document.body.appendChild(el);
+    requestAnimationFrame(()=>el.classList.add('show'));
+    setTimeout(()=>{
+        el.classList.remove('show');
+        setTimeout(()=>el.remove(),300);
+    }, timeout);
+}
 
-fileInput.addEventListener('change', e => {
-    handleFiles(e.target.files);
-});
+/* =========================================================
+   3️⃣ Створення елементу списку
+   ========================================================= */
+function createFileItem(file, index){
+    const item = document.createElement('div');
+    item.className = 'file-item';
+    item.dataset.idx = index;
+    item.draggable = true;               // для drag‑mode
 
-function handleFiles(selectedFiles) {
-    for (let file of selectedFiles) {
-        if (file.type === "application/pdf") {
-            files.push(file);
-        }
+    item.innerHTML = `
+        <div class="drag-handle"${!isDragMode ? ' style="display:none;"' : ''}>☰</div>
+        <div class="thumb"></div>
+        <div class="info">
+            <span class="name">${file.name}</span>
+            <span class="size">${formatBytes(file.size)}</span>
+        </div>
+        <div class="file-actions${isDragMode ? ' drag-mode' : ''}">
+            <button class="up-btn" title="Вгору">⬆</button>
+            <button class="down-btn" title="Вниз">⬇</button>
+            <button class="rename-btn" title="Перейменувати">✎</button>
+            <button class="rm-btn" title="Видалити">✖</button>
+        </div>
+    `;
+
+    // ------ кнопки ------
+    item.querySelector('.up-btn').addEventListener('click',()=>moveFile(index,-1));
+    item.querySelector('.down-btn').addEventListener('click',()=>moveFile(index,1));
+    item.querySelector('.rm-btn').addEventListener('click',()=>removeFile(index));
+    item.querySelector('.rename-btn').addEventListener('click',()=>renameFile(index));
+
+    // ------ drag‑&‑drop (тільки в drag‑mode) ------
+    if (isDragMode){
+        item.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', index); item.classList.add('dragging'); });
+        item.addEventListener('dragend',   ()=>item.classList.remove('dragging'));
+        item.addEventListener('dragover',  e=>e.preventDefault());
+        item.addEventListener('dragenter',()=>item.classList.add('over'));
+        item.addEventListener('dragleave',()=>item.classList.remove('over'));
+        item.addEventListener('drop', e=>{
+            e.preventDefault();
+            const from = Number(e.dataTransfer.getData('text/plain'));
+            const to   = index;
+            moveFileAbsolute(from,to);
+        });
+    }
+
+    // ------ прев’ю (не обов’язково) ------
+    generateThumbnail(file).then(src=>{
+        const thumb = item.querySelector('.thumb');
+        if (src) thumb.innerHTML = `<img src="${src}" alt="preview">`;
+    }).catch(()=>{});
+
+    return item;
+}
+
+/* =========================================================
+   4️⃣ Рендер списку
+   ========================================================= */
+function renderList(){
+    fileList.innerHTML = '';
+    files.forEach((f,i)=>fileList.appendChild(createFileItem(f,i)));
+    const haveFiles = files.length > 0;
+    enableButtons(haveFiles);
+}
+
+/* =========================================================
+   5️⃣ Операції над масивом
+   ========================================================= */
+function addFiles(selected){
+    for (const f of selected){
+        if (f.type !== 'application/pdf') continue;
+        if (!files.some(it=>it.name===f.name && it.size===f.size)) files.push(f);
     }
     renderList();
 }
-
-function renderList() {
-    fileList.innerHTML = '';
-    files.forEach((file, index) => {
-        const div = document.createElement('div');
-        div.className = 'file-item';
-        div.innerHTML = `
-            <span>${index+1}. ${file.name}</span>
-            <div class="file-actions">
-                <button onclick="moveUp(${index})">⬆</button>
-                <button onclick="moveDown(${index})">⬇</button>
-                <button onclick="removeFile(${index})">✖</button>
-            </div>
-        `;
-        fileList.appendChild(div);
-    });
-
-    mergeBtn.disabled = files.length < 2;
+function removeFile(idx){
+    files.splice(idx,1);
+    renderList();
 }
-
-window.removeFile = function(index) {
-    files.splice(index, 1);
+function moveFile(idx, delta){
+    const newIdx = idx + delta;
+    if (newIdx < 0 || newIdx >= files.length) return;
+    [files[idx], files[newIdx]] = [files[newIdx], files[idx]];
+    renderList();
+}
+function moveFileAbsolute(from,to){
+    if (from===to) return;
+    const [el] = files.splice(from,1);
+    files.splice(to,0,el);
     renderList();
 }
 
-window.moveUp = function(index) {
-    if (index === 0) return;
-    [files[index-1], files[index]] = [files[index], files[index-1]];
+/* ---------------------------------------------------------
+   6️⃣ Перейменування окремого файлу
+   --------------------------------------------------------- */
+async function renameFile(idx){
+    const oldFile   = files[idx];
+    const newNameRaw = prompt('Введіть нову назву (з розширенням .pdf)', oldFile.name);
+    if (!newNameRaw) return;               // скасовано
+
+    let newName = newNameRaw.trim();
+    if (!newName.toLowerCase().endsWith('.pdf')) newName += '.pdf';
+
+    const arrayBuf = await oldFile.arrayBuffer();
+    const newFile  = new File([arrayBuf], newName, {type: oldFile.type});
+
+    files[idx] = newFile;
     renderList();
 }
 
-window.moveDown = function(index) {
-    if (index === files.length - 1) return;
-    [files[index+1], files[index]] = [files[index], files[index+1]];
-    renderList();
+/* ---------------------------------------------------------
+   7️⃣ Формат розміру файлу
+   --------------------------------------------------------- */
+function formatBytes(b){
+    const units = ['B','KB','MB','GB','TB'];
+    let i=0;
+    while (b>=1024 && i<units.length-1){ b/=1024; i++; }
+    return `${b.toFixed(1)} ${units[i]}`;
 }
 
-mergeBtn.addEventListener('click', async () => {
+/* ---------------------------------------------------------
+   8️⃣ Прев’ю (PDF.js)
+   --------------------------------------------------------- */
+async function generateThumbnail(file){
+    const arrayBuf = await file.arrayBuffer();
 
+    if (!window.pdfjsLib){
+        await new Promise(res=>{
+            const s=document.createElement('script');
+            s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+            s.onload=res;
+            document.head.appendChild(s);
+        });
+        pdfjsLib.GlobalWorkerOptions.workerSrc=
+            'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+
+    const loadingTask = pdfjsLib.getDocument({data:arrayBuf});
+    const pdf = await loadingTask.promise;
+    const page = await pdf.getPage(1);
+    const viewport = page.getViewport({scale:0.5});
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    await page.render({canvasContext:ctx, viewport}).promise;
+    return canvas.toDataURL('image/png');
+}
+
+/* ---------------------------------------------------------
+   9️⃣ Drag‑&‑Drop у Dropzone
+   --------------------------------------------------------- */
+dropzone.addEventListener('click', ()=>fileInput.click());
+
+dropzone.addEventListener('dragover', e=>{ e.preventDefault(); dropzone.classList.add('dragover'); });
+dropzone.addEventListener('dragleave', ()=>dropzone.classList.remove('dragover'));
+dropzone.addEventListener('drop', e=>{
+    e.preventDefault();
+    dropzone.classList.remove('dragover');
+    addFiles(e.dataTransfer.files);
+});
+
+fileInput.addEventListener('change', e=>addFiles(e.target.files));
+
+/* ---------------------------------------------------------
+   🔟 Кнопка “Очистити”
+   --------------------------------------------------------- */
+clearBtn.addEventListener('click',()=>{
+    if (!files.length) return;
+    if (confirm('Видалити всі файли?')){ files=[]; renderList(); }
+});
+
+/* ---------------------------------------------------------
+   1️⃣1️⃣ Перемикач режиму (кнопки ↔ drag)
+   --------------------------------------------------------- */
+modeToggle.addEventListener('change', e=>{
+    isDragMode = e.target.checked;
+    settings.dragMode = isDragMode;
+    saveSettings();
+    renderList();          // пере‑рендер, бо змінились кнопки/ручка
+});
+
+/* ---------------------------------------------------------
+   1️⃣2️⃣ Генерація випадкового імені
+   --------------------------------------------------------- */
+function randomFileName(){
+    const ts = Date.now();
+    const rnd = Math.floor(Math.random()*1000);
+    return `merged_${ts}_${rnd}.pdf`;
+}
+
+/* ---------------------------------------------------------
+   1️⃣3️⃣ Об’єднання PDF + назва файлу
+   --------------------------------------------------------- */
+mergeBtn.addEventListener('click', async ()=>{
     mergeBtn.disabled = true;
-    mergeBtn.textContent = "Об'єдную...";
+    clearBtn.disabled = true;
+    progressWr.style.display = 'block';
+    progressBar.style.width = '0%';
 
     const mergedPdf = await PDFDocument.create();
 
-    for (let file of files) {
-        const arrayBuffer = await file.arrayBuffer();
-        const pdf = await PDFDocument.load(arrayBuffer);
+    for (let i=0; i<files.length; i++){
+        const buf = await files[i].arrayBuffer();
+        const pdf = await PDFDocument.load(buf);
         const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-        pages.forEach(page => mergedPdf.addPage(page));
+        pages.forEach(p=>mergedPdf.addPage(p));
+
+        const perc = Math.round(((i+1)/files.length)*100);
+        progressBar.style.width = perc+'%';
     }
 
-    const mergedPdfFile = await mergedPdf.save();
-    const blob = new Blob([mergedPdfFile], { type: 'application/pdf' });
+    const finalBytes = await mergedPdf.save();
+    const blob = new Blob([finalBytes],{type:'application/pdf'});
+
+    // ---------- назва вихідного файлу ----------
+    let outName = '';
+    if (randomNameChk.checked){
+        outName = randomFileName();
+    }else{
+        const userName = outputNameInp.value.trim() || 'merged';
+        outName = userName.toLowerCase().endsWith('.pdf') ? userName : `${userName}.pdf`;
+    }
 
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = "merged.pdf";
+    a.download = outName;
     a.click();
-
     URL.revokeObjectURL(url);
 
-    mergeBtn.textContent = "Об'єднати PDF";
+    // ---------- повертаємо UI в нормальний стан ----------
+    progressWr.style.display = 'none';
     mergeBtn.disabled = false;
+    clearBtn.disabled = false;
+    toast('✅ PDF успішно об’єднано!','success');
 });
-</script>
 
+/* ---------------------------------------------------------
+   1️⃣4️⃣ Синхронізація полів з localStorage
+   --------------------------------------------------------- */
+outputNameInp.addEventListener('input',()=>{
+    settings.outputName = outputNameInp.value.trim() || 'merged';
+    saveSettings();
+});
+randomNameChk.addEventListener('change',()=>{
+    settings.randomName = randomNameChk.checked;
+    saveSettings();
+});
+
+/* ---------------------------------------------------------
+   1️⃣5️⃣ Перший рендер після завантаження
+   --------------------------------------------------------- */
+renderList();
+</script>
 </body>
 </html>
