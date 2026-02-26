@@ -41,13 +41,13 @@
 }
 </script>
 
-<link rel="stylesheet" href="../assets/css/reset.css">
-<link rel="stylesheet" href="../assets/css/vars.css">
-<link rel="stylesheet" href="../assets/css/style.css">
-<link rel="stylesheet" href="../assets/css/header.css">
-<link rel="stylesheet" href="../assets/css/footer.css">
+<link rel="stylesheet" href="./../assets/css/reset.css">
+<link rel="stylesheet" href="./../assets/css/vars.css">
+<link rel="stylesheet" href="./../assets/css/style.css">
+<link rel="stylesheet" href="./../assets/css/header.css">
+<link rel="stylesheet" href="./../assets/css/footer.css">
 
-<script defer src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
 
 <style>
 
@@ -217,6 +217,25 @@
     font-size: 14px;
 }
 
+.seo-content {
+    margin-top: 80px;
+    padding: 40px;
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+}
+
+.seo-content h2 {
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+.seo-content p,
+.seo-content li {
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
 </style>
 </head>
 
@@ -245,10 +264,12 @@
 <div id="fileList"></div>
 
 <div class="tool-actions">
-    <button class="merge-btn" id="mergeBtn" mergeBtn.textContent = "⏳ Об'єднання..."; disabled>
+    <button class="merge-btn" id="mergeBtn"; disabled>
         Об'єднати PDF
     </button>
-    <section class="seo-content">
+</div>
+
+<section class="seo-content">
     <h2>Як об'єднати PDF файли онлайн?</h2>
     <p>Щоб об'єднати PDF файли, просто перетягніть документи у зону завантаження або виберіть їх вручну. Після цього натисніть кнопку "Об'єднати PDF" — інструмент миттєво з'єднає файли в один документ.</p>
 
@@ -257,14 +278,13 @@
 
     <h2>Переваги інструменту</h2>
     <ul>
-    <li>100% безкоштовно</li>
-    <li>Без реєстрації</li>
-    <li>Без обмежень</li>
-    <li>Працює на будь-якому пристрої</li>
-    <li>Миттєва обробка</li>
+        <li>100% безкоштовно</li>
+        <li>Без реєстрації</li>
+        <li>Без обмежень</li>
+        <li>Працює на будь-якому пристрої</li>
+        <li>Миттєва обробка</li>
     </ul>
-    </section>
-</div>
+</section>
 
 <!-- OTHER TOOLS -->
 
@@ -299,9 +319,8 @@
 
 <footer></footer>
 
-<script type="module" src="../assets/js/header.js"></script>
-<script type="module" src="../assets/js/footer.js"></script>
-<script type="module" src="../assets/js/main.js"></script>
+<script type="module" src="./../assets/js/header.js"></script>
+<script type="module" src="./../assets/js/main.js"></script>
 
 <script>
 const { PDFDocument } = PDFLib;
