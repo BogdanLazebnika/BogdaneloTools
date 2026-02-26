@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>PDF‑Compressor (офлайн, чистий HTML/JS)</title>
+<style>
+  body{
+    font-family:Arial,Helvetica,sans-serif;
+    max-width:720px;
+    margin:auto;
+    padding:2rem;
+    background:#f7f9fa;
+  }
+  .panel{
+    background:#fff;
+    padding:1.5rem;
+    margin-top:1rem;
+    border-radius:8px;
+    box-shadow:0 2px 6px rgba(0,0,0,.08);
+  }
+  button{
+    background:#3498db;
+    color:#fff;
+    border:none;
+    padding:.6rem 1.2rem;
+    border-radius:4px;
+    cursor:pointer;
+  }
+  button:disabled{
+    background:#95a5a6;
+    cursor:not-allowed;
+  }
+  #log{
+    font-size:.9rem;
+    color:#444;
+    background:#fafafa;
+    padding:.8rem;
+    border-radius:4px;
+    margin-top:1rem;
+    height:180px;
+    overflow:auto;
+    white-space:pre-wrap;
+  }
+</style>
+</head>
+<body>
+
+<h1>⚙️ PDF‑Compressor (офлайн)</h1>
+
+<div class="panel">
+  <input type="file" id="fileInput" accept="application/pdf"><br><br>
+
+  Якість JPEG:
+  <input type="range" id="qualitySlider" min="10" max="100" value="75">
+  <span id="qualityValue">75</span>%<br><br>
+
+  <button id="compressBtn" disabled>Стискати PDF</button>
+
+  <div id="log"></div>
+</div>
+
+<!-- pdf-lib (вбудована бібліотека) -->
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<!-- pako – вже включений у pdf-lib, потрібний лише для reference -->
+
+<script>
+/* -------------------------------------------------
+   Глобальні змінні та UI‑хелпери
+------------------------------------------------- */
+const { PDFDocument, PDFName, PDFRawStream, PDFNumber } = PDFLib;
+const fileInput   = document.getElementById('fileInput');
+const compressBtn = document.getElementById('compressBtn');
+const logBox      = document.getElementById('log');
+const qSlider    = document.getElementById('qualitySlider');
+const qValue     = document.getElementById('qualityValue');
+
+let srcFile = null;
+
+fileInput.addEventListener('change', e => {
+  srcFile = e.target.files[0];
+  compressBtn.disabled = !srcFile;
+  logBox.textContent = '';
+});
+
+qSlider.addEventListener('input', e => qValue.textContent = e.target.value);
+
+/* -------------------------------------------------
+   Основна логіка компресії
+------------------------------------------------- */
+compressBtn.addEventListener('click', async () => {
+  if (!srcFile) return;
+  compressBtn.disabled = true;
+  log('🔎 Читаємо PDF…');
+
+  const arrayBuf = await srcFile.arrayBuffer();
+  const pdfDoc = await PDFDocument.load(arrayBuf, { ignoreEncryption: true });
+
+  // ------------------- 1️⃣ ОЧИЩЕННЯ МЕТАДАНИХ -------------------
+  pdfDoc.setTitle('');
+  pdfDoc.setAuthor('');
+  pdfDoc.setSubject('');
+  pdfDoc.setKeywords([]);
+  pdfDoc.setProducer('');
+  pdfDoc.setCreator('');
+  // НЕ викликаємо setCreationDate / setModificationDate без Date!
+
+  const jpegQuality = Number(qSlider.value) / 100; // 0.75, 0.50 і т.д.
+
+  // ------------------- 2️⃣ Пошук та обробка зображень -------------------
+  const objs = pdfDoc.context.enumerateIndirectObjects();
+  const imgRefs = [];
+
+  // Фільтруємо лише ті об’єкти, у яких Subtype = Image
+  for (const [ref, obj] of objs) {
+    const subtype = obj.dictionary?.lookup(PDFName.of('Subtype'));
+    if (subtype && subtype.name === 'Image') imgRefs.push([ref, obj]);
+  }
+
+  log(`🖼️ Знайдено ${imgRefs.length} зображень`);
+  let processed = 0;
+
+  for (const [ref, img] of imgRefs) {
+    // ---- 2.1 Отримуємо параметри ----
+    const width  = img.get(PDFName.of('Width')).asNumber();
+    const height = img.get(PDFName.of('Height')).asNumber();
+    const bpc    = img.get(PDFName.of('BitsPerComponent')).asNumber();
+    const csObj  = img.get(PDFName.of('ColorSpace'));
+    const csName = csObj?.name || 'DeviceRGB';           // DeviceRGB чи DeviceGray
+
+    // ---- 2.2 Визначаємо, який filter уже застосовано ----
+    const filter = img.get(PDFName.of('Filter'));
+    const filterArr = Array.isArray(filter) ? filter : [filter];
+    const isJpeg = filterArr.some(f => f?.name === 'DCTDecode');
+
+    // ---- 2.3 Отримуємо «чисті» байти ----
+    const rawBytes = img.getContents(); // Uint8Array
+
+    // ---- 2.4 Перетворення у JPEG ----
+    let jpegBytes; // Uint8Array
+
+    if (isJpeg) {
+      // вже JPEG – лише знижуємо якість
+      const blob = new Blob([rawBytes], {type:'image/jpeg'});
+      jpegBytes = new Uint8Array(await downscaleJpeg(blob, jpegQuality).then(b => b.arrayBuffer()));
+    } else {
+      // PNG/Flate/… → Canvas → JPEG
+      const imgData = await rawToImageData(rawBytes, width, height, csName, bpc);
+      const jpegBlob = await canvasToJpeg(imgData, jpegQuality);
+      jpegBytes = new Uint8Array(await jpegBlob.arrayBuffer());
+    }
+
+    // ---- 2.5 Замінюємо старий XObject новим JPEG‑об’єктом ----
+    const newDict = pdfDoc.context.obj({
+      Type: PDFName.of('XObject'),
+      Subtype: PDFName.of('Image'),
+      Width: PDFNumber.of(width),
+      Height: PDFNumber.of(height),
+      ColorSpace: PDFName.of('DeviceRGB'), // JPEG завжди RGB
+      BitsPerComponent: PDFNumber.of(8),
+      Filter: PDFName.of('DCTDecode')
+    });
+    const newStream = PDFRawStream.of(jpegBytes, newDict);
+    pdfDoc.context.assign(ref, newStream); // <-- ОНОВЛЮЄМО
+
+    processed++;
+    log(`✅ Оброблено ${processed}/${imgRefs.length}`);
+  }
+
+  // ------------------- 3️⃣ Збереження нового PDF -------------------
+  log('💾 Генеруємо стислий PDF…');
+  const pdfBytes = await pdfDoc.save({
+    useObjectStreams: true,
+    compress: true           // deflate‑compression для всіх потоків
+  });
+
+  const outName = srcFile.name.replace(/\.pdf$/i, '_compressed.pdf');
+  const outFile = new File([pdfBytes], outName, {type:'application/pdf'});
+
+  // ---- 3.1 Скачати результат ----
+  const url = URL.createObjectURL(outFile);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = outName;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  log(`✅ Готово!  ${outName} – ${(pdfBytes.length/1024).toFixed(1)} KB`);
+  compressBtn.disabled = false;
+});
+
+/* -------------------------------------------------
+   Допоміжні утиліти
+------------------------------------------------- */
+
+/** Запис у лог‑поле */
+function log(txt) { logBox.textContent += txt + '\n'; logBox.scrollTop = logBox.scrollHeight; }
+
+/** Перетворює RAW‑дані (RGB/Gray, 8 bpc) у ImageData */
+async function rawToImageData(raw, w, h, csName, bpc) {
+  // Підтримуємо лише 8 bpc. Якщо інший – повертаємо чорний квадрат.
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  const imgData = ctx.createImageData(w, h);
+  const data = imgData.data;
+
+  if (csName === 'DeviceRGB' && bpc === 8) {
+    // RGB → RGBA
+    for (let i = 0, j = 0; i < raw.length; i += 3, j += 4) {
+      data[j]   = raw[i];
+      data[j+1] = raw[i+1];
+      data[j+2] = raw[i+2];
+      data[j+3] = 255;
+    }
+  } else if (csName === 'DeviceGray' && bpc === 8) {
+    // Gray → RGBA (повторюємо канал)
+    for (let i = 0, j = 0; i < raw.length; i++, j += 4) {
+      const v = raw[i];
+      data[j] = data[j+1] = data[j+2] = v;
+      data[j+3] = 255;
+    }
+  } else {
+    // Не підтримується – заповнюємо білим.
+    data.fill(255);
+  }
+  return imgData;
+}
+
+/** Canvas → JPEG Blob (якість у діапазоні 0‑1) */
+function canvasToJpeg(imgData, quality) {
+  return new Promise(resolve => {
+    const canvas = document.createElement('canvas');
+    canvas.width = imgData.width;
+    canvas.height = imgData.height;
+    const ctx = canvas.getContext('2d');
+    ctx.putImageData(imgData, 0, 0);
+    canvas.toBlob(blob => resolve(blob), 'image/jpeg', quality);
+  });
+}
+
+/** Понижує якість уже існуючого JPEG‑blob */
+function downscaleJpeg(blob, quality) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      canvas.toBlob(b => resolve(b), 'image/jpeg', quality);
+    };
+    img.src = URL.createObjectURL(blob);
+  });
+}
+</script>
+</body>
+</html>

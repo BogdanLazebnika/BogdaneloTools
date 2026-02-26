@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Розділити PDF онлайн – LB Tools</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description"
+      content="Безкоштовний онлайн‑інструмент для розділення PDF‑файлів. Оберіть сторінки, отримайте окремі PDF‑файли або ZIP‑архів. Весь процес виконується в браузері, без завантаження даних на сервер.">
+<link rel="canonical" href="https://your‑site.com/pdf/split.html">
+
+<link rel="stylesheet" href="./../assets/css/reset.css">
+<link rel="stylesheet" href="./../assets/css/vars.css">
+<link rel="stylesheet" href="./../assets/css/style.css">
+<link rel="stylesheet" href="./../assets/css/header.css">
+<link rel="stylesheet" href="./../assets/css/footer.css">
+
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.0/jszip.min.js"></script>
+
+<style>
+/* --------------------------------------------------------------
+   ОТРИМАНИЙ ДИЗАЙН (адаптовано під мобіль)
+   -------------------------------------------------------------- */
+.tool-page        {padding:80px 15px 70px;}
+.tool-container   {max-width:940px;margin:auto;}
+
+.tool-back a{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:10px 14px;border-radius:10px;
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--border-color);
+    font-size:14px;font-weight:600;color:var(--text-primary);
+    transition:.25s;text-decoration:none;
+    margin-bottom:30px;
+}
+.tool-back a:hover{
+    border-color:var(--accent);color:var(--accent);
+    box-shadow:0 0 12px rgba(99,102,241,.25);
+}
+
+/* --------- HEADER --------- */
+.tool-header{text-align:center;margin-bottom:30px;}
+.tool-header h1{
+    font-size:clamp(24px,6vw,36px);
+    font-weight:800;
+    background:linear-gradient(90deg,#6366f1,#22d3ee);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    margin-bottom:8px;
+}
+.tool-header p{font-size:15px;color:var(--text-secondary);}
+
+/* --------- CARD WRAPPER --------- */
+.tool-card-wrapper{
+    background:var(--card-bg);
+    border:1px solid var(--border-color);
+    border-radius:18px;
+    padding:30px;
+    box-shadow:0 15px 30px rgba(0,0,0,.30);
+    backdrop-filter:blur(6px);
+}
+
+/* ---------- OUTPUT CONFIG ---------- */
+.output-config{
+    display:flex;flex-direction:column;gap:12px;margin-bottom:20px;
+}
+.output-config label{
+    font-size:14px;color:var(--text-secondary);
+}
+.output-config input{
+    color:var(--text-primary);padding:10px;border-radius:8px;
+    border:1px solid var(--border-color);background:rgba(255,255,255,.04);
+    font-size:14px;transition:.25s;
+}
+.output-config input:focus{
+    border-color:var(--accent);box-shadow:0 0 0 2px rgba(99,102,241,.2);
+}
+
+/* Switch (random‑name) */
+.switch{position:relative;display:inline-block;width:44px;height:22px;}
+.switch input{opacity:0;width:0;height:0;}
+.slider{
+    position:absolute;cursor:pointer;inset:0;background:#374151;
+    border-radius:22px;transition:.3s;
+}
+.slider:before{
+    content:"";position:absolute;height:18px;width:18px;left:2px;top:2px;
+    background:#fff;border-radius:50%;transition:.3s;
+}
+.switch input:checked+.slider{background:var(--accent);}
+.switch input:checked+.slider:before{transform:translateX(20px);}
+
+/* ---------- DROPZONE ---------- */
+.dropzone{
+    border:2px dashed var(--border-color);padding:45px 15px;
+    text-align:center;border-radius:16px;cursor:pointer;
+    transition:.3s;background:rgba(255,255,255,.02);
+    font-size:14px;margin-bottom:20px;
+}
+.dropzone:hover{border-color:var(--accent);background:rgba(99,102,241,.06);}
+.dropzone.dragover{border-color:var(--accent);background:rgba(99,102,241,.12);transform:scale(1.02);}
+
+/* ---------- MODE SWITCH ---------- */
+.mode-switch{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:5px;padding:10px 12px;
+    border-radius:12px;background:rgba(255,255,255,.03);
+    border:1px solid var(--border-color);font-size:14px;
+}
+.toggle-description{
+    font-size:12px;color:var(--text-secondary);
+    margin-top:4px;
+}
+
+/* ---------- LABEL‑TOGGLE (Показати підписи) ---------- */
+.labels-toggle{
+    display:flex;align-items:center;gap:10px;
+    margin-bottom:20px;padding:10px 12px;
+    border-radius:12px;background:rgba(255,255,255,.03);
+    border:1px solid var(--border-color);font-size:14px;
+}
+
+/* ---------- FILE INFO ---------- */
+.file-info{
+    background:rgba(255,255,255,.02);
+    border:1px solid var(--border-color);
+    border-radius:12px;padding:12px;margin-top:15px;
+    font-size:13px;color:var(--text-secondary);
+    line-height:1.4;
+}
+
+/* ---------- PREVIEW GRID ---------- */
+.pages-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
+    gap:12px;
+    margin-top:20px;
+}
+.page-card{
+    background:#1e293b;border:2px solid transparent;
+    border-radius:10px;padding:6px;
+    cursor:pointer;transition:.2s;text-align:center;
+}
+.page-card:hover{transform:translateY(-3px);}
+.page-card.selected{
+    border-color:#6366f1;box-shadow:0 0 12px rgba(99,102,241,.5);
+}
+.page-card canvas{width:100%;border-radius:4px;}
+.page-number{
+    margin-top:4px;font-size:12px;color:#94a3b8;
+}
+
+/* ---------- ACTION BUTTONS ---------- */
+.tool-actions{
+    display:flex;flex-wrap:wrap;gap:12px;justify-content:center;
+    margin-top:25px;
+}
+.merge-btn{
+    background:linear-gradient(135deg,#6366f1,#4f46e5);
+    border:none;padding:12px 28px;border-radius:10px;
+    font-weight:600;font-size:14px;color:#fff;cursor:pointer;
+    transition:.25s;min-width:140px;position:relative;
+}
+.merge-btn:hover{
+    transform:translateY(-3px);box-shadow:0 8px 16px rgba(79,70,229,.4);
+}
+.merge-btn:disabled{
+    opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;
+}
+.clear-btn{
+    background:rgba(255,255,255,.04);border:1px solid var(--border-color);
+    padding:12px 24px;border-radius:10px;font-weight:600;
+    cursor:pointer;transition:.25s;color:var(--text-primary);
+}
+.clear-btn:hover{
+    background:rgba(239,68,68,.08);border-color:#ef4444;color:#ef4444;
+}
+.clear-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* Підпис під кнопками */
+.btn-description{
+    font-size:12px;color:var(--text-secondary);
+    margin-top:4px;text-align:center;
+}
+
+/* ---------- PROGRESS ---------- */
+.progress-wrapper{
+    width:100%;height:8px;background:var(--border-color);
+    border-radius:8px;margin-top:20px;overflow:hidden;display:none;
+}
+.progress-bar{
+    height:100%;width:0%;background:linear-gradient(90deg,#6366f1,#22d3ee);
+    box-shadow:0 0 10px rgba(99,102,241,.6);transition:.3s;
+}
+
+/* ---------- TOAST ---------- */
+.toast{
+    position:fixed;bottom:20px;right:20px;background:#111827;
+    border:1px solid var(--border-color);padding:12px 18px;
+    border-radius:10px;opacity:0;transform:translateY(20px);
+    transition:.3s;z-index:9999;
+}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast-success{border-color:#22c55e;}
+
+/* ---------- DEBUG PANEL ---------- */
+.debug-panel{
+    background:#1e293b;border:1px solid var(--border-color);
+    border-radius:10px;padding:10px;margin-top:20px;
+    font-size:13px;color:#94a3b8;max-height:180px;overflow:auto;
+}
+.debug-panel.hidden{display:none;}
+
+/* ---------- SEO CONTENT (картка) ---------- */
+.seo-content{
+    background:var(--card-bg);
+    border:1px solid var(--border-color);
+    border-radius:18px;
+    padding:30px;
+    margin-top:45px;
+    box-shadow:0 10px 20px rgba(0,0,0,.20);
+}
+.seo-content h2{
+    font-size:22px;margin-bottom:15px;
+    background:linear-gradient(90deg,#6366f1,#22d3ee);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.seo-content p{
+    font-size:15px;color:var(--text-secondary);
+    line-height:1.6;margin-bottom:12px;
+}
+.seo-content ul{
+    margin-top:10px;padding-left:20px;
+}
+.seo-content li{
+    margin-bottom:8px;font-size:15px;color:var(--text-secondary);
+}
+
+/* ---------- OTHER TOOLS ---------- */
+.other-tools{margin-top:60px;text-align:center;}
+.other-tools h2{
+    font-size:22px;margin-bottom:30px;
+    background:linear-gradient(90deg,#6366f1,#22d3ee);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.tools-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:22px;
+}
+.tool-card{
+    padding:22px;border-radius:14px;border:1px solid var(--border-color);
+    background:rgba(255,255,255,.02);text-decoration:none;color:var(--text-primary);
+    display:flex;flex-direction:column;gap:8px;transition:.25s;
+}
+.tool-card:hover{
+    border-color:var(--accent);transform:translateY(-6px);
+    box-shadow:0 20px 35px rgba(0,0,0,.30);
+}
+.tool-card span{font-size:28px;}
+.tool-card h3{font-size:16px;margin:0;}
+.tool-card p{font-size:14px;color:var(--text-secondary);margin:0;}
+
+/* ------ HIDE LABELS WHEN DISABLED ------ */
+.labels-hidden .btn-description,
+.labels-hidden .toggle-description{
+    display:none;
+}
+
+/* ------ MEDIA QUERIES (мобіль) ------ */
+@media(max-width:600px){
+    .tool-page{padding:80px 10px 50px;}
+    .tool-card-wrapper{padding:20px;}
+    .pages-grid{grid-template-columns:repeat(2,minmax(100px,1fr));}
+}
+</style>
+</head>
+<body>
+
+<header></header>
+
+<main class="tool-page">
+<div class="tool-container">
+
+  <!-- Повернення -->
+  <div class="tool-back"><a href="#" data-link="pdf/pdf-tools.html">← До всіх PDF‑інструментів</a></div>
+
+  <!-- Хедер -->
+  <div class="tool-header">
+    <h1>Розділити PDF</h1>
+    <p>Виберіть потрібні сторінки та отримайте готові файли без зайвих клопотів</p>
+  </div>
+
+  <!-- Основний блок -->
+  <div class="tool-card-wrapper">
+     <!-- Перемикач “Показати підписи” -->
+    <div class="labels-toggle">
+        <span>Показати підписи</span>
+        <label class="switch"><input type="checkbox" id="labelsToggle" checked><span class="slider"></span></label>
+    </div>
+
+    <!-- Налаштування імені -->
+    <div class="output-config">
+        <label for="outputName">Назва результату (без .pdf):</label>
+        <input type="text" id="outputName" placeholder="merged">
+        <div style="display:flex;align-items:center;gap:10px;">
+            <span>Випадкове ім’я</span>
+            <label class="switch"><input type="checkbox" id="randomNameToggle"><span class="slider"></span></label>
+        </div>
+    </div>
+
+    <!-- Dropzone -->
+    <div class="dropzone" id="dropzone">
+        Перетягніть PDF сюди або клацніть, щоб вибрати файл
+        <input type="file" id="fileInput" accept="application/pdf" hidden>
+    </div>
+
+    <!-- Перемикач режиму розбиття -->
+    <div class="mode-switch">
+        <span>Режим розбиття</span>
+        <label class="switch"><input type="checkbox" id="modeToggle"><span class="slider"></span></label>
+    </div>
+
+    <!-- Підписи під перемикачем (будуть сховані/показані) -->
+    <div class="toggle-description">
+        <b>Один PDF</b> – усі вибрані сторінки у один файл.<br>
+        <b>Кожна окрема</b> – кожна вибрана сторінка створює окремий PDF (всі вони упаковані у ZIP‑архів).
+    </div>
+
+   
+
+    <!-- Панель інформації про файл -->
+    <div class="file-info" id="fileInfo" style="display:none;">
+        <b>Файл:</b> <span id="fileName">—</span><br>
+        <b>Розмір:</b> <span id="fileSize">—</span><br>
+        <b>Кількість сторінок:</b> <span id="filePages">—</span><br>
+        <b>Вибрано:</b> <span id="selectedCount">0</span> |
+        <b>Не вибрано:</b> <span id="unselectedCount">0</span>
+    </div>
+
+    <!-- Прев’ю сторінок -->
+    <div class="pages-grid" id="pagesGrid"></div>
+
+    <!-- Кнопки дій + підписи -->
+    <div class="tool-actions">
+        <div style="text-align:center;">
+            <button class="merge-btn"
+                    id="exportSelected"
+                    title="Створити PDF лише з вибраних сторінок (або ZIP, якщо обрано режим «Кожна окрема»)"
+                    >Експорт вибраних</button>
+            <div class="btn-description">Отримати PDF з лише вибраних сторінок</div>
+        </div>
+
+        <div style="text-align:center;">
+            <button class="merge-btn"
+                    id="exportUnselected"
+                    title="Створити PDF лише з не‑вибраних сторінок (або ZIP, якщо режим «Кожна окрема»)"
+                    >Експорт не‑вибраних</button>
+            <div class="btn-description">Отримати PDF з усіх сторінок, які НЕ вибрано</div>
+        </div>
+
+        <div style="text-align:center;">
+            <button class="merge-btn"
+                    id="exportBoth"
+                    title="Створити два PDF‑файли – один з вибраними, інший з не‑вибраними (в сумі – ZIP, якщо більше одного файлу)"
+                    >Експорт обох</button>
+            <div class="btn-description">Отримати два файли: вибрані + не‑вибрані</div>
+        </div>
+
+        <div style="text-align:center;">
+            <button class="clear-btn"
+                    id="clearBtn"
+                    title="Видалити завантажений PDF та скинути всі вибори"
+                    >🗑 Очистити</button>
+            <div class="btn-description">Скинути вибраний файл і всі позначені сторінки</div>
+        </div>
+    </div>
+
+    <!-- Прогрес‑бар -->
+    <div class="progress-wrapper" id="progressWrapper"><div class="progress-bar" id="progressBar"></div></div>
+
+    <!-- Debug‑панель (при потребі) -->
+    <div class="debug-panel hidden" id="debugPanel"></div>
+
+  </div> <!-- .tool-card-wrapper -->
+
+  <!-- SEO‑контент (оформлений у «картці») -->
+  <section class="seo-content">
+    <h2>Як розділити PDF‑файл онлайн?</h2>
+    <p>Щоб розділити PDF‑документ, просто перетягніть його у зону завантаження або виберіть файл вручну. Після появи прев’ю виберіть потрібні сторінки (або введіть їх у поле «1,3,5‑8») та натисніть одну з кнопок «Експорт…». Інструмент миттєво створить окремі PDF‑файли або ZIP‑архів.</p>
+
+    <h2>Безпечне розділення PDF без передачі на сервер</h2>
+    <p>Усі дії виконуються <b>лише у вашому браузері</b>. Файли не надсилаються на сервер, тому ваші дані залишаються конфіденційними.</p>
+
+    <h2>Переваги інструменту</h2>
+    <ul>
+      <li>100 % безкоштовно</li>
+      <li>Без реєстрації</li>
+      <li>Не має обмежень за кількістю сторінок</li>
+      <li>Працює на будь‑якому пристрої (ПК, планшет, телефон)</li>
+      <li>Миттєва обробка в реальному часі</li>
+    </ul>
+  </section>
+
+  <!-- Інші PDF‑інструменти -->
+  <section class="other-tools">
+      <h2>Інші інструменти для PDF</h2>
+      <div class="tools-grid">
+          <a href="#" data-link="pdf/merge.html" class="tool-card">
+              <span>🔗</span><h3>Об’єднати PDF</h3><p>З’єднати кілька документів в один</p>
+          </a>
+          <a href="#" data-link="pdf/compress.html" class="tool-card">
+              <span>🗜</span><h3>Стиснути PDF</h3><p>Зменшити розмір файлу без втрати якості</p>
+          </a>
+          <a href="#" data-link="pdf/password.html" class="tool-card">
+              <span>🔒</span><h3>Поставити пароль</h3><p>Захистити PDF паролем</p>
+          </a>
+          <a href="#" data-link="pdf/rotate.html" class="tool-card">
+              <span>🔄</span><h3>Повернути PDF</h3><p>Змінити орієнтацію сторінок</p>
+          </a>
+      </div>
+  </section>
+
+</div>
+</main>
+
+<footer></footer>
+
+<script type="module" src="./../assets/js/header.js"></script>
+<script type="module" src="./../assets/js/main.js"></script>
+
+<script>
+/* --------------------------------------------------------------
+   1️⃣  Глобальні змінні та ініціалізація
+   -------------------------------------------------------------- */
+const { PDFDocument } = PDFLib;
+
+/* UI‑елементи */
+const dropzone        = document.getElementById('dropzone');
+const fileInput       = document.getElementById('fileInput');
+const pagesGrid       = document.getElementById('pagesGrid');
+const modeToggle      = document.getElementById('modeToggle');
+const exportSelBtn    = document.getElementById('exportSelected');
+const exportUnsBtn    = document.getElementById('exportUnselected');
+const exportBothBtn   = document.getElementById('exportBoth');
+const clearBtn        = document.getElementById('clearBtn');
+const outputNameInp   = document.getElementById('outputName');
+const randomNameChk   = document.getElementById('randomNameToggle');
+const labelsToggle    = document.getElementById('labelsToggle');   // <-- новий елемент
+const progressWr     = document.getElementById('progressWrapper');
+const progressBar     = document.getElementById('progressBar');
+const fileInfo        = document.getElementById('fileInfo');
+const fileNameEl      = document.getElementById('fileName');
+const fileSizeEl      = document.getElementById('fileSize');
+const filePagesEl     = document.getElementById('filePages');
+const selCountEl      = document.getElementById('selectedCount');
+const unselCountEl    = document.getElementById('unselectedCount');
+const debugPanel      = document.getElementById('debugPanel');
+
+/* --------- Local‑storage налаштування --------- */
+const SETTINGS_KEY = 'pdfSplitSettings';
+/* Додано нове поле: showLabels (true = підписи показані) */
+const DEFAULT_SETTINGS = {
+    outputName:'merged',
+    randomName:false,
+    dragMode:false,
+    showLabels:true                 // <-- за замовчуванням підписи увімкнено
+};
+
+let settings = (() => {
+    try{
+        const s = localStorage.getItem(SETTINGS_KEY);
+        return s ? JSON.parse(s) : {...DEFAULT_SETTINGS};
+    }catch(e){
+        return {...DEFAULT_SETTINGS};
+    }
+})();
+
+function saveSettings(){ localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings)); }
+
+/* ---------- Присвоюємо збережені дані ----------
+   (враховуємо новий параметр showLabels) */
+outputNameInp.value = settings.outputName;
+randomNameChk.checked = settings.randomName;
+
+/* 1️⃣ Показати/приховати підписи */
+labelsToggle.checked = (settings.showLabels !== undefined) ? settings.showLabels : true;
+if(!labelsToggle.checked) document.body.classList.add('labels-hidden');
+
+/* --------- Модель даних --------- */
+let originalFile = null;          // завантажений PDF‑File
+let totalPages   = 0;
+let selectedPages = new Set();    // Set<number>
+
+/* --------------------------------------------------------------
+   2️⃣  UI‑Helpers
+   -------------------------------------------------------------- */
+function showToast(msg,type='info',timeout=2500){
+    const el=document.createElement('div');
+    el.className=`toast toast-${type}`;
+    el.textContent=msg;
+    document.body.appendChild(el);
+    requestAnimationFrame(()=>el.classList.add('show'));
+    setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),300);},timeout);
+}
+function enableActionButtons(state){
+    exportSelBtn.disabled=!state;
+    exportUnsBtn.disabled=!state;
+    exportBothBtn.disabled=!state;
+    clearBtn.disabled=!state;
+}
+function startProgress(){ progressWr.style.display='block'; progressBar.style.width='5%'; }
+function endProgress(){ progressBar.style.width='100%'; setTimeout(()=>{progressWr.style.display='none';progressBar.style.width='0%';},800); }
+function updateFileInfo(){
+    if(!originalFile){fileInfo.style.display='none';return;}
+    fileInfo.style.display='block';
+    fileNameEl.textContent = originalFile.name;
+    fileSizeEl.textContent = `${(originalFile.size/1024/1024).toFixed(2)} МБ`;
+    filePagesEl.textContent = totalPages;
+    selCountEl.textContent = selectedPages.size;
+    unselCountEl.textContent = totalPages - selectedPages.size;
+}
+function logDebug(){
+    const unselected = [...Array(totalPages).keys()].map(i=>i+1).filter(p=>!selectedPages.has(p));
+    debugPanel.innerHTML = `
+        <b>Всього сторінок:</b> ${totalPages}<br>
+        <b>Вибрано:</b> ${[...selectedPages].join(', ') || '—'}<br>
+        <b>Не вибрано:</b> ${unselected.join(', ') || '—'}<br>
+        <b>Режим:</b> ${modeToggle.checked ? 'Кожна окрема' : 'Один PDF'}
+    `;
+}
+
+/* --------------------------------------------------------------
+   3️⃣  Завантаження PDF → прев’ю + вибір
+   -------------------------------------------------------------- */
+dropzone.onclick = ()=>fileInput.click();
+
+fileInput.onchange = e=>loadPDF(e.target.files[0]);
+
+dropzone.ondragover  = e=>{e.preventDefault();dropzone.classList.add('dragover');};
+dropzone.ondragleave = ()=>dropzone.classList.remove('dragover');
+dropzone.ondrop      = e=>{
+    e.preventDefault();dropzone.classList.remove('dragover');
+    loadPDF(e.dataTransfer.files[0]);
+};
+
+async function loadPDF(file){
+    if(!file) return;
+    if(file.type!=='application/pdf'){
+        showToast('Будь ласка, завантажте PDF‑файл','error');
+        return;
+    }
+    try{
+        originalFile = file;
+        const buf = await file.arrayBuffer();
+
+        const pdf = await pdfjsLib.getDocument({data:new Uint8Array(buf)}).promise;
+        totalPages = pdf.numPages;
+        selectedPages.clear();
+        pagesGrid.innerHTML='';
+
+        for(let i=1;i<=totalPages;i++){
+            const page = await pdf.getPage(i);
+            const viewport = page.getViewport({scale:0.4});
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            await page.render({canvasContext:ctx,viewport}).promise;
+
+            const card = document.createElement('div');
+            card.className='page-card';
+            card.dataset.page=i;
+            card.onclick=()=>togglePage(i,card);
+
+            const num = document.createElement('div');
+            num.className='page-number';
+            num.textContent=`Сторінка ${i}`;
+
+            card.appendChild(canvas);
+            card.appendChild(num);
+            pagesGrid.appendChild(card);
+        }
+
+        enableActionButtons(true);
+        updateFileInfo();
+        logDebug();
+        showToast('PDF завантажено','success');
+    }catch(err){
+        console.error(err);
+        showToast('Помилка під час завантаження PDF','error');
+    }
+}
+
+/* --------------------------------------------------------------
+   4️⃣  Вибір/зняття вибору сторінки
+   -------------------------------------------------------------- */
+function togglePage(num,card){
+    if(selectedPages.has(num)){
+        selectedPages.delete(num);
+        card.classList.remove('selected');
+    }else{
+        selectedPages.add(num);
+        card.classList.add('selected');
+    }
+    updateFileInfo();
+    logDebug();
+}
+
+/* --------------------------------------------------------------
+   5️⃣  Випадкове ім’я файлу
+   -------------------------------------------------------------- */
+function randomFileName(){
+    const ts = Date.now();
+    const rnd = Math.floor(Math.random()*1000);
+    return `merged_${ts}_${rnd}.pdf`;
+}
+
+/* --------------------------------------------------------------
+   6️⃣  Побудова PDF (з урахуванням режиму)
+   -------------------------------------------------------------- */
+async function buildPdf(pagesArray){
+    const freshBuf = await originalFile.arrayBuffer();         // новий буфер → ніякого detach
+    const srcPdf   = await PDFDocument.load(new Uint8Array(freshBuf));
+
+    const newPdf = await PDFDocument.create();
+    for(const p of pagesArray){
+        const [pg] = await newPdf.copyPages(srcPdf,[p-1]);
+        newPdf.addPage(pg);
+    }
+    const bytes = await newPdf.save();
+    return new Uint8Array(bytes);
+}
+
+/* --------------------------------------------------------------
+   7️⃣  ZIP‑пакування (JSZip)
+   -------------------------------------------------------------- */
+async function zipAndDownload(filesMap, zipName){
+    const zip = new JSZip();
+    for(const [name,data] of Object.entries(filesMap)){
+        zip.file(name,data);
+    }
+    const blob = await zip.generateAsync({type:'blob'});
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = zipName;
+    a.click(); URL.revokeObjectURL(url);
+}
+
+/* --------------------------------------------------------------
+   8️⃣  Функція download (пряме збереження PDF)
+   -------------------------------------------------------------- */
+function download(bytes, name){
+    const blob = new Blob([bytes],{type:'application/pdf'});
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href   = url; a.download = name; a.click();
+    URL.revokeObjectURL(url);
+}
+
+/* --------------------------------------------------------------
+   9️⃣  Отримання назви файлу (з урахуванням випадковості)
+   -------------------------------------------------------------- */
+function getOutputFileName(base){
+    if(settings.randomName) return randomFileName();
+    let name = (settings.outputName||'merged').trim();
+    if(!name.toLowerCase().endsWith('.pdf')) name += '.pdf';
+    if(base) name = `${base}_${name}`;
+    return name;
+}
+
+/* --------------------------------------------------------------
+   10️⃣  Обробники кнопок Export
+   -------------------------------------------------------------- */
+exportSelBtn.addEventListener('click',async()=>{
+    if(!originalFile) return;
+    if(selectedPages.size===0) return showToast('Нічого не вибрано','error');
+
+    startProgress();
+    try{
+        const pages = [...selectedPages].sort((a,b)=>a-b);
+        if(modeToggle.checked){                     // «Кожна окрема»
+            const files = {};
+            for(const p of pages){
+                const pdfBytes = await buildPdf([p]);
+                files[`page_${p}.pdf`] = pdfBytes;
+            }
+            await zipAndDownload(files,'pages.zip');
+            showToast('Сторінки упаковано в ZIP','success');
+        }else{
+            const pdfBytes = await buildPdf(pages);
+            download(pdfBytes,getOutputFileName('selected'));
+            showToast('PDF створено','success');
+        }
+    }catch(err){
+        console.error(err);
+        showToast('Помилка під час експорту','error');
+    }
+    endProgress();
+});
+
+exportUnsBtn.addEventListener('click',async()=>{
+    if(!originalFile) return;
+    const all = [...Array(totalPages).keys()].map(i=>i+1);
+    const unselected = all.filter(p=>!selectedPages.has(p));
+    if(unselected.length===0) return showToast('Усі сторінки вже обрано','error');
+
+    startProgress();
+    try{
+        if(modeToggle.checked){
+            const files = {};
+            for(const p of unselected){
+                const pdfBytes = await buildPdf([p]);
+                files[`page_${p}.pdf`] = pdfBytes;
+            }
+            await zipAndDownload(files,'unselected_pages.zip');
+            showToast('Не‑вибрані сторінки упаковано в ZIP','success');
+        }else{
+            const pdfBytes = await buildPdf(unselected);
+            download(pdfBytes,getOutputFileName('unselected'));
+            showToast('PDF створено','success');
+        }
+    }catch(err){
+        console.error(err);
+        showToast('Помилка під час експорту','error');
+    }
+    endProgress();
+});
+
+exportBothBtn.addEventListener('click',async()=>{   // два файли → ZIP, якщо >1
+    if(!originalFile) return;
+    const all = [...Array(totalPages).keys()].map(i=>i+1);
+    const sel  = [...selectedPages].sort((a,b)=>a-b);
+    const unsel = all.filter(p=>!selectedPages.has(p));
+
+    startProgress();
+    try{
+        const files = {};
+        if(sel.length){
+            const pdfSel = await buildPdf(sel);
+            files['selected.pdf'] = pdfSel;
+        }
+        if(unsel.length){
+            const pdfUns = await buildPdf(unsel);
+            files['unselected.pdf'] = pdfUns;
+        }
+        if(Object.keys(files).length===1){
+            const [name] = Object.keys(files);
+            download(files[name],name);
+        }else{
+            await zipAndDownload(files,'selected_and_unselected.zip');
+        }
+        showToast('Файли створено','success');
+    }catch(err){
+        console.error(err);
+        showToast('Помилка під час експорту','error');
+    }
+    endProgress();
+});
+
+/* --------------------------------------------------------------
+   11️⃣  Очистка (reset UI)
+   -------------------------------------------------------------- */
+clearBtn.addEventListener('click',()=>{
+    if(!originalFile) return;
+    if(confirm('Видалити завантажений PDF і очистити вибір?')){
+        originalFile=null;totalPages=0;selectedPages.clear();
+        pagesGrid.innerHTML='';enableActionButtons(false);
+        fileInfo.style.display='none';
+        showToast('Очищено','info');
+        debugPanel.classList.add('hidden');
+    }
+});
+
+/* --------------------------------------------------------------
+   12️⃣  Налаштування (output‑name, random‑name, режим, підписи)
+   -------------------------------------------------------------- */
+outputNameInp.addEventListener('input',()=>{
+    settings.outputName = outputNameInp.value.trim()||'merged';
+    saveSettings();
+});
+randomNameChk.addEventListener('change',()=>{
+    settings.randomName = randomNameChk.checked;
+    saveSettings();
+});
+modeToggle.addEventListener('change',()=>logDebug());
+
+/* --- Перемикач «Показати підписи» (збереження стану) --- */
+labelsToggle.addEventListener('change',e=>{
+    const show = e.target.checked;
+    if(show){
+        document.body.classList.remove('labels-hidden');
+    }else{
+        document.body.classList.add('labels-hidden');
+    }
+    // зберігаємо у localStorage
+    settings.showLabels = show;
+    saveSettings();
+});
+
+/* --------------------------------------------------------------
+   13️⃣  Перший рендер
+   -------------------------------------------------------------- */
+debugPanel.classList.add('hidden');
+
+/* стан підписів уже застосовано під час ініціалізації (див. вище) */
+</script>
+
+</body>
+</html>
