@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8">
-<title>Стиснути PDF онлайн безкоштовно — LB Tools</title>
+<title>Конвертувати PDF у фото — LB Tools</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
 <link rel="stylesheet" href="./../assets/css/reset.css">
@@ -11,21 +11,26 @@
 <link rel="stylesheet" href="./../assets/css/header.css">
 <link rel="stylesheet" href="./../assets/css/footer.css">
 
-<!-- PDF‑Lib (працює лише в пам’яті) -->
+<!-- PDF‑Lib (лише в пам’яті) -->
 <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
 
-<!-- PDF.js – тільки для прев’ю -->
+<!-- PDF.js – лише для рендерингу -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 </script>
 
+<!-- JSZip + FileSaver – потрібні для створення ZIP‑архіву -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
 <style>
 
-/* -----------------------------------------------------------
-   УСІ ДРУГІ СТИЛІ (копія вашого «Об’єднати PDF», без змін)
-   ----------------------------------------------------------- */
+
+/* -------------------------------------------------
+   УСІ ІНШІ СТИЛІ (клонуємо з «Об’єднати PDF»)
+   ------------------------------------------------- */
 .tool-page{padding:120px 20px 100px;}
 .tool-container{max-width:900px;margin:0 auto;}
 
@@ -78,8 +83,7 @@
 
 /* ---- switch (випадкове ім’я) ---- */
 .switch{
-    position:relative;display:inline-block;
-    width:46px;height:24px;
+    position:relative;display:inline-block;width:46px;height:24px;
 }
 .switch input{opacity:0;width:0;height:0;}
 .slider{
@@ -110,7 +114,7 @@
     transform:scale(1.02);
 }
 
-/* ---- режим стискання (контейнер) ---- */
+/* ---- режим (format) ---- */
 .mode-switch{
     display:flex;align-items:center;justify-content:space-between;
     margin-bottom:25px;padding:14px 18px;
@@ -119,13 +123,11 @@
     gap:12px;
 }
 
-/* =========================================================
-   SELECT – ТЕМА‑АГНОСТИЧНИЙ
-   ========================================================= */
+/* ---------- SELECT (тема‑агностичний) ---------- */
 .select-wrapper{
     position:relative;
-    flex:1;                 /* займати всю ширину в .mode-switch */
-    max-width:260px;        /* максимум у великих екранах */
+    flex:1;
+    max-width:260px;
 }
 .select-wrapper select{
     -webkit-appearance:none;
@@ -135,8 +137,8 @@
     padding:10px 14px;
     border:1px solid var(--border-color);
     border-radius:12px;
-    background:var(--card-bg);               /* фон у темній / світлій темі */
-    color:var(--text-primary);               /* колір тексту */
+    background:var(--card-bg);
+    color:var(--text-primary);
     font-size:14px;cursor:pointer;
     transition:var(--transition);
 }
@@ -145,17 +147,13 @@
     border-color:var(--accent);
     box-shadow:0 0 0 3px var(--accent-soft);
 }
-
-/* Пункти меню – теж використовують змінні */
 .select-wrapper option{
-    background:var(--bg-secondary);   /* фон пункту у відповідній темі */
-    color:var(--text-primary);        /* колір тексту пункту */
+    background:var(--bg-secondary);
+    color:var(--text-primary);
 }
 .select-wrapper option:hover{
     background:var(--bg-tertiary);
 }
-
-/* «стрілка»‑підсвічка */
 .select-wrapper::after{
     content:"▾";
     position:absolute;right:12px;top:50%;
@@ -235,8 +233,8 @@
 /* ---- прогрес‑бар ---- */
 .progress-wrapper{
     width:100%;height:10px;background:var(--border-color);
-    border-radius:50px;margin-top:25px;
-    overflow:hidden;display:none;
+    border-radius:50px;margin-top:25px;overflow:hidden;
+    display:none;
 }
 .progress-bar{
     height:100%;width:0%;
@@ -312,7 +310,7 @@
 }
 </style>
 </head>
-<body class="dark-theme"><!-- або .light-theme, залежно від налаштування -->
+<body class="dark-theme"><!-- або .light-theme -->
 
 <header></header>
 
@@ -324,14 +322,14 @@
 
   <!-- Хедер -->
   <div class="tool-header">
-    <h1>Стиснути PDF</h1>
-    <p>Зменшіть розмір PDF файлу прямо у браузері</p>
+    <h1>PDF → Фото</h1>
+    <p>Конвертуйте будь‑який PDF у набір зображень (JPG, PNG, WebP)</p>
   </div>
 
   <!-- Налаштування імені -->
   <div class="output-config">
-    <label for="outputName">Назва результату (без .pdf):</label>
-    <input type="text" id="outputName" placeholder="compressed">
+    <label for="outputName">Назва архіву (без .zip):</label>
+    <input type="text" id="outputName" placeholder="photos">
     <div style="display:flex;align-items:center;gap:12px;">
         <span>Випадкове ім’я</span>
         <label class="switch">
@@ -347,15 +345,22 @@
     <input type="file" id="fileInput" accept="application/pdf" hidden>
   </div>
 
-  <!-- Режим стискання -->
+  <!-- Вибір формату зображення -->
   <div class="mode-switch">
-    <span>Режим стискання</span>
+    <span>Формат зображення</span>
     <div class="select-wrapper">
-        <select id="compressMode">
-            <option value="balanced">Balanced (рекомендовано)</option>
-            <option value="max">Maximum (мінімальний розмір)</option>
+        <select id="imageFormat">
+            <option value="png">PNG (найвища якість)</option>
+            <option value="jpg">JPG (змінна якість)</option>
+            <option value="webp">WEBP (сучасний)</option>
         </select>
     </div>
+  </div>
+
+  <!-- Додатковий слайдер якості (лише для JPG) -->
+  <div class="output-config" id="jpegQualityWrapper" style="display:none;">
+    <label for="jpegQuality">Якість JPG (0‑1, 1 – найвища)</label>
+    <input type="range" id="jpegQuality" min="0.1" max="1" step="0.05" value="0.9">
   </div>
 
   <!-- Список файлів -->
@@ -364,7 +369,7 @@
   <!-- Кнопки дій -->
   <div class="tool-actions">
     <button class="clear-btn" id="clearBtn" disabled>🗑 Очистити</button>
-    <button class="merge-btn" id="mergeBtn" disabled>Стиснути PDF</button>
+    <button class="merge-btn" id="mergeBtn" disabled>Конвертувати в фото</button>
   </div>
 
   <!-- Прогрес‑бар -->
@@ -372,41 +377,39 @@
 
   <!-- SEO‑контент -->
   <section class="seo-content">
-    <h2>Як стиснути PDF онлайн?</h2>
-    <p>Виберіть PDF‑файл у полі вище, виберіть бажаний режим стискання і натисніть кнопку «Стиснути PDF». Інструмент обробляє документ у вашому браузері, не передаючи дані на сервер.</p>
+    <h2>Як конвертувати PDF у зображення?</h2>
+    <p>Оберіть PDF‑файл, виберіть потрібний формат (JPG, PNG або WebP) і натисніть кнопку «Конвертувати в фото». Усі сторінки документу будуть перетворені у зображення, зібрані в один ZIP‑архів.</p>
 
-    <h2>Переваги онлайн‑стиснення PDF</h2>
+    <h2>Переваги онлайн‑конвертера PDF → Фото</h2>
     <ul>
         <li>100 % безкоштовно</li>
-        <li>Без реєстрації та обмежень</li>
-        <li>Повна конфіденційність – файл не залишає ваш пристрій</li>
-        <li>Миттєва обробка навіть великих документів</li>
+        <li>Конфіденційно – дані обробляються лише у вашому браузері</li>
+        <li>Підтримка трьох форматів зображень</li>
+        <li>Швидко працює на будь‑якому пристрої</li>
     </ul>
 
-    <h2>Коли варто стискати PDF?</h2>
-    <p>Стискання корисне, коли треба відправити файл електронною поштою, завантажити його у хмару або заощадити місце на диску, зберігаючи при цьому читабельність.</p>
+    <h2>Коли це корисно?</h2>
+    <p>Коли потрібні скріншоти окремих сторінок PDF, підготовка матеріалів для соцмереж, створення колажу чи підготовка картинок до подальшого редагування.</p>
   </section>
 
   <!-- Інші інструменти -->
   <div class="other-tools">
     <h2>Інші PDF інструменти</h2>
     <div class="tools-grid">
-        <a href="#" data-link="pdf/merge.html" class="tool-card">
-            <span>🔗</span>
-            <h3>Об’єднати PDF</h3>
-            <p>З’єднує кілька PDF в один документ</p>
-        </a>
-        <a href="#" data-link="pdf/split.html" class="tool-card">
-            <span>✂</span>
-            <h3>Розбити PDF</h3>
-            <p>Розділяє PDF на окремі сторінки</p>
-        </a>
-        <a href="#" data-link="pdf/pdf‑to‑image.html" class="tool-card">
-            <span>📷</span><h3>PDF в фото</h3><p>Конвертувати PDF в зображення</p>
-        </a>
-        <a href="#" data-link="pdf/Image-to-pdf.html" class="tool-card">
-            <span>📷</span><h3>Зображення в PDF</h3><p>Конвертація зображення в PDF</p>
-        </a>
+      <a href="#" data-link="pdf/merge.html" class="tool-card">
+        <span>🔗</span><h3>Об’єднати PDF</h3><p>З’єднує кілька PDF в один документ</p>
+      </a>
+      <a href="#" data-link="pdf/compress.html" class="tool-card">
+        <span>🗜</span><h3>Стиснути PDF</h3><p>Зменшує розмір PDF файлу</p>
+      </a>
+      <a href="#" data-link="pdf/split.html" class="tool-card">
+        <span>✂</span>
+        <h3>Розділити PDF</h3>
+        <p>Розбий PDF на окремі сторінки</p>
+      </a>
+      <a href="#" data-link="pdf/Image-to-pdf.html" class="tool-card">
+          <span>📷</span><h3>Зображення в PDF</h3><p>Конвертація зображення в PDF</p>
+      </a>
     </div>
   </div>
 
@@ -419,9 +422,9 @@
 <script type="module" src="./../assets/js/main.js"></script>
 
 <script>
-/* -------------------------------------------------
-   1️⃣ Підготовка – UI, localStorage, модель
-   ------------------------------------------------- */
+/* ==========================================================
+   1️⃣ Підготовка – UI, localStorage, глобальна модель
+   ========================================================== */
 const { PDFDocument } = PDFLib;
 
 /* ==== UI‑елементи ==== */
@@ -434,14 +437,17 @@ const progressWr      = document.getElementById('progressWrapper');
 const progressBar     = document.getElementById('progressBar');
 const outputNameInp   = document.getElementById('outputName');
 const randomNameChk   = document.getElementById('randomNameToggle');
-const compressModeSel = document.getElementById('compressMode');
+const imageFormatSel  = document.getElementById('imageFormat');
+const jpegQualityInp  = document.getElementById('jpegQuality');
+const jpegQualityWrap = document.getElementById('jpegQualityWrapper');
 
 /* ==== localStorage ==== */
-const SETTINGS_KEY = 'pdfCompressSettings';
+const SETTINGS_KEY = 'pdfToImgSettings';
 const DEFAULT_SETTINGS = {
-    outputName:'compressed',
+    outputName:'photos',
     randomName:false,
-    compressMode:'balanced'
+    imageFormat:'png',      // png | jpg | webp
+    jpegQuality:0.9
 };
 let settings = (() => {
     try{
@@ -452,16 +458,23 @@ let settings = (() => {
 function saveSettings(){ localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings)); }
 
 /* ==== застосовуємо збережені налаштування ==== */
-outputNameInp.value = settings.outputName;
+outputNameInp.value   = settings.outputName;
 randomNameChk.checked = settings.randomName;
-compressModeSel.value = settings.compressMode;
+imageFormatSel.value   = settings.imageFormat;
+jpegQualityInp.value   = settings.jpegQuality;
+
+/* покажемо/приховаємо слайдер якості для JPG */
+function updateQualityVisibility(){
+    jpegQualityWrap.style.display = (imageFormatSel.value==='jpg') ? 'flex' : 'none';
+}
+updateQualityVisibility();
 
 /* ==== глобальна модель ==== */
-let file = null;
+let file = null;      // один PDF‑файл у даний момент
 
-/* -------------------------------------------------
+/* ==========================================================
    2️⃣ UI‑Helpers
-   ------------------------------------------------- */
+   ========================================================== */
 function enableButtons(state){
     mergeBtn.disabled = !state;
     clearBtn.disabled = !state;
@@ -480,9 +493,9 @@ function formatBytes(b){
     return `${b.toFixed(1)} ${u[i]}`;
 }
 
-/* -------------------------------------------------
+/* ==========================================================
    3️⃣ Обробка файлу (drag‑&‑drop, input)
-   ------------------------------------------------- */
+   ========================================================== */
 dropzone.addEventListener('click',()=>fileInput.click());
 
 dropzone.addEventListener('dragover',e=>{e.preventDefault();dropzone.classList.add('dragover');});
@@ -501,9 +514,9 @@ function handleFile(f){
     enableButtons(true);
 }
 
-/* -------------------------------------------------
-   4️⃣ Відображення вибраного файлу
-   ------------------------------------------------- */
+/* ==========================================================
+   4️⃣ Відображення файлу в списку
+   ========================================================== */
 function renderFileItem(f){
     fileList.innerHTML = `
         <div class="file-item">
@@ -516,7 +529,7 @@ function renderFileItem(f){
         </div>`;
     fileList.querySelector('.rm-btn').addEventListener('click',clearAll);
 
-    // прев’ю (просто перша сторінка)
+    // прев’ю – лише перша сторінка
     generateThumbnail(f).then(src=>{
         const thumb = fileList.querySelector('.thumb');
         if(src) thumb.innerHTML = `<img src="${src}" alt="preview">`;
@@ -524,7 +537,7 @@ function renderFileItem(f){
 }
 
 /* -------------------------------------------------
-   5️⃣ Прев’ю – PDF.js (перша сторінка)
+   5️⃣ Прев’ю (перша сторінка) через PDF.js
    ------------------------------------------------- */
 async function generateThumbnail(file){
     const arr = await file.arrayBuffer();
@@ -538,9 +551,9 @@ async function generateThumbnail(file){
     return canvas.toDataURL('image/png');
 }
 
-/* -------------------------------------------------
-   6️⃣ Очищення
-   ------------------------------------------------- */
+/* ==========================================================
+   5️⃣ Очищення
+   ========================================================== */
 function clearAll(){
     file = null;
     fileList.innerHTML = '';
@@ -548,105 +561,114 @@ function clearAll(){
 }
 clearBtn.addEventListener('click',clearAll);
 
-/* -------------------------------------------------
-   7️⃣ Випадкове ім’я файлу
-   ------------------------------------------------- */
-function randomFileName(){ return `compressed_${Date.now()}.pdf`; }
+/* ==========================================================
+   6️⃣ Випадкове ім’я архіву
+   ========================================================== */
+function randomFileName(){ return `photos_${Date.now()}.zip`; }
 
-/* -------------------------------------------------
-   8️⃣ Стиснення PDF
-   ------------------------------------------------- */
+/* ==========================================================
+   7️⃣ Конвертація PDF → зображення → ZIP
+   ========================================================== */
 mergeBtn.addEventListener('click', async()=>{
 
     if(!file) return;
 
-    // блокування UI
+    // Блокуємо UI
     mergeBtn.disabled = true;
     clearBtn.disabled = true;
     progressWr.style.display = 'block';
     progressBar.style.width = '0%';
 
-    // параметри стискання
-    const mode = compressModeSel.value;          // balanced | max
-    const quality = mode==='max' ? 0.4 : 0.7;    // JPEG‑якість
-    const scale   = mode==='max' ? 0.8 : 1;      // масштаб
+    const format = imageFormatSel.value;          // png | jpg | webp
+    const jpegQuality = parseFloat(jpegQualityInp.value); // лише для jpg
 
-    // читаємо вхідний PDF (PDF.js)
+    // Читаємо PDF через PDF.js
     const srcArr = await file.arrayBuffer();
     const srcPdf = await pdfjsLib.getDocument({data:srcArr}).promise;
 
-    // створюємо новий PDF (PDF‑Lib)
-    const newPdf = await PDFDocument.create();
+    // Підготовка ZIP‑архіву
+    const zip = new JSZip();
 
     for(let i=1;i<=srcPdf.numPages;i++){
         const page = await srcPdf.getPage(i);
-        const viewport = page.getViewport({scale});
+        const viewport = page.getViewport({scale:1});   // 100 % масштабу
 
-        // 1️⃣ canvas
+        // canvas → зображення
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = viewport.width;
         canvas.height = viewport.height;
         await page.render({canvasContext:ctx,viewport}).promise;
 
-        // 2️⃣ JPEG (якість залежить від режиму)
-        const jpegData = canvas.toDataURL('image/jpeg', quality);
-        const jpegImg = await newPdf.embedJpg(jpegData);
+        let mime, quality;
+        if(format==='jpg'){
+            mime = 'image/jpeg';
+            quality = jpegQuality;          // 0‑1
+        }else if(format==='webp'){
+            mime = 'image/webp';
+            quality = 0.9;
+        }else{
+            mime = 'image/png';
+            quality = 1;
+        }
 
-        // 3️⃣ нова порожня сторінка + малюємо зображення
-        const newPage = newPdf.addPage([viewport.width, viewport.height]);
-        newPage.drawImage(jpegImg,{x:0,y:0,width:viewport.width,height:viewport.height});
+        const dataURL = canvas.toDataURL(mime, quality);
+        const base64 = dataURL.split(',')[1];
+        const fileName = `page-${String(i).padStart(3,'0')}.${format}`;
 
-        // прогрес‑бар
+        zip.file(fileName, base64, {base64:true});
+
+        // оновлюємо прогрес‑бар
         progressBar.style.width = Math.round(i/srcPdf.numPages*100)+'%';
     }
 
-    // фінальний PDF
-    const outBytes = await newPdf.save({compress:true});
-    const blob = new Blob([outBytes],{type:'application/pdf'});
+    // Генеруємо ZIP‑Blob
+    const zipBlob = await zip.generateAsync({type:'blob'});
 
-    // назва файлу
+    // Формуємо назву архіву
     let outName;
     if(randomNameChk.checked){
         outName = randomFileName();
     }else{
-        const user = outputNameInp.value.trim() || 'compressed';
-        outName = user.toLowerCase().endsWith('.pdf') ? user : `${user}.pdf`;
+        const user = outputNameInp.value.trim() || 'photos';
+        outName = user.toLowerCase().endsWith('.zip') ? user : `${user}.zip`;
     }
 
-    // скачування
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = outName; a.click();
-    URL.revokeObjectURL(url);
+    // Завантаження
+    saveAs(zipBlob, outName);   // функція з FileSaver.js
 
-    // повертаємо UI у звичайний стан
+    // Повертаємо UI у звичайний стан
     progressWr.style.display = 'none';
     mergeBtn.disabled = false;
     clearBtn.disabled = false;
 
-    toast('✅ PDF успішно стиснено!','success');
+    toast('✅ PDF успішно конвертовано у фото!','success');
 });
 
-/* -------------------------------------------------
-   9️⃣ Синхронізація UI → localStorage
-   ------------------------------------------------- */
+/* ==========================================================
+   8️⃣ Синхронізація UI → localStorage
+   ========================================================== */
 outputNameInp.addEventListener('input',()=>{
-    settings.outputName = outputNameInp.value.trim() || 'compressed';
+    settings.outputName = outputNameInp.value.trim() || 'photos';
     saveSettings();
 });
 randomNameChk.addEventListener('change',()=>{
     settings.randomName = randomNameChk.checked;
     saveSettings();
 });
-compressModeSel.addEventListener('change',()=>{
-    settings.compressMode = compressModeSel.value;
+imageFormatSel.addEventListener('change',()=>{
+    settings.imageFormat = imageFormatSel.value;
+    saveSettings();
+    updateQualityVisibility();
+});
+jpegQualityInp.addEventListener('input',()=>{
+    settings.jpegQuality = parseFloat(jpegQualityInp.value);
     saveSettings();
 });
 
-/* -------------------------------------------------
-   10️⃣ Перший рендер (кнопки вимкнені)
-   ------------------------------------------------- */
+/* ==========================================================
+   9️⃣ Перший рендер (кнопки вимкнені)
+   ========================================================== */
 enableButtons(false);
 </script>
 

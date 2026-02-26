@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Конвертувати фото у PDF — LB Tools</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+<link rel="stylesheet" href="./../assets/css/reset.css">
+<link rel="stylesheet" href="./../assets/css/vars.css">
+<link rel="stylesheet" href="./../assets/css/style.css">
+<link rel="stylesheet" href="./../assets/css/header.css">
+<link rel="stylesheet" href="./../assets/css/footer.css">
+
+<!-- PDF‑Lib (створює PDF у пам’яті) -->
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+
+<!-- JSZip – залишено, хоча зараз не використовується -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<style>
+/* -------------------------------------------------
+   ПАЛІТРА (dark / light – залишена без змін)
+   ------------------------------------------------- */
+:root{
+    --bg-primary:#0a0f1f;   --bg-secondary:#0f172a;   --bg-tertiary:#162033;
+    --text-primary:#e6edf3; --text-secondary:#9aa4b2; --text-muted:#6b7280;
+    --accent:#06b6d4;       --accent-hover:#0891b2;   --accent-soft:rgba(6,182,212,.15);
+    --card-bg:rgba(255,255,255,.035); --border-color:rgba(255,255,255,.08);
+    --header-bg:rgba(10,15,31,.75);
+    --glow:0 0 30px rgba(6,182,212,.45); --radius:18px; --transition:.25s ease;
+}
+.light-theme{
+    --bg-primary:#f4f7fb;   --bg-secondary:#ffffff;   --bg-tertiary:#eef2f7;
+    --text-primary:#0f172a;--text-secondary:#475569;--text-muted:#64748b;
+    --accent:#0891b2;      --accent-hover:#0e7490;   --accent-soft:rgba(8,145,178,.12);
+    --card-bg:rgba(0,0,0,.035); --border-color:rgba(0,0,0,.08);
+    --header-bg:rgba(255,255,255,.8);
+    --glow:0 0 20px rgba(8,145,178,.35);
+}
+
+/* -------------------------------------------------
+   БАЗОВІ СТИЛІ (клоновано з «Об’єднати PDF», без змін)
+   ------------------------------------------------- */
+.tool-page{padding:120px 20px 100px;}
+.tool-container{max-width:900px;margin:0 auto;}
+
+/* ---- назва «назад» ---- */
+.tool-back{margin-bottom:30px;}
+.tool-back a{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:12px 18px;border-radius:12px;
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--border-color);
+    font-size:14px;font-weight:600;color:var(--text-primary);
+    text-decoration:none;transition:var(--transition);
+}
+.tool-back a:hover{
+    border-color:#6366f1;color:#6366f1;
+    box-shadow:0 0 12px rgba(99,102,241,.25);
+}
+
+/* ---- хедер ---- */
+.tool-header{text-align:center;margin-bottom:50px;}
+.tool-header h1{
+    font-size:clamp(28px,4vw,42px);font-weight:800;
+    background:linear-gradient(90deg,#6366f1,#22d3ee);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    margin-bottom:15px;
+}
+.tool-header p{font-size:16px;color:var(--text-secondary);}
+
+/* ---- налаштування назви файлу ---- */
+.output-config{
+    display:flex;flex-direction:column;gap:16px;margin-bottom:35px;
+}
+.output-config label{
+    font-size:14px;font-weight:500;color:var(--text-secondary);
+}
+.output-config input[type=text]{
+    padding:14px;border-radius:12px;
+    border:1px solid var(--border-color);
+    background:var(--card-bg);
+    font-size:14px;color:var(--text-primary);
+    transition:var(--transition);
+}
+.output-config input[type=text]::placeholder{
+    color:var(--text-secondary);opacity:.6;
+}
+.output-config input[type=text]:focus{
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px var(--accent-soft);
+}
+
+/* ---- switch (випадкове ім’я) ---- */
+.switch{
+    position:relative;display:inline-block;
+    width:46px;height:24px;
+}
+.switch input{opacity:0;width:0;height:0;}
+.slider{
+    position:absolute;cursor:pointer;inset:0;
+    background:#374151;border-radius:50px;
+    transition:.3s;
+}
+.slider:before{
+    content:"";position:absolute;height:18px;width:18px;
+    left:3px;top:3px;background:white;
+    border-radius:50%;transition:.3s;
+}
+.switch input:checked+.slider{background:var(--accent);}
+.switch input:checked+.slider:before{transform:translateX(22px);}
+
+/* ---- dropzone ---- */
+.dropzone{
+    border:2px dashed var(--border-color);
+    padding:70px 20px;text-align:center;
+    border-radius:18px;cursor:pointer;
+    background:rgba(255,255,255,.02);font-size:15px;
+    margin-bottom:30px;transition:var(--transition);
+}
+.dropzone:hover{border-color:var(--accent);background:rgba(99,102,241,.07);}
+.dropzone.dragover{
+    border-color:var(--accent);
+    background:rgba(99,102,241,.12);
+    transform:scale(1.02);
+}
+
+/* ---- режим drag‑&‑drop ---- */
+.mode-switch{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:25px;padding:14px 18px;
+    border-radius:14px;background:rgba(255,255,255,.03);
+    border:1px solid var(--border-color);font-size:14px;
+}
+
+/* -------------------------------------------------
+   ФАЙЛ‑ITEM (картинка + керування)
+   ------------------------------------------------- */
+.file-item{
+    display:flex;align-items:center;gap:16px;
+    padding:16px;border-radius:16px;
+    border:1px solid var(--border-color);
+    background:rgba(255,255,255,.02);
+    margin-bottom:14px;transition:var(--transition);
+}
+.file-item:hover{
+    border-color:var(--accent);
+    background:rgba(255,255,255,.04);
+}
+.thumb{
+    width:80px;height:80px;border-radius:12px;
+    background:#1f2937;overflow:hidden;flex-shrink:0;
+}
+.thumb img{width:100%;height:100%;object-fit:cover;}
+.info{
+    flex:1;display:flex;flex-direction:column;gap:4px;
+}
+.name{font-weight:600;font-size:14px;color:var(--text-primary);}
+.size{font-size:12px;color:var(--text-secondary);}
+
+/* ---- кнопки дій над файлом ---- */
+.file-actions{
+    display:flex;gap:8px;
+}
+.file-actions button{
+    width:36px;height:36px;border-radius:10px;
+    border:1px solid var(--border-color);
+    background:transparent;cursor:pointer;
+    transition:.2s;font-size:14px;
+}
+.file-actions button:hover{
+    border-color:var(--accent);
+    color:var(--accent);
+}
+
+/* ---- головні дії (кнопки) ---- */
+.tool-actions{
+    display:flex;gap:18px;justify-content:center;
+    margin-top:35px;flex-wrap:wrap;
+}
+.merge-btn{
+    background:linear-gradient(135deg,#6366f1,#4f46e5);
+    border:none;padding:15px 40px;
+    border-radius:14px;font-weight:700;font-size:15px;
+    cursor:pointer;transition:var(--transition);color:#fff;
+    min-width:220px;
+}
+.merge-btn:hover{
+    transform:translateY(-4px);
+    box-shadow:0 12px 25px rgba(79,70,229,.5);
+}
+.merge-btn:disabled{
+    opacity:.5;cursor:not-allowed;box-shadow:none;transform:none;
+}
+.clear-btn{
+    background:rgba(255,255,255,.04);
+    border:1px solid var(--border-color);
+    padding:15px 30px;border-radius:14px;
+    font-weight:600;cursor:pointer;
+    transition:var(--transition);color:var(--text-primary);
+}
+.clear-btn:hover{
+    background:rgba(239,68,68,.1);
+    border-color:#ef4444;color:#ef4444;
+}
+.clear-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ---- прогрес‑бар ---- */
+.progress-wrapper{
+    width:100%;height:10px;background:var(--border-color);
+    border-radius:50px;margin-top:25px;overflow:hidden;
+    display:none;
+}
+.progress-bar{
+    height:100%;width:0%;
+    background:linear-gradient(90deg,#6366f1,#22d3ee);
+    box-shadow:0 0 15px rgba(99,102,241,.7);
+    transition:.3s;
+}
+
+/* ---- toast ---- */
+.toast{
+    position:fixed;bottom:30px;right:30px;
+    background:#111827;border:1px solid var(--border-color);
+    padding:14px 20px;border-radius:12px;
+    opacity:0;transform:translateY(20px);
+    transition:.3s;z-index:9999;
+}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast-success{border-color:#22c55e;}
+.toast-error{border-color:#ef4444;}
+
+/* ---- SEO‑контент ---- */
+.seo-content{
+    margin-top:80px;padding:40px;border-radius:20px;
+    background:rgba(255,255,255,.02);
+    border:1px solid var(--border-color);
+}
+.seo-content h2{font-size:20px;margin:30px 0 12px;}
+.seo-content p{color:var(--text-secondary);line-height:1.6;}
+.seo-content ul{margin-top:15px;padding-left:18px;}
+.seo-content li{margin-bottom:8px;}
+
+/* ---- інші інструменти ---- */
+.other-tools{margin-top:120px;}
+.other-tools h2{
+    text-align:center;font-size:26px;margin-bottom:40px;
+    background:linear-gradient(90deg,#6366f1,#22d3ee);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.tools-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:24px;
+}
+.tool-card{
+    padding:30px;border-radius:18px;
+    border:1px solid var(--border-color);
+    background:rgba(255,255,255,.02);
+    text-decoration:none;color:var(--text-primary);
+    display:flex;flex-direction:column;gap:10px;
+    transition:var(--transition);
+}
+.tool-card:hover{
+    border-color:var(--accent);
+    transform:translateY(-8px);
+    box-shadow:0 20px 35px rgba(0,0,0,.35);
+}
+.tool-card span{font-size:32px;}
+.tool-card h3{font-size:18px;margin:0;}
+.tool-card p{font-size:14px;color:var(--text-secondary);margin:0;}
+
+/* ---- адаптивність ---- */
+@media(max-width:600px){
+    .tool-header{margin-bottom:30px;}
+    .output-config{gap:12px;}
+    .mode-switch{flex-direction:column;align-items:flex-start;gap:12px;}
+    .dropzone{padding:50px 15px;}
+    .merge-btn,.clear-btn{width:100%;}
+    .file-item{flex-direction:column;align-items:flex-start;}
+    .file-actions{margin-top:12px;}
+}
+</style>
+</head>
+<body class="dark-theme"><!-- або .light-theme -->
+
+<header></header>
+
+<main class="tool-page">
+<div class="tool-container">
+
+  <!-- Повернення -->
+  <div class="tool-back"><a href="#" data-link="pdf/pdf-tools.html">← До всіх PDF‑інструментів</a></div>
+
+  <!-- Хедер -->
+  <div class="tool-header">
+    <h1>Фото → PDF</h1>
+    <p>Об’єднайте кілька зображень в один PDF‑документ</p>
+  </div>
+
+  <!-- Налаштування назви PDF -->
+  <div class="output-config">
+    <label for="outputName">Назва результату (без .pdf):</label>
+    <input type="text" id="outputName" placeholder="photos">
+    <div style="display:flex;align-items:center;gap:12px;">
+        <span>Випадкове ім’я</span>
+        <label class="switch"><input type="checkbox" id="randomNameToggle"><span class="slider"></span></label>
+    </div>
+  </div>
+
+  <!-- Dropzone -->
+  <div class="dropzone" id="dropzone">
+    Перетягніть зображення сюди або натисніть для вибору
+    <input type="file" id="fileInput" accept="image/*" multiple hidden>
+  </div>
+
+  <!-- Перемикач режиму drag‑&‑drop -->
+  <div class="mode-switch">
+    <span>Режим впорядкування</span>
+    <label class="switch"><input type="checkbox" id="dragModeToggle"><span class="slider"></span></label>
+  </div>
+
+  <!-- Список файлів -->
+  <div id="fileList"></div>
+
+  <!-- Кнопки дій -->
+  <div class="tool-actions">
+    <button class="clear-btn" id="clearBtn" disabled>🗑 Очистити</button>
+    <button class="merge-btn" id="mergeBtn" disabled>Створити PDF</button>
+  </div>
+
+  <!-- Прогрес‑бар -->
+  <div class="progress-wrapper" id="progressWrapper"><div class="progress-bar" id="progressBar"></div></div>
+
+  <!-- SEO‑контент -->
+  <section class="seo-content">
+    <h2>Як перетворити фото у PDF онлайн?</h2>
+    <p>Обирайте зображення (JPEG, PNG, WebP, GIF, BMP, SVG), задавайте порядок
+    (відповідно до кнопок «↑ / ↓» або перетягуванням), вкажіть ім’я PDF‑файлу
+    і натискайте «Створити PDF». Усі дані обробляються лише у вашому браузері.</p>
+
+    <h2>Переваги інструменту</h2>
+    <ul>
+        <li>100 % безкоштовно</li>
+        <li>Не потребує реєстрації</li>
+        <li>Працює в будь‑якому браузері</li>
+        <li>Підтримує усі популярні формати зображень</li>
+        <li>Повний контроль над порядком фотографій</li>
+    </ul>
+
+    <h2>Коли варто конвертувати фото в PDF?</h2>
+    <p>Для створення фотопортфоліо, підготовки роздрукованих альбомів,
+    збереження сканованих документів, а також коли потрібно згрупувати
+    зображення у зручний для перегляду формат.</p>
+  </section>
+
+  <!-- Інші інструменти -->
+  <div class="other-tools">
+    <h2>Інші PDF‑інструменти</h2>
+    <div class="tools-grid">
+      <a href="#" data-link="pdf/merge.html" class="tool-card"><span>🔗</span><h3>Об’єднати PDF</h3><p>З’єднує кілька PDF в один документ</p></a>
+      <a href="#" data-link="pdf/split.html" class="tool-card"><span>✂</span><h3>Розбити PDF</h3><p>Розділяє PDF на окремі сторінки</p></a>
+      <a href="#" data-link="pdf/compress.html" class="tool-card"><span>🗜</span><h3>Стиснути PDF</h3><p>Зменшує розмір PDF файлу</p></a>
+      <a href="#" data-link="pdf/pdf‑to‑image.html" class="tool-card">
+            <span>📷</span><h3>PDF в фото</h3><p>Конвертувати PDF в зображення</p>
+        </a>
+    </div>
+  </div>
+
+</div>
+</main>
+
+<footer></footer>
+
+<script type="module" src="./../assets/js/header.js"></script>
+<script type="module" src="./../assets/js/main.js"></script>
+
+<script>
+const { PDFDocument } = PDFLib;
+
+const dropzone        = document.getElementById('dropzone');
+const fileInput       = document.getElementById('fileInput');
+const fileList        = document.getElementById('fileList');
+const mergeBtn        = document.getElementById('mergeBtn');
+const clearBtn        = document.getElementById('clearBtn');
+const progressWr      = document.getElementById('progressWrapper');
+const progressBar     = document.getElementById('progressBar');
+const outputNameInp   = document.getElementById('outputName');
+const randomNameChk   = document.getElementById('randomNameToggle');
+const dragModeToggle  = document.getElementById('dragModeToggle');
+
+const SUPPORTED_MIMES = ['image/jpeg','image/jpg','image/png','image/webp','image/gif','image/bmp','image/svg+xml'];
+const SETTINGS_KEY = 'photoToPdfSettings';
+const DEFAULT_SETTINGS = { outputName:'photos', randomName:false, dragMode:false };
+
+let settings = (() => {
+    try { return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {...DEFAULT_SETTINGS}; } 
+    catch { return {...DEFAULT_SETTINGS}; }
+})();
+outputNameInp.value = settings.outputName;
+randomNameChk.checked = settings.randomName;
+dragModeToggle.checked = settings.dragMode;
+
+function saveSettings(){ localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings)); }
+
+let files = [];
+let isDragMode = settings.dragMode;
+
+function enableButtons(state){
+    mergeBtn.disabled = !state;
+    clearBtn.disabled = !state;
+}
+function toast(msg,type='info',timeout=2500){
+    const el = document.createElement('div');
+    el.className = `toast toast-${type}`; el.textContent = msg; document.body.appendChild(el);
+    requestAnimationFrame(()=>el.classList.add('show'));
+    setTimeout(()=>{el.classList.remove('show'); setTimeout(()=>el.remove(),300);},timeout);
+}
+function formatBytes(b){
+    const u = ['B','KB','MB','GB','TB'];let i=0; while(b>=1024 && i<u.length-1){b/=1024;i++;} return `${b.toFixed(1)} ${u[i]}`;
+}
+
+// ---- drag & input
+dropzone.addEventListener('click',()=>fileInput.click());
+dropzone.addEventListener('dragover',e=>{e.preventDefault(); dropzone.classList.add('dragover');});
+dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('dragover'));
+dropzone.addEventListener('drop',e=>{e.preventDefault(); dropzone.classList.remove('dragover'); addFiles(e.dataTransfer.files); });
+fileInput.addEventListener('change',e=>addFiles(e.target.files));
+
+function addFiles(selected){
+    let added=false;
+    for(const f of selected){
+        if(!SUPPORTED_MIMES.includes(f.type)){ toast(`Формат ${f.type} не підтримується`, 'error'); continue; }
+        if(!files.some(it=>it.name===f.name && it.size===f.size)){ files.push(f); added=true; }
+    }
+    if(added) renderList();
+}
+
+function renderList(){
+    fileList.innerHTML = '';
+    files.forEach((f,i)=>fileList.appendChild(createFileItem(f,i)));
+    enableButtons(files.length>0);
+}
+
+function createFileItem(file,index){
+    const item = document.createElement('div'); item.className='file-item'; item.dataset.idx=index; item.draggable=isDragMode;
+    const url = URL.createObjectURL(file);
+    item.innerHTML = `
+        <div class="thumb"><img src="${url}" alt="preview"></div>
+        <div class="info"><span class="name">${file.name}</span><span class="size">${formatBytes(file.size)}</span></div>
+        <div class="file-actions">
+            <button class="up-btn" title="Вгору">⬆</button>
+            <button class="down-btn" title="Вниз">⬇</button>
+            <button class="rm-btn" title="Видалити">✖</button>
+        </div>
+    `;
+    item.querySelector('.up-btn').addEventListener('click',()=>moveFile(index,-1));
+    item.querySelector('.down-btn').addEventListener('click',()=>moveFile(index,1));
+    item.querySelector('.rm-btn').addEventListener('click',()=>removeFile(index));
+
+    if(isDragMode){
+        item.addEventListener('dragstart',e=>{ e.dataTransfer.setData('text/plain',index); item.classList.add('dragging'); });
+        item.addEventListener('dragend',()=>item.classList.remove('dragging'));
+        item.addEventListener('dragover',e=>e.preventDefault());
+        item.addEventListener('dragenter',()=>item.classList.add('over'));
+        item.addEventListener('dragleave',()=>item.classList.remove('over'));
+        item.addEventListener('drop',e=>{e.preventDefault(); const from=Number(e.dataTransfer.getData('text/plain')); moveFileAbsolute(from,index);});
+    }
+    return item;
+}
+
+function removeFile(idx){ files.splice(idx,1); renderList(); }
+function moveFile(idx,delta){ const newIdx=idx+delta; if(newIdx<0||newIdx>=files.length) return; [files[idx],files[newIdx]]=[files[newIdx],files[idx]]; renderList(); }
+function moveFileAbsolute(from,to){ if(from===to) return; const [el]=files.splice(from,1); files.splice(to,0,el); renderList(); }
+
+function clearAll(){ files=[]; renderList(); }
+clearBtn.addEventListener('click',()=>{ if(confirm('Видалити всі зображення?')) clearAll(); });
+
+function randomFileName(){ return `photos_${Date.now()}.pdf`; }
+
+mergeBtn.addEventListener('click',async()=>{
+    if(!files.length) return;
+    mergeBtn.disabled = true; clearBtn.disabled = true; progressWr.style.display='block'; progressBar.style.width='0%';
+    const imgData = await Promise.all(files.map(f=>loadImageToCanvas(f)));
+    const maxWidth = Math.max(...imgData.map(d=>d.width));
+    const pdfDoc = await PDFDocument.create();
+    for(let i=0;i<imgData.length;i++){
+        const {canvas,width,height} = imgData[i];
+        const scale = Math.min(1, maxWidth/width);
+        const newW = width*scale, newH = height*scale;
+        const jpegData = canvas.toDataURL('image/jpeg',0.8).split(',')[1];
+        const uint8 = Uint8Array.from(atob(jpegData),c=>c.charCodeAt(0));
+        const img = await pdfDoc.embedJpg(uint8);
+        const page = pdfDoc.addPage([newW,newH]);
+        page.drawImage(img,{x:0,y:0,width:newW,height:newH});
+        progressBar.style.width = Math.round(((i+1)/imgData.length)*100)+'%';
+    }
+    const pdfBytes = await pdfDoc.save();
+    let outName = randomNameChk.checked ? randomFileName() : (outputNameInp.value.trim()||'photos')+'.pdf';
+    const blob = new Blob([pdfBytes],{type:'application/pdf'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=outName; a.click();
+    progressWr.style.display='none'; mergeBtn.disabled=false; clearBtn.disabled=false;
+    toast('✅ PDF успішно створено!','success');
+});
+
+function loadImageToCanvas(file){
+    return new Promise((resolve,reject)=>{
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        if(file.type==='image/svg+xml') img.crossOrigin='anonymous';
+        img.onload = ()=>{
+            const canvas=document.createElement('canvas'), ctx=canvas.getContext('2d');
+            canvas.width=img.naturalWidth; canvas.height=img.naturalHeight;
+            ctx.drawImage(img,0,0); URL.revokeObjectURL(url);
+            resolve({canvas,width:canvas.width,height:canvas.height});
+        };
+        img.onerror = e=>{ URL.revokeObjectURL(url); toast('Не вдалось завантажити зображення','error'); reject(e); };
+        img.src=url;
+    });
+}
+
+dragModeToggle.addEventListener('change',e=>{ isDragMode=e.target.checked; settings.dragMode=isDragMode; saveSettings(); renderList(); });
+outputNameInp.addEventListener('input',()=>{ settings.outputName=outputNameInp.value.trim()||'photos'; saveSettings(); });
+randomNameChk.addEventListener('change',()=>{ settings.randomName=randomNameChk.checked; saveSettings(); });
+
+enableButtons(false);
+</script>
+
+</body>
+</html>
