@@ -1,0 +1,413 @@
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Об'єднати PDF онлайн безкоштовно — З'єднати PDF файли | LB Tools</title>
+
+<meta name="description" content="Об'єднати PDF онлайн безкоштовно та без реєстрації. З'єднай кілька PDF файлів в один документ прямо у браузері. Без завантаження на сервер. Швидко, безпечно, без обмежень.">
+
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://твійдомен.com/pdf/merge.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Об'єднати PDF онлайн безкоштовно — LB Tools">
+<meta property="og:description" content="З'єднай кілька PDF файлів в один документ прямо у браузері. Безкоштовно та без реєстрації.">
+<meta property="og:url" content="https://твійдомен.com/pdf/merge.html">
+<meta property="og:image" content="https://твійдомен.com/assets/img/og-merge.jpg">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Об'єднати PDF онлайн — LB Tools">
+<meta name="twitter:description" content="Безкоштовне онлайн об'єднання PDF файлів прямо у браузері.">
+<meta name="twitter:image" content="https://твійдомен.com/assets/img/og-merge.jpg">
+
+<!-- Schema.org -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Об'єднати PDF — LB Tools",
+  "url": "https://твійдомен.com/pdf/merge.html",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires JavaScript",
+  "description": "Безкоштовний онлайн інструмент для об'єднання PDF файлів прямо у браузері без завантаження на сервер.",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+
+<link rel="stylesheet" href="../assets/css/reset.css">
+<link rel="stylesheet" href="../assets/css/vars.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="../assets/css/header.css">
+<link rel="stylesheet" href="../assets/css/footer.css">
+
+<script defer src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+
+<style>
+
+/* ===== PAGE WRAPPER ===== */
+
+.tool-page {
+    padding: 120px 20px 100px;
+}
+
+.tool-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* ===== TOP BACK BUTTON ===== */
+
+.tool-back {
+    margin-bottom: 40px;
+}
+
+.tool-back a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* ===== TITLE ===== */
+
+.tool-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.tool-header h1 {
+    font-size: 42px;
+    margin-bottom: 15px;
+    background: linear-gradient(90deg,#6366f1,#22d3ee);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.tool-header p {
+    color: var(--text-secondary);
+}
+
+/* ===== DROPZONE ===== */
+
+.dropzone {
+    border: 2px dashed var(--border-color);
+    background: var(--card-bg);
+    padding: 60px 30px;
+    text-align: center;
+    border-radius: var(--radius);
+    margin-bottom: 40px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.dropzone:hover {
+    border-color: var(--accent);
+}
+
+.dropzone.dragover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+}
+
+/* ===== FILE LIST ===== */
+
+.file-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 14px 18px;
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.file-actions button {
+    background: none;
+    border: 1px solid var(--border-color);
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-left: 6px;
+    color: var(--text-primary);
+}
+
+.file-actions button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+/* ===== MAIN BUTTON ===== */
+
+.tool-actions {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.merge-btn {
+    background: var(--accent);
+    border: none;
+    padding: 14px 32px;
+    border-radius: var(--radius);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.merge-btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-3px);
+}
+
+.merge-btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+/* ===== OTHER TOOLS ===== */
+
+.other-tools {
+    margin-top: 100px;
+}
+
+.other-tools h2 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+    gap: 20px;
+}
+
+.tool-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 25px;
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: inherit;
+    transition: var(--transition);
+}
+
+.tool-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-5px);
+}
+
+.tool-card span {
+    font-size: 30px;
+}
+
+.tool-card h3 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.tool-card p {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header></header>
+
+<main class="tool-page">
+
+<div class="tool-container">
+
+<div class="tool-back">
+    <a href="#" data-link="pdf/pdf-tools.html">← До всіх PDF інструментів</a>
+</div>
+
+<div class="tool-header">
+    <h1>Об'єднати PDF</h1>
+    <p>З'єднай кілька PDF файлів в один документ прямо у браузері</p>
+</div>
+
+<div class="dropzone" id="dropzone">
+    Перетягніть PDF сюди або натисніть для вибору
+    <input type="file" id="fileInput" accept="application/pdf" multiple hidden>
+</div>
+
+<div id="fileList"></div>
+
+<div class="tool-actions">
+    <button class="merge-btn" id="mergeBtn" mergeBtn.textContent = "⏳ Об'єднання..."; disabled>
+        Об'єднати PDF
+    </button>
+    <section class="seo-content">
+    <h2>Як об'єднати PDF файли онлайн?</h2>
+    <p>Щоб об'єднати PDF файли, просто перетягніть документи у зону завантаження або виберіть їх вручну. Після цього натисніть кнопку "Об'єднати PDF" — інструмент миттєво з'єднає файли в один документ.</p>
+
+    <h2>Безпечне об'єднання PDF без завантаження на сервер</h2>
+    <p>Усі файли обробляються прямо у вашому браузері. Документи не передаються на сервер, що гарантує повну конфіденційність та безпеку даних.</p>
+
+    <h2>Переваги інструменту</h2>
+    <ul>
+    <li>100% безкоштовно</li>
+    <li>Без реєстрації</li>
+    <li>Без обмежень</li>
+    <li>Працює на будь-якому пристрої</li>
+    <li>Миттєва обробка</li>
+    </ul>
+    </section>
+</div>
+
+<!-- OTHER TOOLS -->
+
+<div class="other-tools">
+    <h2>Інші PDF інструменти</h2>
+
+    <div class="tools-grid">
+
+        <a href="#" data-link="pdf/split.html" class="tool-card">
+            <span>✂</span>
+            <h3>Розділити PDF</h3>
+            <p>Розбий PDF на окремі сторінки</p>
+        </a>
+
+        <a href="#" data-link="pdf/compress.html" class="tool-card">
+            <span>🗜</span>
+            <h3>Стиснути PDF</h3>
+            <p>Зменшити розмір PDF файлу</p>
+        </a>
+
+        <a href="#" data-link="pdf/password.html" class="tool-card">
+            <span>🔒</span>
+            <h3>Поставити пароль</h3>
+            <p>Захистити PDF документ</p>
+        </a>
+
+    </div>
+</div>
+
+</div>
+</main>
+
+<footer></footer>
+
+<script type="module" src="../assets/js/header.js"></script>
+<script type="module" src="../assets/js/footer.js"></script>
+<script type="module" src="../assets/js/main.js"></script>
+
+<script>
+const { PDFDocument } = PDFLib;
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const fileList = document.getElementById('fileList');
+const mergeBtn = document.getElementById('mergeBtn');
+
+let files = [];
+
+dropzone.addEventListener('click', () => fileInput.click());
+
+dropzone.addEventListener('dragover', e => {
+    e.preventDefault();
+    dropzone.classList.add('dragover');
+});
+
+dropzone.addEventListener('dragleave', () => {
+    dropzone.classList.remove('dragover');
+});
+
+dropzone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropzone.classList.remove('dragover');
+    handleFiles(e.dataTransfer.files);
+});
+
+fileInput.addEventListener('change', e => {
+    handleFiles(e.target.files);
+});
+
+function handleFiles(selectedFiles) {
+    for (let file of selectedFiles) {
+        if (file.type === "application/pdf") {
+            files.push(file);
+        }
+    }
+    renderList();
+}
+
+function renderList() {
+    fileList.innerHTML = '';
+    files.forEach((file, index) => {
+        const div = document.createElement('div');
+        div.className = 'file-item';
+        div.innerHTML = `
+            <span>${index+1}. ${file.name}</span>
+            <div class="file-actions">
+                <button onclick="moveUp(${index})">⬆</button>
+                <button onclick="moveDown(${index})">⬇</button>
+                <button onclick="removeFile(${index})">✖</button>
+            </div>
+        `;
+        fileList.appendChild(div);
+    });
+
+    mergeBtn.disabled = files.length < 2;
+}
+
+window.removeFile = function(index) {
+    files.splice(index, 1);
+    renderList();
+}
+
+window.moveUp = function(index) {
+    if (index === 0) return;
+    [files[index-1], files[index]] = [files[index], files[index-1]];
+    renderList();
+}
+
+window.moveDown = function(index) {
+    if (index === files.length - 1) return;
+    [files[index+1], files[index]] = [files[index], files[index+1]];
+    renderList();
+}
+
+mergeBtn.addEventListener('click', async () => {
+
+    mergeBtn.disabled = true;
+    mergeBtn.textContent = "Об'єдную...";
+
+    const mergedPdf = await PDFDocument.create();
+
+    for (let file of files) {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await PDFDocument.load(arrayBuffer);
+        const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+        pages.forEach(page => mergedPdf.addPage(page));
+    }
+
+    const mergedPdfFile = await mergedPdf.save();
+    const blob = new Blob([mergedPdfFile], { type: 'application/pdf' });
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = "merged.pdf";
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+    mergeBtn.textContent = "Об'єднати PDF";
+    mergeBtn.disabled = false;
+});
+</script>
+
+</body>
+</html>
