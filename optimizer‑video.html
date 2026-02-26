@@ -1,159 +1,98 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Оптимізатор відео</title>
-
-    <meta name="viewport" id="viewportMeta"
-          content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-
-    <!-- ==== CSS ==== -->
-    <link rel="stylesheet" href="./assets/css/reset.css">
-    <link rel="stylesheet" href="./assets/css/vars.css">
-    <link rel="stylesheet" href="./assets/css/style.css">
-    <link rel="stylesheet" href="./assets/css/optimizer-video.css">
-    <link rel="stylesheet" href="./assets/css/header.css">
-    <link rel="stylesheet" href="./assets/css/footer.css">
-
-    <!-- ==== Google Fonts ==== -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-          rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Local Video Compressor</title>
 </head>
-
 <body>
-    <header></header>
 
-    <main class="container">
-        <div class="container">
+<h2>Повністю локальний відео-компресор</h2>
 
-            <!-- HERO -->
-            <section class="tool-hero">
-                <h1>Оптимізатор відео</h1>
-                <p class="tool-subtitle">
-                    Стискайте MP4, WebM, OGG, MKV, AVI, GIF – без вихідних серверів.
-                    Усе працює в браузері.
-                </p>
-            </section>
+<input type="file" id="upload" accept="video/*"><br><br>
 
-            <!-- CONTROLS -->
-            <section class="controls">
+<label>Ширина:</label>
+<input type="number" id="width" placeholder="1280"><br><br>
 
-                <div class="form-group">
-                    <label class="form-label" for="files">Файли</label>
-                    <input type="file" id="files" class="form-input"
-                           accept="video/*" multiple>
-                </div>
+<label>FPS:</label>
+<input type="number" id="fps" placeholder="30"><br><br>
 
-                <div class="form-group">
-                    <label class="form-label" for="width">
-                        Ширина (px) – 0 = без зміни
-                    </label>
-                    <input type="number" id="width" class="form-input"
-                           min="0" value="0">
-                </div>
+<label>Бітрейт (k):</label>
+<input type="number" id="bitrate" placeholder="1000"><br><br>
 
-                <div class="form-group">
-                    <label class="form-label" for="height">
-                        Висота (px) – 0 = без зміни
-                    </label>
-                    <input type="number" id="height" class="form-input"
-                           min="0" value="0">
-                </div>
+<label>Формат:</label>
+<select id="format">
+  <option value="mp4">mp4</option>
+  <option value="webm">webm</option>
+</select><br><br>
 
-                <div class="form-group">
-                    <label class="form-label" for="quality">Якість (0‑100)</label>
-                    <input type="number" id="quality" class="form-input"
-                           min="0" max="100" value="80">
-                </div>
+<label>
+  <input type="checkbox" id="mute">
+  Прибрати звук
+</label><br><br>
 
-                <div class="form-group">
-                    <label class="form-label" for="format">Формат</label>
-                    <select id="format" class="form-select">
-                        <option value="auto">Авто (зберегти тип)</option>
-                        <option value="mp4">MP4 (H.264)</option>
-                        <option value="webm">WebM (VP9)</option>
-                        <option value="ogg">Ogg (Theora)</option>
-                        <option value="gif">GIF (анімація)</option>
-                        <option value="mkv">MKV</option>
-                        <option value="avi">AVI</option>
-                    </select>
-                </div>
+<button onclick="compress()">Стиснути</button>
 
-                <div class="form-group">
-                    <label class="form-label" for="renameMode">Ренейминг</label>
-                    <select id="renameMode" class="form-select">
-                        <option value="none">Не змінювати</option>
-                        <option value="append">Додати суфікс</option>
-                        <option value="replace">Змінити (нова назва)</option>
-                    </select>
-                </div>
+<p id="status"></p>
 
-                <div class="form-group rename-append hidden" id="appendGroup">
-                    <label class="form-label" for="suffix">Суфікс</label>
-                    <input type="text" id="suffix" class="form-input"
-                           placeholder="_opt">
-                </div>
+<script src="./assets/ffmpeg/ffmpeg.min.js"></script>
+<script>
+const { createFFmpeg, fetchFile } = FFmpeg;
 
-                <div class="form-group rename-replace hidden" id="replaceGroup">
-                    <label class="form-label" for="newName">
-                        Нова назва (без розширення)
-                    </label>
-                    <input type="text" id="newName" class="form-input"
-                           placeholder="newname">
-                </div>
-                
+const ffmpeg = createFFmpeg({
+    log: true,
+    corePath: "./assets/ffmpeg/ffmpeg-core.js"  // 🔥 КРИТИЧНО
+});
 
-                <div class="form-actions">
-                    <button id="run" class="btn btn--primary">Оптимізувати</button>
-                    <button id="downloadAll" class="btn btn--success"
-                            disabled>⬇️ Завантажити всі (ZIP)</button>
-                    <button id="saveFolder" class="btn btn--accent"
-                            disabled>📁 Зберегти у папку</button>
-                </div>
-            </section>
+(async () => {
+    await ffmpeg.load();
+})();
+</script>
 
-            <div id="dropzone" class="dropzone">
-                Перетягніть файли сюди або виберіть їх вище
-            </div>
+async function compress() {
 
-            <div id="alerts" class="alerts"></div>
+  const file = document.getElementById('upload').files[0]
+  if (!file) return alert("Завантаж відео")
 
-            <div id="preview"></div>
-        </div>
+  document.getElementById("status").innerText = "Завантаження FFmpeg..."
 
-        <div id="progress"></div>
+  if (!ffmpeg.isLoaded()) {
+    await ffmpeg.load()
+  }
 
-        <!-- Модальне вікно -->
-        <div id="modal" class="modal" role="dialog" aria-modal="true">
-            <button id="modalClose" class="modal__close">✖</button>
-            <button id="modalPrev" class="modal__nav modal__nav--prev">&#9664;</button>
+  document.getElementById("status").innerText = "Обробка..."
 
-            <div id="modalContent" class="modal__content">
-                <video id="modalImg" class="modal__img" src="" controls></video>
-                <div id="modalCounter" class="modal__counter"></div>
-            </div>
+  ffmpeg.FS('writeFile', 'input', await fetchFile(file))
 
-            <button id="modalNext" class="modal__nav modal__nav--next">&#9654;</button>
-        </div>
-    </main>
+  const width = document.getElementById("width").value
+  const fps = document.getElementById("fps").value
+  const bitrate = document.getElementById("bitrate").value
+  const format = document.getElementById("format").value
+  const mute = document.getElementById("mute").checked
 
-    <footer></footer>
+  let command = ['-i', 'input']
 
+  if (width) command.push('-vf', `scale=${width}:-1`)
+  if (fps) command.push('-r', fps)
+  if (bitrate) command.push('-b:v', bitrate + 'k')
+  if (mute) command.push('-an')
 
+  command.push('output.' + format)
 
-    <!-- FFmpeg локально -->
-    <script src="./assets/ffmpeg/ffmpeg.min.js"></script>
+  await ffmpeg.run(...command)
 
-    <!-- ТІЛЬКИ ОДИН раз підключаємо -->
-    <script src="./assets/js/optimizer-video.js"></script>
+  const data = ffmpeg.FS('readFile', 'output.' + format)
 
-    <!-- Інші модулі -->
-    <script type="module" src="./assets/js/main.js"></script>
-    <script type="module" src="./assets/js/header.js"></script>
+  const blob = new Blob([data.buffer], { type: 'video/' + format })
+  const url = URL.createObjectURL(blob)
 
-</body>
-</html>
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'compressed.' + format
+  a.click()
+
+  document.getElementById("status").innerText = "Готово!"
+}
+</script>
+
 </body>
 </html>

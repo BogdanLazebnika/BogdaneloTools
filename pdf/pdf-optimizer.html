@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Merge Tool</title>
+
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+
+<style>
+body {
+    font-family: Inter, sans-serif;
+    background: #0f172a;
+    color: #fff;
+    padding: 40px;
+    max-width: 900px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.dropzone {
+    border: 2px dashed #334155;
+    padding: 40px;
+    text-align: center;
+    border-radius: 16px;
+    margin-bottom: 30px;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.dropzone.dragover {
+    border-color: #6366f1;
+    background: rgba(99,102,241,0.1);
+}
+
+.file-list {
+    margin-bottom: 30px;
+}
+
+.file-item {
+    background: #1e293b;
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.file-item button {
+    background: #ef4444;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+}
+
+.actions {
+    text-align: center;
+}
+
+button.merge-btn {
+    background: linear-gradient(135deg,#6366f1,#4f46e5);
+    border: none;
+    padding: 14px 24px;
+    border-radius: 12px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+</style>
+</head>
+<body>
+
+<h1>📄 Об'єднати PDF</h1>
+
+<div class="dropzone" id="dropzone">
+    Перетягніть PDF сюди або натисніть для вибору
+    <input type="file" id="fileInput" accept="application/pdf" multiple hidden>
+</div>
+
+<div class="file-list" id="fileList"></div>
+
+<div class="actions">
+    <button class="merge-btn" id="mergeBtn" disabled>
+        Об'єднати PDF
+    </button>
+</div>
+
+<script>
+const { PDFDocument } = PDFLib;
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const fileList = document.getElementById('fileList');
+const mergeBtn = document.getElementById('mergeBtn');
+
+let files = [];
+
+/* ---------- Drag & Drop ---------- */
+dropzone.addEventListener('click', () => fileInput.click());
+
+dropzone.addEventListener('dragover', e => {
+    e.preventDefault();
+    dropzone.classList.add('dragover');
+});
+
+dropzone.addEventListener('dragleave', () => {
+    dropzone.classList.remove('dragover');
+});
+
+dropzone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropzone.classList.remove('dragover');
+    handleFiles(e.dataTransfer.files);
+});
+
+fileInput.addEventListener('change', e => {
+    handleFiles(e.target.files);
+});
+
+/* ---------- Handle Files ---------- */
+function handleFiles(selectedFiles) {
+    for (let file of selectedFiles) {
+        if (file.type === "application/pdf") {
+            files.push(file);
+        }
+    }
+    renderList();
+}
+
+/* ---------- Render File List ---------- */
+function renderList() {
+    fileList.innerHTML = '';
+    files.forEach((file, index) => {
+        const div = document.createElement('div');
+        div.className = 'file-item';
+        div.innerHTML = `
+            <span>${index+1}. ${file.name}</span>
+            <div>
+                <button onclick="moveUp(${index})">⬆</button>
+                <button onclick="moveDown(${index})">⬇</button>
+                <button onclick="removeFile(${index})">✖</button>
+            </div>
+        `;
+        fileList.appendChild(div);
+    });
+
+    mergeBtn.disabled = files.length < 2;
+}
+
+/* ---------- Controls ---------- */
+window.removeFile = function(index) {
+    files.splice(index, 1);
+    renderList();
+}
+
+window.moveUp = function(index) {
+    if (index === 0) return;
+    [files[index-1], files[index]] = [files[index], files[index-1]];
+    renderList();
+}
+
+window.moveDown = function(index) {
+    if (index === files.length - 1) return;
+    [files[index+1], files[index]] = [files[index], files[index+1]];
+    renderList();
+}
+
+/* ---------- Merge PDFs ---------- */
+mergeBtn.addEventListener('click', async () => {
+    mergeBtn.disabled = true;
+    mergeBtn.textContent = "Об'єдную...";
+
+    const mergedPdf = await PDFDocument.create();
+
+    for (let file of files) {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await PDFDocument.load(arrayBuffer);
+        const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+        pages.forEach(page => mergedPdf.addPage(page));
+    }
+
+    const mergedPdfFile = await mergedPdf.save();
+    const blob = new Blob([mergedPdfFile], { type: 'application/pdf' });
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = "merged.pdf";
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+    mergeBtn.textContent = "Об'єднати PDF";
+    mergeBtn.disabled = false;
+});
+</script>
+
+</body>
+</html>
