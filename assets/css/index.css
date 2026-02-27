@@ -1,130 +1,147 @@
-/* HERO */
+/* -------------------------------------------------
+   00. Глобальні налаштування
+   ------------------------------------------------- */
+html { scroll-behavior: smooth; }               /* плавна прокрутка */
+body { background: var(--bg-primary); color: var(--text-primary); }
 
+a {                           /* ---- Підкреслення ---- */
+    text-decoration: none;     /* видалено підкреслення у всіх станах */
+    color: inherit;           /* колір успадковується, а для .app-link – окремо */
+}
+a:hover,
+a:focus {
+    text-decoration: none;     /* ще раз – без underline при hover/focus */
+}
+
+/* -------------------------------------------------
+   01. HERO
+   ------------------------------------------------- */
 .hero {
     position: relative;
     padding: 120px 20px;
     text-align: center;
     overflow: hidden;
 }
-
-.hero-content {
-    position: relative;
-    z-index: 2;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
+.hero-content { position: relative; z-index:2; max-width:800px; margin:auto; }
 .hero h1 {
     font-size: 64px;
-    margin-bottom: 20px;
-    background: linear-gradient(90deg, #6366f1, #22d3ee);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    margin-bottom:20px;
+    background: linear-gradient(90deg,#6366f1,#22d3ee);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
 }
-
-.hero-subtitle {
-    font-size: 20px;
-    color: var(--text-secondary);
-    margin-bottom: 40px;
-    line-height: 1.6;
-}
-
-.hero-buttons {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    flex-wrap: wrap;
-}
+.hero-subtitle {font-size:20px;color:var(--text-secondary);margin-bottom:40px;line-height:1.6;}
+.hero-buttons {display:flex;gap:20px;justify-content:center;flex-wrap:wrap;}
 
 /* Buttons */
-
 .btn {
-    padding: 14px 28px;
-    border-radius: var(--radius);
-    text-decoration: none;
-    font-weight: 600;
-    transition: var(--transition);
+    padding:14px 28px;
+    border-radius:var(--radius);
+    font-weight:600;
+    transition:var(--transition);
 }
+.btn-primary {background:var(--accent);color:#fff;}
+.btn-primary:hover {background:var(--accent-hover);transform:translateY(-3px);}
+.btn-secondary {border:1px solid var(--border-color);color:var(--text-primary);}
+.btn-secondary:hover {background:var(--card-bg);transform:translateY(-3px);}
 
-.btn-primary {
-    background: var(--accent);
-    color: #fff;
-}
-
-.btn-primary:hover {
-    background: var(--accent-hover);
-    transform: translateY(-3px);
-}
-
-.btn-secondary {
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-}
-
-.btn-secondary:hover {
-    background: var(--card-bg);
-    transform: translateY(-3px);
-}
-
-/* Background glow */
-
+/* Hero background glow */
 .hero-bg {
-    position: absolute;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(99,102,241,0.4) 0%, transparent 70%);
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    filter: blur(100px);
-    z-index: 1;
+    position:absolute;width:600px;height:600px;
+    background:radial-gradient(circle,rgba(99,102,241,.4) 0%,transparent 70%);
+    top:50%;left:50%;transform:translate(-50%,-50%);
+    filter:blur(100px);z-index:1;
 }
 
-/* Apps Section */
-
-.apps-section {
-    padding: 100px 0;
+/* -------------------------------------------------
+   02. ABOUT / SEO‑BLOCK
+   ------------------------------------------------- */
+.about-section {
+    padding:100px 20px;
+    background:var(--bg-tertiary);
+    color:var(--text-primary);
+    border-radius:var(--radius);
+    margin:40px auto;
+}
+.about-section .section-title {
+    font-size:2.8rem;margin-bottom:1rem;text-align:center;color:var(--accent);
+}
+.about-section .about-text {
+    max-width:800px;margin:0 auto 1.5rem;
+    line-height:1.7;font-size:1.07rem;color:var(--text-secondary);
+}
+.about-section .about-features {
+    max-width:800px;margin:0 auto 2rem;
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:12px;list-style:none;padding:0;
+}
+.about-section .about-features li {
+    position:relative;padding-left:30px;font-size:1rem;
+    line-height:1.5;color:var(--text-primary);
+}
+.about-section .about-features li::before {
+    content:"✔️";position:absolute;left:0;top:0;font-size:1.2rem;
 }
 
+/* -------------------------------------------------
+   03. APPS SECTION
+   ------------------------------------------------- */
+.apps-section {padding:100px 0;}
+.apps-section .section-title {
+    font-size:2.5rem;margin-bottom:2rem;text-align:center;color:var(--accent);
+}
+
+/* Sub‑heading for a group (PDF‑tools) */
+.subsection-title {
+    grid-column:1/-1;
+    font-size:2rem;
+    margin:2rem 0 1rem;
+    color:var(--accent);
+    text-align:left;
+}
+
+/* Grid of cards */
 .apps-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 30px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:30px;
 }
 
-/* App Card */
-
+/* Card */
 .app-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-    padding: 30px;
-    text-decoration: none;
-    color: inherit;
-    transition: var(--transition);
-    backdrop-filter: blur(10px);
+    background:var(--card-bg);
+    border:1px solid var(--border-color);
+    border-radius:var(--radius);
+    padding:28px;
+    text-decoration:none;color:inherit;
+    transition:var(--transition);
+    backdrop-filter:blur(10px);
 }
-
-.app-card:hover {
-    transform: translateY(-8px);
-    border-color: var(--accent);
-}
-
-.app-icon {
-    font-size: 40px;
-    margin-bottom: 20px;
-}
-
+.app-card:hover {transform:translateY(-8px);border-color:var(--accent);}
+.app-icon {font-size:44px;margin-bottom:18px;}
 .app-card h3 {
-    margin-bottom: 10px;
+    margin:0 0 8px;
+    font-size:1.25rem;
+    color:var(--text-primary);
 }
-
 .app-card p {
-    color: var(--text-secondary);
-    margin-bottom: 20px;
+    margin:0 0 14px;
+    line-height:1.5;
+    color:var(--text-secondary);
 }
+.app-link {font-weight:600;color:var(--accent);}
 
-.app-link {
-    font-weight: 600;
-    color: var(--accent);
+/* -------------------------------------------------
+   04. RESPONSIVE
+   ------------------------------------------------- */
+@media (max-width:768px){
+    .hero{padding:80px 15px;}
+    .hero h1{font-size:48px;}
+    .hero-subtitle{font-size:18px;}
+
+    .about-section .section-title,
+    .apps-section .section-title,
+    .subsection-title{font-size:2rem;}
+
+    .about-section .about-features{grid-template-columns:1fr;}
 }

@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="uk" class="dark-theme">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>QR-Generator – швидке створення QR-коду онлайн</title>
+
+    <!-- ================= SEO ================= -->
+    <meta name="description"
+          content="Безкоштовний онлайн-генератор QR-коду. Створюйте QR для URL, тексту, Wi-Fi. PNG або ZIP. Усе працює прямо в браузері без серверів.">
+    <meta name="keywords"
+          content="QR код, QR generator, онлайн генератор QR, створити QR, безкоштовний QR, скачати QR PNG, QR ZIP">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="QR-Generator">
+
+    <link rel="canonical" href="https://example.com/qr-generator.html">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="QR-Generator – швидке створення QR-коду">
+    <meta property="og:description"
+          content="Створюйте QR-коди за секунди. Дані залишаються лише у вашому браузері.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://example.com/qr-generator.html">
+    <meta property="og:image" content="https://example.com/qr-preview.png">
+
+    <!-- JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "QR-Generator",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "All",
+        "description": "Онлайн генератор QR-кодів без серверів.",
+        "url": "https://example.com/qr-generator.html"
+    }
+    </script>
+
+    <!-- ================= Libraries ================= -->
+    <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+
+    <!-- ================= CSS ================= -->
+    <link rel="stylesheet" href="./assets/css/reset.css">
+    <link rel="stylesheet" href="./assets/css/vars.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <link rel="stylesheet" href="./assets/css/optimizer-img.css">
+    <link rel="stylesheet" href="./assets/css/header.css">
+    <link rel="stylesheet" href="./assets/css/footer.css">
+
+    <style>
+        /* =====================================================
+   PAGE LAYOUT
+===================================================== */
+
+.tool-page {
+    padding: 120px 20px 100px;
+}
+
+.tool-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* =====================================================
+   HEADER (SEO Banner style)
+===================================================== */
+
+.seo-banner {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.seo-banner h1 {
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 800;
+    background: linear-gradient(90deg, #6366f1, #22d3ee);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 15px;
+}
+
+.seo-banner p {
+    font-size: 16px;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* =====================================================
+   FORM BLOCK
+===================================================== */
+
+.field {
+    margin-bottom: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.field label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+textarea,
+input {
+    padding: 15px;
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    font-size: 14px;
+    color: var(--text-primary);
+    transition: var(--transition);
+}
+
+textarea {
+    min-height: 130px;
+    resize: vertical;
+}
+
+textarea::placeholder,
+input::placeholder {
+    color: var(--text-secondary);
+    opacity: .6;
+}
+
+textarea:focus,
+input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+/* =====================================================
+   CUSTOM SELECT
+===================================================== */
+
+.custom-select {
+    position: relative;
+}
+
+.select-trigger {
+    padding: 15px;
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    cursor: pointer;
+    font-size: 14px;
+    transition: var(--transition);
+}
+
+.select-trigger:hover {
+    border-color: var(--accent);
+}
+
+.select-options {
+    position: absolute;
+    width: 100%;
+    margin-top: 8px;
+    border-radius: 14px;
+    background: #111827;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    display: none;
+    z-index: 10;
+}
+
+.select-options.active {
+    display: block;
+    animation: fadeIn .2s ease;
+}
+
+.select-options div {
+    padding: 12px 15px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.select-options div:hover {
+    background: rgba(99,102,241,.15);
+    color: var(--accent);
+}
+
+/* =====================================================
+   ACTION BUTTONS
+===================================================== */
+
+.actions {
+    display: flex;
+    gap: 18px;
+    justify-content: center;
+    margin-top: 35px;
+    flex-wrap: wrap;
+}
+
+.actions button {
+    min-width: 200px;
+    padding: 15px 35px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+#generateBtn {
+    background: linear-gradient(135deg,#6366f1,#4f46e5);
+    border: none;
+    color: #fff;
+}
+
+#generateBtn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(79,70,229,.5);
+}
+
+#downloadAllBtn {
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+#downloadAllBtn:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+#clearHistoryBtn {
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+#clearHistoryBtn:hover {
+    background: rgba(239,68,68,.1);
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+/* =====================================================
+   HISTORY GRID
+===================================================== */
+
+#history {
+    margin-top: 60px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
+    gap: 24px;
+}
+
+/* =====================================================
+   QR CARD
+===================================================== */
+
+.card {
+    padding: 25px;
+    border-radius: 18px;
+    border: 1px solid var(--border-color);
+    background: rgba(255,255,255,.02);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    transition: var(--transition);
+}
+
+.card:hover {
+    border-color: var(--accent);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 35px rgba(0,0,0,.35);
+}
+
+.card img {
+    width: 100%;
+    max-width: 200px;
+    background: #fff;
+    padding: 12px;
+    border-radius: 14px;
+}
+
+.card .info {
+    font-size: 13px;
+    text-align: center;
+    color: var(--text-secondary);
+    word-break: break-word;
+}
+
+/* =====================================================
+   SEO TEXT BLOCK
+===================================================== */
+
+.seo-text {
+    margin-top: 100px;
+    padding: 40px;
+    border-radius: 20px;
+    background: rgba(255,255,255,.02);
+    border: 1px solid var(--border-color);
+}
+
+.seo-text h2 {
+    font-size: 20px;
+    margin: 30px 0 12px;
+}
+
+.seo-text p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.seo-text ul {
+    margin-top: 15px;
+    padding-left: 18px;
+}
+
+.seo-text li {
+    margin-bottom: 8px;
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+    .seo-banner {
+        margin-bottom: 35px;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+
+    .actions button {
+        width: 100%;
+        min-width: auto;
+    }
+
+    .seo-text {
+        padding: 25px;
+    }
+
+    #history {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =====================================================
+   ANIMATION
+===================================================== */
+
+@keyframes fadeIn {
+    from {opacity:0; transform:translateY(-6px);}
+    to {opacity:1; transform:translateY(0);}
+}
+    </style>
+</head>
+
+<body>
+
+<header></header>
+
+<main>
+
+    <!-- ================= SEO Banner ================= -->
+    <section class="seo-banner">
+        <h1>QR-Generator – швидке створення QR-коду в браузері</h1>
+        <p>
+            Безкоштовний онлайн-застосунок для створення QR-кодів.
+            Працює повністю в браузері без серверів.
+            Підтримує PNG та ZIP.
+        </p>
+    </section>
+
+    <!-- ================= Form ================= -->
+    <section class="field">
+        <label for="urls">Посилання або текст (по одному в рядку)</label>
+        <textarea id="urls" placeholder="https://example.com"></textarea>
+    </section>
+
+    <section class="field">
+        <label for="filename">Базова назва файлу</label>
+        <input id="filename" type="text" placeholder="my-qr-code">
+    </section>
+
+    <section class="field">
+        <label>Розмір QR-коду</label>
+        <div class="custom-select" id="sizeSelect">
+            <div class="select-trigger">256 px – оптимальний</div>
+            <div class="select-options">
+                <div data-value="128">128 px – маленький</div>
+                <div data-value="192">192 px – середній</div>
+                <div data-value="256">256 px – оптимальний</div>
+                <div data-value="320">320 px – великий</div>
+                <div data-value="384">384 px – дуже великий</div>
+                <div data-value="512">512 px – максимум</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="actions">
+        <button id="generateBtn">Створити QR</button>
+        <button id="downloadAllBtn" disabled>Скачати все (ZIP)</button>
+        <button id="clearHistoryBtn">Очистити історію</button>
+    </div>
+
+    <!-- ================= History ================= -->
+    <section id="history"></section>
+
+    <!-- ================= SEO Text ================= -->
+    <section class="seo-text">
+        <h2>Що таке QR-код?</h2>
+        <p>
+            QR-код — це двовимірний штрих-код для швидкого доступу до інформації.
+            Він може містити URL, текст, Wi-Fi дані та іншу інформацію.
+        </p>
+
+        <h2>Переваги генератора</h2>
+        <ul>
+            <li>Працює повністю в браузері</li>
+            <li>Підтримує масове створення</li>
+            <li>Завантаження PNG або ZIP</li>
+            <li>Історія зберігається у localStorage</li>
+        </ul>
+    </section>
+
+</main>
+
+<footer>
+    © 2026 QR-Generator — Усі дані залишаються у вашому браузері
+</footer>
+
+<!-- ================= SCRIPT ================= -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const STORAGE_KEY = "qrGeneratorHistory";
+
+    const generateBtn = document.getElementById("generateBtn");
+    const downloadAllBtn = document.getElementById("downloadAllBtn");
+    const clearHistoryBtn = document.getElementById("clearHistoryBtn");
+    const urlsTextarea = document.getElementById("urls");
+    const filenameInput = document.getElementById("filename");
+    const historyDiv = document.getElementById("history");
+
+    const sizeSelect = document.getElementById("sizeSelect");
+    const trigger = sizeSelect.querySelector(".select-trigger");
+    const options = sizeSelect.querySelector(".select-options");
+
+    let selectedSize = 256;
+    let history = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+    /* ================= SELECT ================= */
+
+    trigger.addEventListener("click", (e) => {
+        e.stopPropagation();
+        options.classList.toggle("active");
+    });
+
+    options.addEventListener("click", (e) => {
+        const item = e.target.closest("[data-value]");
+        if (!item) return;
+
+        selectedSize = parseInt(item.dataset.value);
+        trigger.textContent = item.textContent;
+        options.classList.remove("active");
+    });
+
+    document.addEventListener("click", () => {
+        options.classList.remove("active");
+    });
+
+    /* ================= UTIL ================= */
+
+    function createQR(text, size) {
+        const qr = new QRious({ value: text, size });
+        return qr.canvas.toDataURL("image/png");
+    }
+
+    function saveHistory() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+        downloadAllBtn.disabled = history.length < 2;
+    }
+
+    function download(dataUrl, filename) {
+        const a = document.createElement("a");
+        a.href = dataUrl;
+        a.download = filename;
+        a.click();
+    }
+
+    function renderHistory() {
+        historyDiv.innerHTML = "";
+
+        history.forEach(item => {
+            const div = document.createElement("div");
+            div.className = "card";
+
+            div.innerHTML = `
+                <img src="${item.data}" alt="QR код">
+                <div class="info">${item.text}</div>
+                <button>Скачати</button>
+            `;
+
+            div.querySelector("button").addEventListener("click", () => {
+                download(item.data, item.file);
+            });
+
+            historyDiv.appendChild(div);
+        });
+    }
+
+    /* ================= GENERATE ================= */
+
+    generateBtn.addEventListener("click", () => {
+
+        const lines = urlsTextarea.value
+            .split("\n")
+            .map(l => l.trim())
+            .filter(Boolean);
+
+        if (!lines.length) {
+            alert("Введіть хоча б одне значення");
+            return;
+        }
+
+        const base = filenameInput.value.trim() || "qr-code";
+
+        lines.forEach((text, index) => {
+            const data = createQR(text, selectedSize);
+            const file = `${base}-${Date.now()}-${index}.png`;
+
+            history.unshift({ text, data, file });
+        });
+
+        saveHistory();
+        renderHistory();
+        urlsTextarea.value = "";
+    });
+
+    /* ================= ZIP ================= */
+
+    downloadAllBtn.addEventListener("click", async () => {
+
+        if (history.length < 2) return;
+
+        const zip = new JSZip();
+
+        history.forEach(item => {
+            const base64 = item.data.split(",")[1];
+            zip.file(item.file, base64, { base64: true });
+        });
+
+        const blob = await zip.generateAsync({ type: "blob" });
+
+        saveAs(blob, "qr-codes.zip");
+    });
+
+    /* ================= CLEAR ================= */
+
+    clearHistoryBtn.addEventListener("click", () => {
+        if (!confirm("Очистити всю історію?")) return;
+
+        history = [];
+        saveHistory();
+        renderHistory();
+    });
+
+    /* ================= INIT ================= */
+
+    renderHistory();
+    saveHistory();
+});
+</script>
+
+<!-- ================= Modules ================= -->
+<script type="module" src="./assets/js/main.js"></script>
+<script type="module" src="./assets/js/header.js"></script>
+
+</body>
+</html>

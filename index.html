@@ -1,16 +1,87 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
+    <!-- ==================== META ==================== -->
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LB Tools — Онлайн інструменти</title>
 
+    <title>LB Tools — безкоштовні онлайн інструменти для PDF, зображень і файлів</title>
+    <meta name="description"
+          content="LB Tools – набір потужних онлайн‑утиліт: об’єднання, розділення, стиснення PDF, конвертація PDF↔зображення, оптимізатор фото та інші безкоштовні інструменти без реєстрації.">
+    <link rel="canonical" href="https://lbtools.dev/">
+    <meta name="robots" content="index, follow">
+
+    <!-- ==================== OG / TWITTER ==================== -->
+    <meta property="og:title"       content="LB Tools — безкоштовні онлайн інструменти">
+    <meta property="og:description" content="Об’єднуйте, розділяйте, стискайте PDF, конвертуйте PDF↔зображення, оптимізуйте фото прямо в браузері.">
+    <meta property="og:type"        content="website">
+    <meta property="og:url"         content="https://lbtools.dev/">
+    <meta property="og:image"       content="https://lbtools.dev/assets/img/og-preview.png">
+    <meta property="og:locale"      content="uk_UA">
+
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:title"       content="LB Tools — безкоштовні онлайн інструменти">
+    <meta name="twitter:description" content="PDF‑злиття, розділення, стиснення, конвертація, оптимізатор зображень – усе без реєстрації.">
+    <meta name="twitter:image"       content="https://lbtools.dev/assets/img/og-preview.png">
+
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- ==================== CSS ==================== -->
     <link rel="stylesheet" href="./assets/css/reset.css">
     <link rel="stylesheet" href="./assets/css/vars.css">
     <link rel="stylesheet" href="./assets/css/style.css">
     <link rel="stylesheet" href="./assets/css/index.css">
     <link rel="stylesheet" href="./assets/css/header.css">
     <link rel="stylesheet" href="./assets/css/footer.css">
+
+    <!-- ==================== JSON‑LD (структуровані дані) ==================== -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "url": "https://lbtools.dev/",
+      "name": "LB Tools",
+      "description": "Безкоштовні онлайн‑утиліти: злиття, розділення, стиснення PDF, конвертація PDF↔зображення, оптимізатор фото.",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://lbtools.dev/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!-- FAQ‑розділ – rich‑snippet -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+          "@type": "Question",
+          "name": "Як об'єднати PDF‑файли без реєстрації?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Відкрийте інструмент «Об’єднати PDF», перетягніть файли у вікно, змініть порядок, натисніть «Злиття» – готово."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Чи можу я стискати PDF пакетно?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Так, у розділі «Стиснути PDF» є підтримка batch‑обробки – просто додайте кілька файлів і натисніть «Стиснути»."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Чи зберігаються мої файли після обробки?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Файли не зберігаються на сервері. Після завершення обробки вам пропонується завантажити результат, а тимчасові дані автоматично видаляються."
+          }
+        }]
+    }
+    </script>
 </head>
 <body>
 
@@ -18,47 +89,177 @@
 
 <main class="home">
 
-    <!-- HERO -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>LB Tools</h1>
-            <p class="hero-subtitle">
-                Потужні онлайн інструменти для роботи з файлами та зображеннями.
-                Швидко. Просто. Безкоштовно.
-            </p>
+  <!-- ==================== HERO ==================== -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>LB Tools</h1>
+      <p class="hero-subtitle">
+        Потужні онлайн інструменти для роботи з файлами та зображеннями.
+        Швидко. Просто. Безкоштовно.
+      </p>
 
-            <div class="hero-buttons">
-                <a href="#apps" class="btn btn-primary">Переглянути інструменти</a>
-                <a href="#" data-link="optimizer-img.html" class="btn btn-secondary">Оптимізатор зображень</a>
-            </div>
-        </div>
+      <div class="hero-buttons">
+        <a href="#about" class="btn btn-primary">Про сайт</a>
+        <a href="#apps"
+           class="btn btn-secondary"
+           aria-label="Інструменти всі інструменти LB Tools">
+          До інструментів
+        </a>
+      </div>
+    </div>
 
-        <div class="hero-bg"></div>
-    </section>
+    <div class="hero-bg"></div>
+  </section>
 
+  <!-- ==================== ABOUT / SEO BLOCK ==================== -->
+  <section id="about" class="about-section container">
+    <h2 class="section-title">Що таке LB Tools?</h2>
 
-    <!-- APPS -->
-    <section id="apps" class="apps-section container">
-        <h2 class="section-title">Наші інструменти</h2>
+    <p class="about-text">
+      LB Tools – це сукупність <strong>безкоштовних онлайн‑утиліт</strong>, які працюють без реєстрації і без встановлення будь‑якого ПЗ.   
+      Ми допомагаємо швидко обробляти <strong>PDF‑документи</strong>, <strong>зображення</strong> та інші файли прямо у вашому браузері.
+    </p>
 
-        <div class="apps-grid">
+    <ul class="about-features">
+      <li>🔗 <strong>Об’єднання PDF</strong> – злиття кількох файлів в один.</li>
+      <li>✂️ <strong>Розділення PDF</strong> – видобуток окремих сторінок.</li>
+      <li>🗜️ <strong>Стиснення PDF</strong> – зменшення розміру без втрати якості.</li>
+      <li>🖼️ <strong>PDF → Зображення</strong> – конвертація у PNG/JPG.</li>
+      <li>🧾 <strong>Зображення → PDF</strong> – створення PDF з JPG/PNG/WebP.</li>
+      <li>🖼️ <strong>Оптимізатор зображень</strong> – стиск фото без втрати якості.</li>
+    </ul>
 
-            <a href="#" data-link="optimizer-img.html" class="app-card">
-                <div class="app-icon">🖼️</div>
-                <h3>Оптимізатор зображень</h3>
-                <p>Стискай фото без втрати якості прямо в браузері.</p>
-                <span class="app-link">Відкрити →</span>
-            </a>
+    <p class="about-text">
+      Ми дбаємо про <strong>конфіденційність</strong>: ваші файли залишаються лише в оперативній пам’яті браузера і автоматично видаляються після обробки.
+    </p>
+  </section>
 
-            <a href="#" data-link="another-app.html" class="app-card">
-                <div class="app-icon">⚙️</div>
-                <h3>Інший додаток</h3>
-                <p>Опис твого наступного інструменту.</p>
-                <span class="app-link">Відкрити →</span>
-            </a>
+  <!-- ==================== APPS (всі інструменти) ==================== -->
+  <section id="apps" class="apps-section container">
+    <h2 class="section-title">Наші інструменти</h2>
 
-        </div>
-    </section>
+    <div class="apps-grid">
+
+      <!-- ----- Оптимізатор зображень ----- -->
+      <article class="app-card"
+               itemscope
+               itemtype="https://schema.org/SoftwareApplication">
+        <a href="optimizer-img.html"
+           data-link="optimizer-img.html"
+           class="card-link"
+           aria-label="Оптимізатор зображень – стиск фото без втрати якості">
+          <div class="app-icon" role="img" aria-hidden="true">🖼️</div>
+          <h3 itemprop="name">Оптимізатор зображень</h3>
+          <p itemprop="description">Стискай фото без втрати якості прямо в браузері.</p>
+          <span class="app-link">Відкрити →</span>
+        </a>
+      </article>
+
+      <!-- ----- Інший (заповнювач) ----- -->
+      <article class="app-card"
+               itemscope
+               itemtype="https://schema.org/SoftwareApplication">
+        <a href="another-app.html"
+           data-link="another-app.html"
+           class="card-link"
+           aria-label="Інший додаток – опис вашого наступного інструменту">
+          <div class="app-icon" role="img" aria-hidden="true">⚙️</div>
+          <h3 itemprop="name">Інший додаток</h3>
+          <p itemprop="description">Опис вашого наступного інструменту.</p>
+          <span class="app-link">Відкрити →</span>
+        </a>
+      </article>
+
+      <!-- ======== PDF‑ІНСТРУМЕНТИ ======== -->
+      <h3 class="subsection-title" style="grid-column:1/-1;">PDF‑інструменти</h3>
+
+      <!-- Об’єднати PDF -->
+      <article class="app-card"
+               itemscope
+               itemtype="https://schema.org/SoftwareApplication">
+        <a href="pdf/merge.html"
+           data-link="pdf/merge.html"
+           class="card-link"
+           aria-label="Об’єднати PDF – злиття кількох PDF у один документ">
+          <div class="app-icon" role="img" aria-hidden="true">🔗</div>
+          <h3 itemprop="name">Об’єднати PDF</h3>
+          <p itemprop="description">
+            З’єднай кілька PDF‑файлів в один документ з можливістю зміни порядку сторінок.
+          </p>
+          <span class="app-link">Відкрити →</span>
+        </a>
+      </article>
+
+      <!-- Розділити PDF -->
+      <article class="app-card"
+               itemscope
+               itemtype="https://schema.org/SoftwareApplication">
+        <a href="pdf/split.html"
+           data-link="pdf/split.html"
+           class="card-link"
+           aria-label="Розділити PDF – витяг окремих сторінок або розбиття на частини">
+          <div class="app-icon" role="img" aria-hidden="true">✂️</div>
+          <h3 itemprop="name">Розділити PDF</h3>
+          <p itemprop="description">
+            Витягни окремі сторінки або розбий PDF на кілька файлів.
+          </p>
+          <span class="app-link">Відкрити →</span>
+        </a>
+      </article>
+
+      <!-- Стиснути PDF -->
+      <article class="app-card"
+               itemscope
+               itemtype="https://schema.org/SoftwareApplication">
+        <a href="pdf/compress.html"
+           data-link="pdf/compress.html"
+           class="card-link"
+           aria-label="Стиснути PDF – зменшення розміру без втрати якості">
+          <div class="app-icon" role="img" aria-hidden="true">🗜️</div>
+          <h3 itemprop="name">Стиснути PDF</h3>
+          <p itemprop="description">
+            Зменш розмір PDF без значної втрати якості. Підтримка batch‑обробки.
+          </p>
+          <span class="app-link">Відкрити →</span>
+        </a>
+      </article>
+
+      <!-- PDF → Зображення -->
+      <article class="app-card"
+               itemscope
+               itemtype="https://schema.org/SoftwareApplication">
+        <a href="pdf/pdf-to-image.html"
+           data-link="pdf/pdf-to-image.html"
+           class="card-link"
+           aria-label="PDF → Зображення – конвертація PDF‑сторінок у PNG або JPG">
+          <div class="app-icon" role="img" aria-hidden="true">🖼️</div>
+          <h3 itemprop="name">PDF → Зображення</h3>
+          <p itemprop="description">
+            Конвертуй сторінки PDF у PNG або JPG формат.
+          </p>
+          <span class="app-link">Відкрити →</span>
+        </a>
+      </article>
+
+      <!-- Зображення → PDF -->
+      <article class="app-card"
+               itemscope
+               itemtype="https://schema.org/SoftwareApplication">
+        <a href="pdf/image-to-pdf.html"
+           data-link="pdf/image-to-pdf.html"
+           class="card-link"
+           aria-label="Зображення → PDF – створення PDF з JPG, PNG або WebP">
+          <div class="app-icon" role="img" aria-hidden="true">🧾</div>
+          <h3 itemprop="name">Зображення → PDF</h3>
+          <p itemprop="description">
+            Створи PDF документ із JPG, PNG або WebP файлів.
+          </p>
+          <span class="app-link">Відкрити →</span>
+        </a>
+      </article>
+
+    </div> <!-- /.apps-grid -->
+  </section>
 
 </main>
 
@@ -67,6 +268,5 @@
 <script type="module" src="./assets/js/header.js"></script>
 <script type="module" src="./assets/js/main.js"></script>
 <script type="module" src="./assets/js/index.js"></script>
-
 </body>
 </html>
