@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>DOCX Стискач</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+body{
+font-family: Arial;
+background:#f4f4f4;
+text-align:center;
+padding:40px;
+}
+.box{
+background:white;
+padding:30px;
+border-radius:10px;
+display:inline-block;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+button{
+padding:10px 20px;
+font-size:16px;
+cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2>Стиснення Word (.docx)</h2>
+<input type="file" id="fileInput" accept=".docx"><br><br>
+<label>Якість зображень:</label>
+<input type="range" id="quality" min="0.2" max="1" step="0.1" value="0.7">
+<span id="qv">0.7</span>
+<br><br>
+<button onclick="compressDocx()">Стиснути</button>
+<br><br>
+<a id="download"></a>
+</div>
+
+<script>
+document.getElementById("quality").oninput = function(){
+document.getElementById("qv").textContent = this.value;
+}
+
+async function compressImage(blob, quality){
+
+return new Promise(resolve=>{
+const img = new Image();
+const canvas = document.createElement("canvas");
+const ctx = canvas.getContext("2d");
+
+img.onload = () => {
+canvas.width = img.width;
+canvas.height = img.height;
+ctx.drawImage(img,0,0);
+
+canvas.toBlob(newBlob=>{
+resolve(newBlob);
+},"image/jpeg", quality);
+};
+
+img.src = URL.createObjectURL(blob);
+});
+}
+
+async function compressDocx(){
+
+const file = document.getElementById("fileInput").files[0];
+if(!file) return alert("Вибери DOCX файл");
+
+const quality = parseFloat(document.getElementById("quality").value);
+
+const zip = await JSZip.loadAsync(file);
+
+const mediaFolder = zip.folder("word/media");
+
+if(!mediaFolder){
+alert("Зображення не знайдені");
+return;
+}
+
+const files = Object.keys(mediaFolder.files);
+
+for(const name of files){
+
+const fileObj = mediaFolder.files[name];
+const blob = await fileObj.async("blob");
+
+if(blob.type.startsWith("image")){
+
+const compressed = await compressImage(blob, quality);
+
+zip.file(name, compressed);
+
+}
+
+}
+
+const newBlob = await zip.generateAsync({type:"blob"});
+
+const url = URL.createObjectURL(newBlob);
+
+const a = document.getElementById("download");
+a.href = url;
+a.download = "compressed.docx";
+a.textContent = "Завантажити стислий файл";
+
+}
+</script>
+
+</body>
+</html>
