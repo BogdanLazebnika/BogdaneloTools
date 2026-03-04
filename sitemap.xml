@@ -2,47 +2,48 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <url>
-    <loc>https://yourdomain.com/</loc>
+    <loc>https://bogdanlazebnika.github.io/BogdaneloTools/</loc>
+    <priority>1.0</priority>
   </url>
 
   <url>
-    <loc>https://yourdomain.com/about.html</loc>
+    <loc>https://bogdanlazebnika.github.io/BogdaneloTools/about.html</loc>
   </url>
 
   <url>
-    <loc>https://yourdomain.com/optimizer-img.html</loc>
+    <loc>https://bogdanlazebnika.github.io/BogdaneloTools/optimizer-img.html</loc>
   </url>
 
   <url>
-    <loc>https://yourdomain.com/optimizer.video.html</loc>
+    <loc>https://bogdanlazebnika.github.io/BogdaneloTools/optimizer.video.html</loc>
   </url>
 
   <url>
-    <loc>https://yourdomain.com/qr-generator.html</loc>
+    <loc>https://bogdanlazebnika.github.io/BogdaneloTools/qr-generator.html</loc>
   </url>
 
   <url>
-    <loc>https://yourdomain.com/pdf/compress.html</loc>
+    <loc>https://bogdanlazebnika.github.io/BogdaneloTools/pdf/compress.html</loc>
   </url>
 
   <url>
-    <loc>https://yourdomain.com/pdf/image-to-pdf.html</loc>
+    <loc>https://bogdanlazebnika.github.io/BogdaneloTools/pdf/image-to-pdf.html</loc>
   </url>
 
   <url>
-    <loc>https://yourdomain.com/pdf/merge.html</loc>
+    <loc>https://bogdanlazebnika.github.io/BogdaneloTools/pdf/merge.html</loc>
   </url>
 
   <url>
-    <loc>https://yourdomain.com/pdf/pdf-tools.html</loc>
+    <loc>https://bogdanlazebnika.github.io/BogdaneloTools/pdf/pdf-tools.html</loc>
   </url>
 
   <url>
-    <loc>https://yourdomain.com/pdf/pdf-to-image.html</loc>
+    <loc>https://bogdanlazebnika.github.io/BogdaneloTools/pdf/pdf-to-image.html</loc>
   </url>
 
   <url>
-    <loc>https://yourdomain.com/pdf/split.html</loc>
+    <loc>https://bogdanlazebnika.github.io/BogdaneloTools/pdf/split.html</loc>
   </url>
 
 </urlset>
