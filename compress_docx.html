@@ -2,113 +2,176 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8">
-<title>DOCX Стискач</title>
+<title>DOCX Compressor</title>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
 <style>
+
 body{
-font-family: Arial;
-background:#f4f4f4;
-text-align:center;
+font-family:Arial;
+background:#0f172a;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
+
+.card{
+background:#1e293b;
 padding:40px;
+border-radius:12px;
+width:420px;
+text-align:center;
+box-shadow:0 10px 40px rgba(0,0,0,0.5);
 }
-.box{
-background:white;
+
+.drop{
+border:2px dashed #475569;
 padding:30px;
+margin:20px 0;
 border-radius:10px;
-display:inline-block;
-box-shadow:0 0 10px rgba(0,0,0,0.1);
+cursor:pointer;
 }
+
+.drop:hover{
+border-color:#38bdf8;
+}
+
 button{
-padding:10px 20px;
+background:#38bdf8;
+border:none;
+padding:12px 20px;
+border-radius:8px;
 font-size:16px;
 cursor:pointer;
 }
+
+button:hover{
+background:#0284c7;
+}
+
 </style>
+
 </head>
 
 <body>
 
-<div class="box">
-<h2>Стиснення Word (.docx)</h2>
-<input type="file" id="fileInput" accept=".docx"><br><br>
-<label>Якість зображень:</label>
-<input type="range" id="quality" min="0.2" max="1" step="0.1" value="0.7">
-<span id="qv">0.7</span>
-<br><br>
-<button onclick="compressDocx()">Стиснути</button>
-<br><br>
+<div class="card">
+
+<h2>DOCX Compressor</h2>
+
+<div class="drop" onclick="file.click()">
+Натисни або перетягни DOCX
+</div>
+
+<input type="file" id="file" accept=".docx" hidden>
+
+<button onclick="compress()">Стиснути</button>
+
+<p id="info"></p>
+
 <a id="download"></a>
+
 </div>
 
 <script>
-document.getElementById("quality").oninput = function(){
-document.getElementById("qv").textContent = this.value;
-}
 
-async function compressImage(blob, quality){
+async function compressImage(blob){
 
 return new Promise(resolve=>{
-const img = new Image();
-const canvas = document.createElement("canvas");
-const ctx = canvas.getContext("2d");
 
-img.onload = () => {
-canvas.width = img.width;
-canvas.height = img.height;
-ctx.drawImage(img,0,0);
+const img=new Image()
+const canvas=document.createElement("canvas")
+const ctx=canvas.getContext("2d")
 
-canvas.toBlob(newBlob=>{
-resolve(newBlob);
-},"image/jpeg", quality);
-};
+img.onload=()=>{
 
-img.src = URL.createObjectURL(blob);
-});
+let w=img.width
+let h=img.height
+
+const MAX=1400
+
+if(w>MAX){
+h=h*(MAX/w)
+w=MAX
 }
 
-async function compressDocx(){
+canvas.width=w
+canvas.height=h
 
-const file = document.getElementById("fileInput").files[0];
-if(!file) return alert("Вибери DOCX файл");
+ctx.drawImage(img,0,0,w,h)
 
-const quality = parseFloat(document.getElementById("quality").value);
+canvas.toBlob(resolve,"image/jpeg",0.6)
 
-const zip = await JSZip.loadAsync(file);
-
-const mediaFolder = zip.folder("word/media");
-
-if(!mediaFolder){
-alert("Зображення не знайдені");
-return;
 }
 
-const files = Object.keys(mediaFolder.files);
+img.src=URL.createObjectURL(blob)
+
+})
+
+}
+
+async function compress(){
+
+const file=document.getElementById("file").files[0]
+
+if(!file){
+alert("Вибери DOCX")
+return
+}
+
+const zip=await JSZip.loadAsync(file)
+
+const media=zip.folder("word/media")
+
+if(!media){
+alert("No images found")
+return
+}
+
+const files=Object.keys(media.files)
 
 for(const name of files){
 
-const fileObj = mediaFolder.files[name];
-const blob = await fileObj.async("blob");
+const fileObj=media.files[name]
+
+const blob=await fileObj.async("blob")
 
 if(blob.type.startsWith("image")){
 
-const compressed = await compressImage(blob, quality);
+const compressed=await compressImage(blob)
 
-zip.file(name, compressed);
-
-}
+zip.file(name.replace(/\.\w+$/,".jpg"),compressed)
 
 }
 
-const newBlob = await zip.generateAsync({type:"blob"});
+}
 
-const url = URL.createObjectURL(newBlob);
+const newDoc=await zip.generateAsync({
+type:"blob",
+compression:"DEFLATE",
+compressionOptions:{level:9}
+})
 
-const a = document.getElementById("download");
-a.href = url;
-a.download = "compressed.docx";
-a.textContent = "Завантажити стислий файл";
+const oldSize=(file.size/1024/1024).toFixed(2)
+const newSize=(newDoc.size/1024/1024).toFixed(2)
+
+document.getElementById("info").innerHTML=
+`Було: ${oldSize} MB<br>Стало: ${newSize} MB`
+
+const url=URL.createObjectURL(newDoc)
+
+const a=document.getElementById("download")
+
+a.href=url
+a.download="compressed.docx"
+a.innerText="Завантажити"
 
 }
+
 </script>
 
 </body>
