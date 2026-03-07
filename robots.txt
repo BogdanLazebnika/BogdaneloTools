@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://bogdanlazebnika.github.io/BogdaneloTools/sitemap.xml
+Sitemap: https://lbtools.site/sitemap.xml

@@ -21,6 +21,17 @@ document.addEventListener("click", function (e) {
     window.location.href = BASE_PATH + path;
 });
 
+function fixIcons() {
+
+    const icons = document.querySelectorAll("use[data-icon]");
+
+    icons.forEach(icon => {
+        const path = icon.dataset.icon;
+        icon.setAttribute("href", BASE_PATH + path);
+    });
+
+}
+
 // assets/js/main.js
 
 export async function loadPartial(url, containerSelector) {
@@ -59,6 +70,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 🔥 після вставки partial можемо ініціалізувати речі
     syncThemeButton();
+    fixIcons();
 
 });
 
@@ -79,3 +91,5 @@ setTimeout(() => {
     const isLight = document.body.classList.contains('light-theme');
     themeBtn.textContent = isLight ? '☀️' : '🌙';
 }, 50);
+
+

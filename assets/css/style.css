@@ -9,14 +9,14 @@ main {
 }
 .container {
     box-sizing: border-box;
-    width: 1200px;
-    max-width: 95%;
+    max-width: 1200px;
+    width: 95%;
     margin: 0 auto;
 }
 
 .section-title {
     font-size: 32px;
-    margin-bottom: 40px;
+    margin: 40px 0;
     text-align: center;
 }
 

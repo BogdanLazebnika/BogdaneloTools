@@ -1,427 +1,450 @@
-/* ================= HEADER ================= */
-
-.header{
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1003;
-
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-
-    background: var(--header-bg);
-    border-bottom: 1px solid var(--border-color);
-
-    transition: var(--transition);
+/* -------------------------------------------------
+   1. Header
+   ------------------------------------------------- */
+.header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 1003;
+  backdrop-filter: blur(14px);
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--border-color);
+  transition: var(--transition);
+}
+.header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 70px;
+}
+.header__logo {
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--text-primary);
+  text-decoration: none;
 }
 
-.header__inner{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    height:70px;
+/* -------------------------------------------------
+   2. Desktop navigation
+   ------------------------------------------------- */
+.header__nav {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+.header__nav-link,
+.header__nav-btn {
+  color: var(--text-primary);
+  font-weight: 500;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.header__nav-link {
+  position: relative;
+  padding-bottom: 5px;
+}
+.header__nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .25s ease;
+}
+.header__nav-link:hover,
+.header__nav-link:focus-visible,
+.header__nav-dropdown:hover .header__nav-btn {
+  color: var(--accent);
+}
+.header__nav-link:hover::after,
+.header__nav-link:focus-visible::after {
+  transform: scaleX(1);
+}
+.header__nav-dropdown {
+  position: relative;
+  padding: 20px 0;
+}
+.header__nav-arrow {
+  display: inline-block;
+  margin: 5px;
+  font-size: 12px;
+  transition: transform .3s ease;
+}
+.header__nav-dropdown:hover .header__nav-arrow {
+  transform: rotate(180deg);
 }
 
-.logo{
-    font-weight:700;
-    font-size:20px;
-    text-decoration:none;
-    color:var(--text-primary);
+/* -------------------------------------------------
+   3. Mega‑menu
+   ------------------------------------------------- */
+.mega-menu {
+  box-sizing: border-box;
+  position: fixed;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1200px;
+  padding: 40px 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: .25s ease;
+}
+.header__nav-dropdown:hover .mega-menu {
+  opacity: 1;
+  visibility: visible;
+}
+.mega-menu__content {
+  max-height: calc(80vh - 70px);
+  overflow-y: auto;
+  background: var(--bg-primary);
+  padding: 30px;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+}
+.mega-menu__title {
+  margin-bottom: 40px;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.mega-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
 }
 
+/* ------- Mega‑card (основне посилання) ------- */
+.mega-card {
+  box-sizing: border-box;
+  transition: var(--transition);
+}
+.mega-card__inner {}
 
-/* ================= NAVIGATION ================= */
-
-.nav{
-    display:flex;
-    gap:30px;
-    align-items:center;
+.mega-card-title-container{
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.nav a,
-.nav__link{
-    color:var(--text-secondary);
-    text-decoration:none;
-    font-weight:500;
-    background:none;
-    border:none;
-    cursor:pointer;
-    transition:var(--transition);
+/* основне посилання всередині карточки */
+.mega-card__link {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  color: var(--text-primary);
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  text-decoration: none;
+  transition: var(--transition);
+}
+.mega-card__link:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  opacity: .9;
+  transform: scale(1.001);
+}
+.mega-card__link:hover .mega-card__icon,
+.mega-card__link:hover .mega-card__title,
+.mega-card__link:hover .mega-card__desc {
+  color: var(--accent);
+  transform: translateY(-2px);
 }
 
-.nav a:hover,
-.nav__link:hover{
-    color:var(--accent);
+/* іконка/текст всередині посилання */
+.mega-card__icon {
+  font-size: 32px;
+}
+.mega-card__icon svg { width: 32px; height: 32px; }
+.mega-card__title {
+  font-size: 1.1rem;
+}
+.mega-card__desc {
+  margin: 0;
+  font-size: .95rem;
+  color: var(--text-secondary);
 }
 
-
-/* ================= MEGA MENU ================= */
-
-.nav__dropdown{
-    position:relative;
+/* -------- Sub‑list (під‑меню) -------- */
+.mega-card__sublist-container {
+  transition: .25s ease;
+}
+.mega-card__sublist {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: 20px 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: .25s ease;
 }
 
-.mega-menu{
-
-    position:absolute;
-    top:100%;
-    left:50%;
-    transform:translateX(-50%);
-    width:100vw;
-
-    padding:40px 0;
-
-    opacity:0;
-    visibility:hidden;
-    transition:0.25s ease;
+/* елемент списку та посилання */
+.mega-card__sublist-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.mega-card__sublist-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  border-radius: 10px;
+  text-decoration: none;
+  transition: var(--transition);
 }
 
-.nav__dropdown:hover .mega-menu{
-    opacity:1;
-    visibility:visible;
+/* анімація «>» справа */
+.mega-card__sublist-link::after {
+  content: "\003E";
+  position: absolute;
+  right: -12px;
+  top: 50%;
+  transform: translateY(-50%) translateX(-5px);
+  font-size: inherit;
+  color: var(--accent);
+  opacity: 0;
+  transition: opacity .25s ease, transform .25s ease;
+}
+.mega-card__sublist-link:hover {
+  color: var(--accent);
+  transform: translateX(5px);
+}
+.mega-card__sublist-link:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
 }
 
-.mega-menu__content{
-    box-sizing: border-box;
-    max-height: calc(80vh - 70px);
-    overflow-y: scroll;
-    background:var(--bg-primary);
-    padding:30px;
-    border-radius:20px;
-    border:1px solid var(--border-color);
+/* відкриття під‑списку */
+.mega-card--wrapper:hover .mega-card__sublist {
+  display: flex;
+  opacity: 1;
+  visibility: visible;
+}
+.mega-card--wrapper:hover .mega-card__sublist-container {
+  background: var(--card-bg);
+  border: 1px solid var(--accent);
+  border-radius: 0 0 20px 20px;
+  padding: 0 20px 20px;
+}
+.mega-card--wrapper:hover .mega-card__link {
+  border-bottom: none;
+  border-radius: 20px 20px 0 0;
 }
 
-.mega-menu h2{
-    margin-bottom:40px;
-    color:var(--text-primary);
+/* -------------------------------------------------
+   4. Header actions (theme‑toggle, burger)
+   ------------------------------------------------- */
+.header__actions {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+.theme-toggle {
+  padding: 8px 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.theme-toggle:hover { border-color: var(--accent); }
+
+/* burger‑button */
+.mobile-btn {
+  display: none;
+  width: 44px;
+  height: 44px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: .25s ease;
+}
+.mobile-btn:hover {
+  border-color: var(--accent);
+  box-shadow: var(--glow);
+}
+.mobile-btn span {
+  width: 20px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 2px;
+  transition: .25s ease;
+}
+.mobile-btn.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.mobile-btn.active span:nth-child(2) { opacity: 0; }
+.mobile-btn.active span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+/* -------------------------------------------------
+   5. Mobile menu
+   ------------------------------------------------- */
+.mobile-menu {
+  box-sizing: border-box;
+  position: fixed;
+  top: 70px;
+  right: -380px;
+  width: 100%;
+  max-width: 380px;
+  height: calc(100vh - 70px);
+  background: var(--bg-secondary);
+  padding: 40px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  border-left: 1px solid var(--border-color);
+  overflow-y: auto;
+  transition: .35s ease;
+  z-index: 1002;
+}
+.mobile-menu.open { right: 0; }
+.mobile-menu::before {
+  content: "Меню";
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
 }
 
-.mega-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-    gap:40px;
+/* посилання в мобільному меню */
+.mobile-menu__link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 18px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  color: var(--text-primary);
+  font-weight: 500;
+  font-size: 15px;
+  text-decoration: none;
+  transition: .25s ease;
 }
-
-.mega-card{
-    padding:30px;
-    border-radius:20px;
-    background:var(--card-bg);
-    border:1px solid var(--border-color);
-    text-decoration:none;
-    color:var(--text-primary);
-    transition:var(--transition);
+.mobile-menu__link::after {
+  content: "›";
+  font-size: 18px;
+  color: var(--text-muted);
+  transition: .25s ease;
 }
-
-.mega-card span{
-    font-size:32px;
+.mobile-menu__link:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  transform: translateX(4px);
 }
-
-.mega-card:hover{
-    transform:translateY(-6px);
-    border-color:var(--accent);
+.mobile-menu__link:hover::after {
+  color: var(--accent);
+  transform: translateX(4px);
 }
+.mobile-menu__link:active { transform: scale(.98); }
 
-
-/* ================= ACTIONS ================= */
-
-.header__actions{
-    display:flex;
-    gap:15px;
-    align-items:center;
-}
-
-.theme-toggle{
-    background:var(--card-bg);
-    border:1px solid var(--border-color);
-    border-radius:12px;
-    padding:8px 12px;
-    cursor:pointer;
-    color:var(--text-primary);
-    transition:var(--transition);
-}
-
-.theme-toggle:hover{
-    border-color:var(--accent);
-}
-
-
-/* ================= BURGER BUTTON ================= */
-.mobile-btn{
-    width:44px;
-    height:44px;
-
-    display:none;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    gap:6px;
-
-    background:var(--card-bg);
-    border:1px solid var(--border-color);
-    border-radius:14px;
-
-    cursor:pointer;
-    transition:0.25s ease;
-
-    position:relative;
-    z-index:1003;
-}
-
-/* Glow hover */
-.mobile-btn:hover{
-    border-color:var(--accent);
-    box-shadow:var(--glow);
-}
-
-/* Lines */
-.mobile-btn span{
-    width:20px;
-    height:2px;
-    background:var(--text-primary);
-    border-radius:2px;
-    transition:0.25s ease;
-}
-
-/* ACTIVE → X */
-.mobile-btn.active span:nth-child(1){
-    transform:translateY(8px) rotate(45deg);
-}
-
-.mobile-btn.active span:nth-child(2){
-    opacity:0;
-}
-
-.mobile-btn.active span:nth-child(3){
-    transform:translateY(-8px) rotate(-45deg);
-}
-
-
-/* ================= MOBILE MENU ================= */
-
-/* ================= MOBILE MENU ================= */
-
-.mobile-menu{
-    box-sizing: border-box;
-    position:fixed;
-    top:70px;
-    right:-380px;
-
-    width:100%;
-    max-width:380px;
-    height:calc(100vh - 70px);
-
-    background:var(--bg-secondary);
-    padding:40px 24px;
-
-    display:flex;
-    flex-direction:column;
-    gap:18px;
-
-    transition:0.35s ease;
-    z-index:1002;
-
-    border-left:1px solid var(--border-color);
-    overflow-y:auto;
-}
-
-.mobile-menu.open{
-    right:0;
-}
-
-/* Title inside mobile (optional if додаси) */
-.mobile-menu::before{
-    content:"Меню";
-    font-size:14px;
-    text-transform:uppercase;
-    letter-spacing:1px;
-    color:var(--text-muted);
-    margin-bottom:10px;
-}
-
-
-/* ==== MOBILE LINKS AS BUTTON CARDS ==== */
-
-.mobile-menu a{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-
-    padding:16px 18px;
-    border-radius:14px;
-
-    text-decoration:none;
-    font-weight:500;
-    font-size:15px;
-
-    background:var(--card-bg);
-    border:1px solid var(--border-color);
-
-    color:var(--text-primary);
-
-    transition:0.25s ease;
-    position:relative;
-}
-
-/* Arrow */
-.mobile-menu a::after{
-    content:"›";
-    font-size:18px;
-    color:var(--text-muted);
-    transition:0.25s ease;
-}
-
-/* Hover */
-.mobile-menu a:hover{
-    border-color:var(--accent);
-    background:var(--accent-soft);
-    transform:translateX(4px);
-}
-
-.mobile-menu a:hover::after{
-    color:var(--accent);
-    transform:translateX(4px);
-}
-
-/* Active press effect */
-.mobile-menu a:active{
-    transform:scale(0.98);
-}
-
-
-/* Divider (optional якщо захочеш групи) */
-.mobile-menu hr{
-    border:none;
-    height:1px;
-    background:var(--border-color);
-    margin:10px 0;
-}
-
-/* ================= OVERLAY ================= */
-
-.mobile-overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.45);
-    backdrop-filter:blur(4px);
-
-    opacity:0;
-    pointer-events:none;
-    transition:0.3s ease;
-
-    z-index:1001;
-}
-
-.mobile-overlay.active{
-    opacity:1;
-    pointer-events:auto;
-}
-
-
-/* ================= LOCK SCROLL ================= */
-
-body.menu-open{
-    overflow:hidden;
-}
-
-
-/* ================= RESPONSIVE ================= */
-
-@media(max-width:900px){
-
-    .nav{
-        display:none;
-    }
-
-    .mobile-btn{
-        display:flex;
-    }
-}
-
-
-
-
-/* ================= MOBILE DROPDOWN ================= */
-
+/* -------------------------------------------------
+   6. Mobile dropdown (внутрішнє меню “Застосунки”)
+   ------------------------------------------------- */
 .mobile-dropdown {
-    position: relative;
+  position: relative;
 }
-
-.mobile-dropdown-btn {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 18px;
-    border-radius: 14px;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-    font-weight: 500;
-    font-size: 15px;
-    cursor: pointer;
-    transition: 0.25s ease;
+.mobile-dropdown__btn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 18px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  color: var(--text-primary);
+  font-weight: 500;
+  font-size: 15px;
+  cursor: pointer;
+  transition: .25s ease;
 }
-
-.mobile-dropdown-btn:hover {
-    border-color: var(--accent);
-    background: var(--accent-soft);
+.mobile-dropdown__btn:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
 }
-
-.dropdown-arrow {
-    transition: transform 0.3s ease;
-    font-size: 12px;
+.mobile-dropdown__arrow {
+  font-size: 12px;
+  transition: transform .3s ease;
 }
-
-.mobile-dropdown.active .dropdown-arrow {
-    transform: rotate(180deg);
+.mobile-dropdown.active .mobile-dropdown__arrow { transform: rotate(180deg); }
+.mobile-dropdown__content {
+  max-height: 0;
+  overflow: hidden;
+  margin-left: 20px;
+  transition: max-height .4s ease;
 }
+.mobile-dropdown.active .mobile-dropdown__content { max-height: 500px; }
 
-.mobile-dropdown-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease;
-    margin-left: 20px;
-}
-
-.mobile-dropdown.active .mobile-dropdown-content {
-    max-height: 500px; /* Або достатньо для твоїх елементів */
-}
-
+/* елементи під‑меню в моб. меню */
 .mobile-submenu-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 16px;
-    margin: 8px 0;
-    border-radius: 12px;
-    background: var(--bg-primary);
-    border: 1px solid var(--border-color);
-    text-decoration: none;
-    color: var(--text-primary);
-    transition: 0.25s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  margin: 8px 0;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: .25s ease;
 }
-
-.mobile-submenu-item span {
-    font-size: 24px;
+.mobile-submenu-item__icon { font-size: 24px; }
+.mobile-submenu-item__title {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 600;
 }
-
-.mobile-submenu-item div {
-    flex: 1;
+.mobile-submenu-item__desc {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted);
 }
-
-.mobile-submenu-item h4 {
-    margin: 0 0 4px 0;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.mobile-submenu-item p {
-    margin: 0;
-    font-size: 12px;
-    color: var(--text-muted);
-}
-
 .mobile-submenu-item:hover {
-    border-color: var(--accent);
-    transform: translateX(4px);
+  border-color: var(--accent);
+  transform: translateX(4px);
+}
+
+/* -------------------------------------------------
+   7. Overlay & body lock
+   ------------------------------------------------- */
+.mobile-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: .3s ease;
+  z-index: 1001;
+}
+.mobile-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+body.menu-open { overflow: hidden; }
+
+/* -------------------------------------------------
+   8. Responsive (tablet & mobile)
+   ------------------------------------------------- */
+@media (max-width: 900px) {
+  .header__nav { display: none; }
+  .mobile-btn   { display: flex; }
 }
