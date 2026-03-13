@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- ====================== TITLE & DESCRIPTION ====================== -->
+    <title>Image Tools онлайн – змінювати розмір, стискати, конвертувати фото безкоштовно</title>
+    <meta name="description"
+          content="Image Tools онлайн: змінюйте розмір, стискайте, конвертуйте, обрізайте та додавайте водяний знак до фото. 100 % локальна обробка, без реєстрації та без завантаження на сервер.">
+    <meta name="keywords"
+          content="змінити розмір фото онлайн, стиснути фото без реєстрації, конвертувати PNG у JPG, обрізка зображення, водяний знак фото, безкоштовні онлайн інструменти фото, онлайн редактор фото, локальна обробка фото">
+
+    <!-- ====================== CANONICAL & ROBOTS ====================== -->
+    <link rel="canonical" href="https://lbtools.site/imagetools/">
+    <meta name="robots" content="index, follow">
+
+    <!-- ====================== OPEN GRAPH ====================== -->
+    <meta property="og:title" content="Image Tools — безкоштовні онлайн‑інструменти для фото">
+    <meta property="og:description"
+          content="Змінюйте розмір, стискайте, конвертуйте, обрізайте та ставте водяний знак у вашому браузері без реєстрації.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://lbtools.site/imagetools/">
+    <meta property="og:image" content="https://lbtools.site/assets/img/image-tools-preview.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt"
+          content="Скріншот інтерфейсу Image Tools: змінити розмір, стиснути, конвертувати фото, 100 % локальна обробка">
+    <meta property="og:locale" content="uk_UA">
+
+    <!-- ====================== TWITTER CARD ====================== -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Image Tools — безкоштовні онлайн‑інструменти для фото">
+    <meta name="twitter:description"
+          content="Змінюйте розмір, стискайте, конвертуйте, обрізайте та додавайте водяний знак до зображень без реєстрації.">
+    <meta name="twitter:image" content="https://lbtools.site/assets/img/image-tools-preview.png">
+    <meta name="twitter:image:alt"
+          content="Image Tools – безкоштовні інструменти для зміни розміру, стискання та конвертації фото, працює локально.">
+
+    <!-- ====================== FAVICON ====================== -->
+    <link rel="icon" href="./../favicon.ico" type="image/x-icon">
+
+    <!-- ====================== CSS ====================== -->
+    <link rel="stylesheet" href="./../assets/css/reset.css">
+    <link rel="stylesheet" href="./../assets/css/vars.css">
+    <link rel="stylesheet" href="./../assets/css/style.css">
+    <link rel="stylesheet" href="./../assets/css/header.css">
+    <link rel="stylesheet" href="./../assets/css/footer.css">
+
+    <!-- ====================== JSON‑LD (WebPage) ====================== -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Image Tools – Онлайн інструменти для фото",
+      "description": "Безкоштовні онлайн‑інструменти для зміни розміру, стискання, конвертації, обрізки та водяного знаку зображень. 100 % локальна обробка в браузері.",
+      "url": "https://lbtools.site/imagetools/",
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {"@type":"ListItem","position":1,"name":"LB Tools","item":"https://lbtools.site/"},
+          {"@type":"ListItem","position":2,"name":"Image Tools","item":"https://lbtools.site/imagetools/"}
+        ]
+      },
+      "author": {"@type":"Organization","name":"LB Tools","url":"https://lbtools.site/"},
+      "publisher": {"@type":"Organization","name":"LB Tools","logo":{"@type":"ImageObject","url":"https://lbtools.site/favicon.ico"}}
+    }
+    </script>
+
+    <!-- ====================== JSON‑LD (FAQ) ====================== -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Як змінити розмір фото онлайн без реєстрації?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Відкрийте інструмент ‘Змінити розмір’, завантажте зображення, задайте нові пікселі або % масштаб, натисніть ‘Змінити’ – готове фото одразу пропонується для завантаження."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Чи безпечний онлайн‑сервіс для стискання фото?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Так. Усі операції виконуються локально у вашому браузері, файли не передаються на сервери і автоматично видаляються після обробки."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Як конвертувати PNG у JPG без втрати якості?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Використайте інструмент ‘Конвертувати’. Оберіть вихідний файл, задайте формат JPG, регулюйте якість (0‑100) і натисніть ‘Конвертувати’."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Чи можна додати водяний знак до декількох фото одночасно?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Так. На сторінці ‘Водяний знак’ можна завантажити кілька зображень і застосувати один і той же знак до всіх за один клік."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Чи підтримує інструмент ‘Обрізка’ готові пропорції для соцмереж?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Так. Доступні шаблони 1:1 (Instagram), 4:5, 16:9, 9:16 та кастомні розміри, які можна задати вручну."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- ====================== JSON‑LD (WebSite) ====================== -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "url": "https://lbtools.site/",
+      "name": "LB Tools",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://lbtools.site/imagetools/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!-- ====================== JSON‑LD (SoftwareApplication) ====================== -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Image Tools",
+      "operatingSystem": "All",
+      "applicationCategory": "WebApplication",
+      "offers": {"@type":"Offer","price":"0","priceCurrency":"UAH"},
+      "url": "https://lbtools.site/imagetools/",
+      "description": "Онлайн‑інструменти для зміни розміру, стискання, конвертації, обрізки та водяних знаків зображень. Працює 100 % локально в браузері."
+    }
+    </script>
+
+    <!-- ====================== INLINE‑CSS (залишено як у шаблоні) ====================== -->
+    <style>
+        /* ==================== БАЗОВІ СТИЛІ ==================== */
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 50px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        /* ==================== HERO ==================== */
+        .hero {
+            position: relative;
+            padding: 100px 20px;
+            text-align: center;
+            overflow: hidden;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #6366f1, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* ==================== КНОПКИ ==================== */
+        .btn {
+            padding: 14px 28px;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-3px);
+        }
+        .btn-secondary {
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+        .btn-secondary:hover {
+            background: var(--card-bg);
+            transform: translateY(-3px);
+        }
+
+        /* ==================== ФОН ГЕРОЯ ==================== */
+        .hero-bg {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(99,102,241,0.4) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            filter: blur(100px);
+            z-index: 1;
+        }
+
+
+
+
+
+        /* ==================== СІТКА ІНСТРУМЕНТІВ ==================== */
+        #toolsInject {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+        .tools-grid, .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        .tool-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 30px;
+            text-decoration: none;
+            color: inherit;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .tool-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+        }
+        .tool-card > span:first-child {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+
+        .tool-card .icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
+        .tool-card h3 {
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+        .tool-card p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+        .tool-card::after {
+            content: "Відкрити →";
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: 600;
+            color: var(--accent);
+            transition: var(--transition);
+        }
+        .tool-card:hover::after {
+            transform: translateX(5px);
+        }
+
+
+
+
+        
+
+        /* ==================== SEO‑КОНТЕНТ ==================== */
+        .seo-section {
+            padding: 80px 20px;
+            background: var(--bg-secondary);
+        }
+        .seo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 50px;
+        }
+        .seo-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 30px;
+            transition: var(--transition);
+        }
+        .seo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .seo-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .seo-card p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ==================== ПЕРЕВАГИ ==================== */
+        .benefits-section {
+            padding: 80px 20px;
+            text-align: center;
+        }
+        .benefits-list {
+            list-style-type: none;
+            padding: 0;
+            max-width: 800px;
+            margin: 50px auto 0;
+            text-align: left;
+        }
+        .benefits-list li {
+            margin-bottom: 25px;
+            padding-left: 40px;
+            position: relative;
+            font-size: 1.1rem;
+        }
+        .benefits-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: var(--accent);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .benefits-list strong {
+            color: var(--text-primary);
+        }
+
+        /* ==================== ДОДАТКОВИЙ SEO‑ТЕКСТ ==================== */
+        .article-seo {
+            max-width:1200px;
+            margin:0 auto 60px;
+            padding:0 20px;
+            font-size:1.05rem;
+            line-height:1.8;
+            color:var(--text-primary);
+        }
+        .article-seo h2 {
+            font-size:1.8rem;
+            margin:40px 0 20px;
+            text-align:center;
+            color:var(--accent);
+        }
+        .article-seo h3 {
+            font-size:1.4rem;
+            margin:30px 0 15px;
+            color:var(--accent);
+        }
+        .article-seo ul {
+            margin-left:20px;
+            list-style:disc;
+        }
+        .article-seo a {
+            color:var(--accent);
+            text-decoration:underline;
+        }
+        .article-seo a:hover {color:var(--accent-hover);}
+
+        /* ==================== АДАПТИВНІСТЬ ==================== */
+        @media (max-width: 768px) {
+            .tools-grid, .apps-grid, .seo-grid { gap:20px; }
+            .hero { padding:80px 15px; }
+            .hero h1 { font-size:2.5rem; }
+            .hero-subtitle { font-size:1.1rem; }
+            .hero-buttons { flex-direction:column; gap:15px; }
+            .btn { width:100%; }
+            #toolsInject { padding:40px 15px; }
+            .seo-section, .benefits-section { padding:60px 15px; }
+            .section-title { font-size:1.75rem; }
+        }
+        @media (max-width: 480px) {
+            .hero { padding:60px 10px; }
+            .hero h1 { font-size:2rem; }
+            .hero-subtitle { font-size:1rem; }
+            .tool-card { padding:20px; }
+            .tool-card h3 { font-size:18px; }
+            .seo-card { padding:20px; }
+            .seo-card h3 { font-size:1.25rem; }
+        }
+    </style>
+
+    <!-- ====================== JSON‑LD (додаткова мікрозапис підвищує релевантність) ====================== -->
+    <script type="application/ld+json">
+    {
+      "@context":"https://schema.org",
+      "@type":"Article",
+      "headline":"Все, що треба знати про онлайн‑редагування фото",
+      "author":{"@type":"Organization","name":"LB Tools"},
+      "datePublished":"2026-03-08",
+      "description":"Детальний посібник з використання інструментів зміни розміру, стискання, конвертації, обрізки та водяного знаку. Переваги локальної обробки в браузері.",
+      "url":"https://lbtools.site/imagetools/",
+      "image":"https://lbtools.site/assets/img/image-tools-preview.png",
+      "publisher":{"@type":"Organization","name":"LB Tools","logo":{"@type":"ImageObject","url":"https://lbtools.site/favicon.ico"}}
+    }
+    </script>
+</head>
+
+<body>
+<header></header>
+
+<main class="home">
+    <!-- ==================== HERO ==================== -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Image Tools</h1>
+            <p class="hero-subtitle">
+                Повний набір інструментів для роботи з фотографіями та графікою.
+                100 % локальна обробка — без завантаження файлів на сервер.
+            </p>
+
+            <!-- Прихований SEO‑текст (для індексації) -->
+            <div class="seo-hidden">
+                <h2>Як ефективно працювати з фото онлайн</h2>
+                <p>Наші Image Tools дозволяють змінювати розмір, стискати, конвертувати, обрізати та додавати водяний знак до зображень за секунди. Усі операції виконуються локально у браузері, без передачі даних на сервер.</p>
+                <p>Ідеально підходить для дизайнерів, маркетологів та всіх, хто часто працює з графікою.</p>
+            </div>
+            <style>
+                .seo-hidden{
+                    font-size:0;
+                    height:0;
+                    overflow:hidden;
+                    position:absolute;
+                }
+                .seo-hidden p,
+                .seo-hidden h2 {font-size:16px;}
+            </style>
+
+            <div class="hero-buttons">
+                <a href="#apps" class="btn btn-primary">Переглянути інструменти</a>
+                <a href="./../index.html" class="btn btn-secondary">← До всіх інструментів</a>
+            </div>
+        </div>
+        <div class="hero-bg"></div>
+    </section>
+
+    <!-- ==================== ІНСТРУМЕНТИ ==================== -->
+    <!-- Блок, куди будемо підвантажувати картки -->
+    <section id="apps" class="apps-section">
+        <div class="container">
+            <h2 class="section-title">Image Інструменти</h2>
+            <div id="toolsInject"></div>   <!-- ← саме в цьому div скрипт вставить список -->
+        </div>
+    </section>
+
+    <!-- ==================== SEO‑КОНТЕНТ ==================== -->
+    <section class="seo-section">
+        <div class="container">
+            <h2 class="section-title">Потужні інструменти для роботи з фото</h2>
+
+            <div class="seo-grid">
+                <div class="seo-card">
+                    <h3>🔧 Змінити розмір</h3>
+                    <p>Швидко зменшуйте або збільшуйте розмір зображення у потрібних пікселях або відсотках, зберігаючи пропорції та якість.</p>
+                </div>
+                <div class="seo-card">
+                    <h3>🗜️ Стиснення фото</h3>
+                    <p>Оптимізуйте розмір файлу без помітної втрати якості – ідеально для веб‑проектів та електронної пошти.</p>
+                </div>
+                <div class="seo-card">
+                    <h3>🔄 Конвертація</h3>
+                    <p>Перетворюйте між JPG, PNG, WebP, AVIF, BMP, TIFF за секунди, зберігаючи кольоровий простір.</p>
+                </div>
+                <div class="seo-card">
+                    <h3>✂️ Обрізка</h3>
+                    <p>Вибирайте потрібну частину зображення, задавайте готові пропорції (1:1, 4:3, 16:9) або кастомні розміри.</p>
+                </div>
+                <div class="seo-card">
+                    <h3>💧 Водяний знак</h3>
+                    <p>Додавайте текстовий або графічний водяний знак, регулюючи прозорість, розмір і розташування.</p>
+                </div>
+                <div class="seo-card">
+                    <h3>🔁 Поворот/Фліп</h3>
+                    <p>Поверніть фото на 90°, 180°, 270° або відзеркаліть його горизонтально/вертикально.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== ДОДАТКОВИЙ SEO‑ТЕКСТ (видимий) ==================== -->
+    <section class="article-seo">
+        <h2>Все, що треба знати про онлайн‑редагування фото</h2>
+
+        <p>Сьогодні <strong>змінити розмір фото онлайн</strong> стало абсолютно безболісно – будь‑який користувач може за кілька кліків адаптувати зображення під потрібний формат без встановлення дорогих програм. <em>Image Tools</em> пропонує <strong>повну локальну обробку</strong> (усі дані залишаються лише у вашому браузері), тому ви можете працювати без ризику витоку особистих файлів.</p>
+
+        <h3>Коли потрібен інструмент «Змінити розмір»?</h3>
+        <ul>
+            <li>Підготовка фото для <strong>соціальних мереж</strong> (Instagram – 1080 × 1080 px, Facebook – 1200 × 630 px);</li>
+            <li>Оптимізація зображень для <strong>швидкості сайту</strong> (зменшення ваги до 50 % без втрати якості);</li>
+            <li>Створення <strong>прев’ю‑зображень</strong> для відео‑уроків, презентацій, рекламних банерів.</li>
+        </ul>
+
+        <h3>Стискання фото без втрати якості</h3>
+        <p>Інструмент <strong>стискання фото онлайн</strong> працює на базі сучасних алгоритмів WebP/AVIF, що дозволяє знизити розмір файлу до <strong>80 % і навіть більше</strong>, зберігаючи візуальну якість. Це особливо корисно для <strong>e‑commerce</strong>‑сайтів, коли кожен кілобайт впливає на швидкість завантаження сторінок.</p>
+
+        <h3>Конвертація: PNG → JPG, WebP, AVIF та інші формати</h3>
+        <p>Конвертування з <strong>PNG у JPG</strong> дозволяє суттєво зменшити розмір файлу, бо JPG краще стискає фотознімки. Якщо вам потрібна <strong>безплатна підтримка нових форматів</strong> (WebP, AVIF), <em>Image Tools</em> має готові пресети – просто оберіть потрібний формат у випадаючому меню.</p>
+
+        <h3>Водяний знак – захист вашого авторського контенту</h3>
+        <p>Додайте <strong>текстовий або графічний водяний знак</strong> до будь‑якої кількості зображень за один клік. Встановіть прозорість, розмір, кут накладання – і ваші фото будуть захищені від нелегального копіювання.</p>
+
+        <h3>Крок‑за‑кроком: редагуємо фото в <em>Image Tools</em></h3>
+        <ol>
+            <li><strong>Виберіть інструмент</strong> – наприклад, <a href="/imagetools/resize.html">Змінити розмір</a>.</li>
+            <li>Перетягніть <strong>файл у вікно</strong> або клацніть «Обрати файл».</li>
+            <li>Вкажіть нові <strong>пікселі, % масштаб або готову пропорцію</strong>.</li>
+            <li>Натисніть <strong>«Змінити»</strong> – фото одразу готове до завантаження.</li>
+            <li>За потреби застосуйте <strong>додаткові інструменти</strong> (водяний знак, поворот, обрізка).</li>
+        </ol>
+
+        <p>Усі інструменти <strong>повністю безкоштовні</strong>, немає обмежень на кількість оброблюваних файлів, а процес відбувається <strong>100 % локально у вашому браузері</strong>. Тому ваші дані ніколи не залишають комп’ютер.</p>
+
+        <h3>Чому саме <em>Image Tools</em>?</h3>
+        <p>Ми поєднали <strong>швидкість, безпеку та простоту</strong>. Завдяки технології WebAssembly (WASM) наші інструменти працюють швидше, ніж традиційні JS‑рішення, і забезпечують <strong>точну обробку без втрати деталізації</strong>.</p>
+
+        <p>Пробуйте <a href="#apps">усі інструменти</a> без реєстрації – ви отримаєте <strong>повний контроль над вашими зображеннями</strong> в будь‑якому браузері.</p>
+    </section>
+
+    <!-- ==================== ПЕРЕВАГИ ==================== -->
+    <section class="benefits-section">
+        <div class="container">
+            <h2 class="section-title">Чому обирають наші Image інструменти?</h2>
+
+            <ul class="benefits-list">
+                <li><strong>Без реєстрації</strong> – миттєвий доступ без створення акаунту</li>
+                <li><strong>100 % безпека</strong> – файли залишаються лише на вашому пристрої</li>
+                <li><strong>Швидка обробка</strong> – всі операції виконуються в браузері за мілісекунди</li>
+                <li><strong>Безкоштовно</strong> – жодних платних функцій, усі інструменти відкриті</li>
+                <li><strong>Підтримка багатьох форматів</strong> – JPG, PNG, WebP, AVIF, BMP, TIFF та інші</li>
+                <li><strong>Висока якість</strong> – алгоритми зберігають кольорову гаму та деталізацію</li>
+            </ul>
+        </div>
+    </section>
+</main>
+
+<footer></footer>
+
+<!-- Якщо іноді потрібна динамічна підванта інструментів, залиште скрипт – він не перешкоджає вже розміщеним карткам -->
+<script src="./assets/js/tools-inject.js"></script>
+<script type="module" src="./../assets/js/header.js"></script>
+<script type="module" src="./../assets/js/main.js"></script>
+</body>
+</html>

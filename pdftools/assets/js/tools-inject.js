@@ -1,47 +1,50 @@
 /* --------------------------------------------------------------
    tools-inject.js – уніфікована генерація списку PDF‑інструментів
+   (версія з SVG‑іконками)
    -------------------------------------------------------------- */
 
 (() => {
-    // -----------------------------------------------------------------
-    // 1️⃣  ДАНІ
-    // -----------------------------------------------------------------
+    /* ==================== 1️⃣ ДАНІ ==================== */
 
-    // 1.1. Список інструментів (шлях – папка, без .html та без /)
+    // 1.1. Масив інструментів.
+    //  – href  – шлях до каталогу інструмента (без .html і без початкового "/")
+    //  – icon  – ID символу в sprite‑файлі `icons.svg`
+    //  – title – назва, що показується користувачеві
+    //  – desc  – короткий опис
     const tools = [
         {
-            href: 'pdftools/pdfmerge',
-            icon: '🔗',
+            href:  'pdftools/pdfmerge',
+            icon:  'merge-pdf-ico',
             title: 'Об’єднати PDF',
-            desc: 'З’єднати кілька документів в один'
+            desc:  'З’єднати кілька документів в один'
         },
         {
-            href: 'pdftools/pdfsplit',
-            icon: '✂',
+            href:  'pdftools/pdfsplit',
+            icon:  'split-pdf-ico',
             title: 'Розділити PDF',
-            desc: 'Розбий PDF на окремі сторінки'
+            desc:  'Розбий PDF на окремі сторінки'
         },
         {
-            href: 'pdftools/pdfcompress',
-            icon: '🗜',
+            href:  'pdftools/pdfcompress',
+            icon:  'compress-pdf-outline-ico',
             title: 'Стиснути PDF',
-            desc: 'Зменшити розмір PDF файлу'
+            desc:  'Зменшити розмір PDF‑файлу'
         },
         {
-            href: 'pdftools/convert-pdf-to-image',
-            icon: '📷',
+            href:  'pdftools/convert-pdf-to-image',
+            icon:  'pdf-to-img-ico',
             title: 'PDF → Зображення',
-            desc: 'Конвертувати PDF у PNG/JPG'
+            desc:  'Конвертувати PDF у PNG/JPG'
         },
         {
-            href: 'pdftools/convert-image-to-pdf',
-            icon: '📷',
+            href:  'pdftools/convert-image-to-pdf',
+            icon:  'img-to-pdf-ico',
             title: 'Зображення → PDF',
-            desc: 'Створити PDF з JPG/PNG/WebP'
+            desc:  'Створити PDF з JPG/PNG/WebP'
         }
     ];
 
-    // 1.2. Якщо потрібні “жорсткі” виключення (наприклад старі статичні сторінки)
+    // 1.2. Жорсткі виключення (наприклад, старі статичні сторінки)
     const MANUAL_EXCLUDED = [
         // '/pdf/merge.html',
         // '/some/old/page.html'
@@ -50,27 +53,24 @@
     // 1.3. Селектор контейнера‑placeholder
     const CONTAINER_SELECTOR = '#toolsInject';
 
-    // -----------------------------------------------------------------
-    // 2️⃣  УТИЛІТИ
-    // -----------------------------------------------------------------
+
+    /* ==================== 2️⃣ УТИЛІТИ ==================== */
 
     /**
-     * Очищає шлях:
-     *   – гарантує, що він починається з «/»,
-     *   – видаляє "/index.html",
-     *   – викидає зайві кінцеві '/',
-     *   – переводить у нижній регістр.
+     * Нормалізує шлях:
+     *   – додає початковий "/"
+     *   – видаляє "/index.html"
+     *   – прибирає зайві кінцеві "/"
+     *   – переводить у нижній регістр
      */
     function normalizePath(raw) {
         let p = raw.startsWith('/') ? raw : '/' + raw;
-        // видаляємо /index.html (може бути /index.html або /index.HTML)
         p = p.replace(/\/index\.html$/i, '');
-        // прибираємо зайві слеші в кінці
         p = p.replace(/\/+$/g, '');
         return p.toLowerCase();
     }
 
-    /** Чи поточна сторінка – це одна з наших папок‑інструментів? */
+    /** Чи є поточна сторінка однією з інструментів? */
     function isCurrentToolPage() {
         const cur = normalizePath(location.pathname);
         // 1) ручні виключення
@@ -79,22 +79,22 @@
         return tools.some(t => normalizePath(t.href) === cur);
     }
 
-    /** HTML‑шаблон однієї картки (для app‑grid або tools‑grid) */
+    /** HTML‑шаблон однієї картки (SVG‑іконка, назва, опис) */
     function renderCard(item) {
-        // залишаємо relative папку – браузер завантажить index.html автоматично
-        const href = item.href;
+        const href = item.href;                 // залишаємо relative‑path – браузер підвантажить index.html
         return `
             <a href="${href}" data-link="${href}" class="tool-card">
-                <span>${item.icon}</span>
+                <svg class="icon" aria-hidden="true">
+                    <use data-icon="assets/img/icons/icons.svg#${item.icon}"></use>
+                </svg>
                 <h3>${item.title}</h3>
                 <p>${item.desc}</p>
             </a>
         `;
     }
 
-    // -----------------------------------------------------------------
-    // 3️⃣  Основна функція – генеруємо та вставляємо блок
-    // -----------------------------------------------------------------
+    /* ==================== 3️⃣ Основна функція ==================== */
+
     function injectTools() {
         const container = document.querySelector(CONTAINER_SELECTOR);
         if (!container) {
@@ -105,21 +105,18 @@
         const curIsTool = isCurrentToolPage();               // чи на сторінці‑інструменті?
         const curPath   = normalizePath(location.pathname);   // нормалізований поточний шлях
 
-        // Фільтруємо: якщо ми на сторінці‑інструменті, то виключаємо саме це посилання.
+        // Фільтруємо → коли ми вже на конкретному інструменті, то не виводимо посилання на нього
         const itemsHTML = tools
             .filter(item => {
                 if (!curIsTool) return true;                 // на головній – залишаємо все
-                // на сторінці‑інструменті – відкидаємо лише те, що співпадає
-                return normalizePath(item.href) !== curPath;
+                return normalizePath(item.href) !== curPath;// на інструменті – виключаємо його
             })
             .map(renderCard)
             .join('');
 
-        if (!itemsHTML) return; // нічого не залишилось – не вставляємо порожнє
+        if (!itemsHTML) return; // нічого не залишилось – не вставляємо порожньої розмітки
 
-        // Два варіанти розмітки – в залежності від того, куди будемо вставляти:
-        //  * Якщо контейнер знаходиться в "apps-section" → клас apps-grid
-        //  * Якщо в "other-tools" → клас tools-grid
+        // Визначаємо, куди саме вставляємо (apps‑section → apps‑grid, інше → tools‑grid)
         const wrapperClass = container.closest('.apps-section')
             ? 'apps-grid'
             : 'tools-grid';
@@ -131,9 +128,8 @@
         `;
     }
 
-    // -----------------------------------------------------------------
-    // 4️⃣  Запуск після повного парсінгу DOM
-    // -----------------------------------------------------------------
+    /* ==================== 4️⃣ Запуск після DOMReady ==================== */
+
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', injectTools);
     } else {

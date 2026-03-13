@@ -1,168 +1,161 @@
+/*=====================================================================
+  1️⃣  Базові стилі сторінки
+=====================================================================*/
+html,
 body {
+    /* Забороняємо «збільшення» при подвійному тапі */
+    touch-action: manipulation;                     /* iOS/Android */
+    margin: 0;
     font-family: 'Inter', sans-serif;
     background: var(--bg-primary);
     color: var(--text-primary);
-    margin: 0;
+
+    /* Плавний перехід між темами */
+    transition: background-color var(--scrollbar-transition),
+                color var(--scrollbar-transition);
 }
-main {
-    padding: 70px 0;
+
+/* Для всього контенту, який не має скрол‑бару – нічого не резервуємо */
+* {
+    /* Видалено: scrollbar-gutter: stable both-edges; */
 }
-.container {
+
+/* Основна розмітка */
+main               { padding: 70px 0; }
+.container          {
     box-sizing: border-box;
     max-width: 1200px;
     width: 95%;
     margin: 0 auto;
 }
-
-.section-title {
+.section-title       {
     font-size: 32px;
     margin: 40px 0;
     text-align: center;
 }
 
-/* Забороняємо «збільшення» при подвійному клацанні на всій сторінці */
-html, body {
-    touch-action: manipulation;            /* в iOS/Android убирає double‑tap zoom */
+/* --------------------------------------------------------------------
+   2️⃣  Модальне вікно (pinch‑zoom дозволяємо лише всередині)
+--------------------------------------------------------------------*/
+.modal__content { touch-action: pinch-zoom; }
+.modal__img    { transition: transform .2s ease; }
+
+/* --------------------------------------------------------------------
+   3️⃣  Іконки – без зайвих відступів
+--------------------------------------------------------------------*/
+.icon {
+    display: inline-block;
+    width: 1em; height: 1em;
+    vertical-align: middle;
+    fill: currentColor; stroke: currentColor;
+    flex-shrink: 0;
+    padding: 0; margin: 0;
+    overflow: visible;               /* показуємо весь SVG */
 }
+.icon svg { width: 100%; height: 100%; }
 
-/* У модалі дозволяємо pinch‑zoom */
-.modal__content {
-    touch-action: pinch-zoom;               /* дозволяє лише в модальному вікні */
-}
-
-/* За бажанням – плавна анімація масштабування картинки */
-.modal__img {
-    transition: transform .2s ease;
-}
-
-
-
-
-/*=================================================================
-  🔹  БАЗОВІ ЗМІННІ
-=================================================================*/
+/*=====================================================================
+  4️⃣  Перемінні (CSS‑змінні) – налаштування скрол‑бару
+=====================================================================*/
 :root {
+    /* ==== розмір ==== */
+    --scrollbar-size: 8px;                     /* 6‑12 px – виберіть реально потрібне */
 
-  /* Товщина скрол‑бару (змінюється в одному місці) */
-  --scrollbar-size: 8px;                     /* 6‑12 px – виберіть, що вам до вподоби */
+    /* ==== кольори (вони беруться із вашого набору змінних) ==== */
+    --scrollbar-thumb: var(--accent);                /* основний */
+    --scrollbar-thumb-hover: var(--accent-hover);    /* hover */
+    --scrollbar-thumb-active: var(--accent);         /* active (прокручування) */
+    --scrollbar-track: var(--bg-tertiary);           /* фон треку */
 
-  /* Кольори – беруться з вашого набору змінних  */
-  --scrollbar-thumb:          var(--accent);        /* основний */
-  --scrollbar-thumb-hover:    var(--accent-hover);  /* hover */
-  --scrollbar-thumb-active:   var(--accent);        /* активний (прокручування) */
-  --scrollbar-track:          var(--bg-tertiary);   /* фон треку */
-  --scrollbar-radius:         var(--radius);        /* заокруглення кутів */
-  --scrollbar-transition:    var(--transition);    /* плавність усього */
-
-  /* Додаткові «неймовірні» ефекти */
-  --scrollbar-glow:           0 0 12px var(--accent);
-  --scrollbar-glow-hover:     0 0 18px var(--accent-hover);
+    /* ==== інші параметри ==== */
+    --scrollbar-radius: var(--radius);              /* заокруглення кутів */
+    --scrollbar-transition: var(--transition);      /* плавність */
+    --scrollbar-glow: 0 0 12px var(--accent);         /* базовий «glow» */
+    --scrollbar-glow-hover: 0 0 18px var(--accent-hover);
 }
 
-/*=================================================================
-  🌙  Темна тема  (це ваш початковий блок)
-=================================================================*/
-:root {
-  /* вже є – залишаємо без змін */
-}
+/*=====================================================================
+  5️⃣  Плавна анімація при перемиканні тем (фон, колір тексту)
+=====================================================================*/
+/* already declared у пункті 1 – залишаємо тільки transition  */
 
-/*=================================================================
-  🌞  Світла тема – у вас вже є .light‑theme, вона переписує
-=================================================================*/
-.light-theme {
-  /* тут змінюються лише ваші колірні змінні.
-     Додатково підмінюємо скрол‑бар, якщо хочете інший
-     вигляд у світлій темі (наприклад, інший glow). */
-}
-
-/*=================================================================
-  🔧  Плавний перехід між темами (для всіх властивостей,
-      що залежать від CSS‑змінних)
-=================================================================*/
-html,
-body {
-  transition:
-    background-color var(--scrollbar-transition),
-    color            var(--scrollbar-transition);
-}
-
-/*=================================================================
-  🦊  Firefox  – підтримка лише кольору + товщини
-=================================================================*/
+/*=====================================================================
+  6️⃣  Підтримка Firefox (толщина + колір)
+=====================================================================*/
 html {
-  scrollbar-width: thin;                                   /* thin | auto | none */
-  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+    scrollbar-width: thin;                              /* thin | auto | none */
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
-/*=================================================================
-  💻  WebKit‑базовані (Chrome, Edge, Safari, Opera)
-=================================================================*/
+/*=====================================================================
+  7️⃣  WebKit‑базовані браузери (Chrome, Edge, Safari, Opera)
+=====================================================================*/
 ::-webkit-scrollbar {
-  width:  var(--scrollbar-size);
-  height: var(--scrollbar-size);
-  background: transparent;        /* фон «вікна» – лишаємо прозорим */
+    width: var(--scrollbar-size);
+    height: var(--scrollbar-size);
+    background: transparent;          /* прозорий «контейнер» */
 }
 
-/* Трек (запасний простір, по якому рухається thumb) */
+/* --- Трек (запасний простір) -------------------------------------- */
 ::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
-  border-radius: var(--scrollbar-radius);
+    background: var(--scrollbar-track);
+    border-radius: var(--scrollbar-radius);
 }
 
-/* Пальчик (thumb) */
+/* --- Пальчик (thumb) ----------------------------------------------- */
 ::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border: 2px solid var(--scrollbar-track);          /* створює «порожнину» */
-  border-radius: var(--scrollbar-radius);
-  box-shadow: var(--scrollbar-glow);
-  transition:
-    background-color var(--scrollbar-transition),
-    box-shadow       var(--scrollbar-transition),
-    transform        var(--scrollbar-transition);
+    background: var(--scrollbar-thumb);
+    border: 2px solid var(--scrollbar-track);   /* створює «порожнину» */
+    border-radius: var(--scrollbar-radius);
+    box-shadow: var(--scrollbar-glow);
+    transition: background-color var(--scrollbar-transition),
+                box-shadow var(--scrollbar-transition),
+                transform var(--scrollbar-transition);
 }
 
-/* Hover – підсвічування */
+/* --- Hover ---------------------------------------------------------- */
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--scrollbar-thumb-hover);
-  box-shadow: var(--scrollbar-glow-hover);
-  transform: scale(1.05);
+    background: var(--scrollbar-thumb-hover);
+    box-shadow: var(--scrollbar-glow-hover);
+    transform: scale(1.05);
 }
 
-/* Active (коли кнопка миші натиснута) */
+/* --- Active (кнопка миші натиснута) -------------------------------- */
 ::-webkit-scrollbar-thumb:active {
-  background: var(--scrollbar-thumb-active);
-  box-shadow: 0 0 24px var(--accent);
-  transform: scale(0.98);
+    background: var(--scrollbar-thumb-active);
+    box-shadow: 0 0 24px var(--accent);
+    transform: scale(0.98);
 }
 
-/* Куток, який бачимо, коли є вертикальний + горизонтальний скрол */
-::-webkit-scrollbar-corner {
-  background: var(--scrollbar-track);
-}
+/* --- Куток (при одночасному вертикальному + горизонтальному скролі) */
+::-webkit-scrollbar-corner { background: var(--scrollbar-track); }
 
-/* Приховуємо «стрілки» – вони виглядають вже старо */
-::-webkit-scrollbar-button {
-  display: none;
-}
+/* --- Приховуємо «стрілки» ------------------------------------------ */
+::-webkit-scrollbar-button { display: none; }
 
-/*=================================================================
-  📐  Сталість розмітки – не «стрибає» при появі/зникненні скрол‑бару */
-* {
-  scrollbar-gutter: stable both-edges;   /* Chrome 108+, Safari 16+, Firefox 112+ */
-}
-
-/*=================================================================
-  ♿  Користувачі з «prefers‑reduced‑motion» – без анімацій */
+/*=====================================================================
+  8️⃣  Переваги користувачів, які вимкнули анімації
+=====================================================================*/
 @media (prefers-reduced-motion: reduce) {
-  ::-webkit-scrollbar-thumb {
-    transition: none;
-  }
+    ::-webkit-scrollbar-thumb { transition: none; }
 }
 
-/*=================================================================
-  🧩  Клас для будь‑якого контент‑блоку з прокруткою,
-       якщо ви не хочете, щоб на всій сторінці був скрол‑бар
-=================================================================*/
+/*=====================================================================
+  9️⃣  Блоки, які **повинні** мати скрол‑бар (з резервом простору)
+=====================================================================*/
 .scrollable {
-  overflow: auto;    /* або overflow-y / overflow-x за потребою */
+    overflow: auto;                     /* або overflow-y / overflow-x */
+    scrollbar-gutter: stable both-edges;   /* залишаємо gutter лише тут */
 }
+
+/* --------------------------------------------------------------------
+   Якщо хочете, щоб скрол‑бар був **поверх** контенту (не резервував
+   простір) – застосуйте клас .overlay (працює в Chrome, Edge, Safari)
+--------------------------------------------------------------------*/
+.scrollable.overlay {
+    overflow: overlay;   /* не резервує простір під скрол‑бар */
+}
+
+/*=====================================================================
+  🔚  Кінець файлу
+=====================================================================*/

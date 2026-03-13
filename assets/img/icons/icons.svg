@@ -1,26 +1,171 @@
 <svg xmlns="http://www.w3.org/2000/svg">
-    <defs>
+  <defs>
 
-        <symbol id="icon-search" viewBox="0 0 48 48">
-            <path d="M18.9677 33.9353C22.716 33.9353 26.134 32.5476 28.7597 30.2714L42.4883 44L44 42.4883L30.2714 28.7597C32.5476 26.134 33.9353 22.716 33.9353 18.9677C33.9353 10.7012 27.2341 4 18.9677 4C10.7012 4 4 10.7012 4 18.9677C4 27.2341 10.7012 33.9353 18.9677 33.9353ZM18.9677 6.13824C26.042 6.13824 31.7971 11.8933 31.7971 18.9677C31.7971 26.042 26.042 31.7971 18.9677 31.7971C11.8933 31.7971 6.13824 26.042 6.13824 18.9677C6.13824 11.8933 11.8933 6.13824 18.9677 6.13824Z" fill="currentColor"/>
-        </symbol>
+    <!-- 🔍 Пошукова іконка (id="icon‑search") -->
+    <symbol id="icon-search" viewBox="0 0 48 48">
+      <path d="M18.9677 33.9353C22.716 33.9353 26.134 32.5476 28.7597 30.2714L42.4883 44L44 42.4883L30.2714 28.7597C32.5476 26.134 33.9353 22.716 33.9353 18.9677C33.9353 10.7012 27.2341 4 18.9677 4C10.7012 4 4 10.7012 4 18.9677C4 27.2341 10.7012 33.9353 18.9677 33.9353ZM18.9677 6.13824C26.042 6.13824 31.7971 11.8933 31.7971 18.9677C31.7971 26.042 26.042 31.7971 18.9677 31.7971C11.8933 31.7971 6.13824 26.042 6.13824 18.9677C6.13824 11.8933 11.8933 6.13824 18.9677 6.13824Z"
+            fill="currentColor"/>
+    </symbol>
 
-        <symbol id="pdf-tool-ico" viewBox="0 0 24 24">
-            <path d="M0 0h24v24H0V0z" fill="none"/>
-            <path d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm12 6V9c0-.55-.45-1-1-1h-2v5h2c.55 0 1-.45 1-1zm-2-3h1v3h-1V9zm4 2h1v-1h-1V9h1V8h-2v5h1zm-8 0h1c.55 0 1-.45 1-1V9c0-.55-.45-1-1-1H9v5h1v-2zm0-2h1v1h-1V9z" fill="currentColor"/>
-        </symbol>
 
-        <symbol id="file-dock" viewBox="0 0 24 24">
-          <path d="M8 16h8v2H8zm0-4h8v2H8zm6-10H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z" fill="currentColor"/>
-        </symbol>
+    <symbol id="moon-ico" viewBox="0 -960 960 960" preserveAspectRatio="xMidYMid meet">
+    <path d="M360-80q-32 0-61.5-4.5T240-98q126-41 203-146t77-236q0-131-77-236T240-862q29-9 58.5-13.5T360-880q83 0 156 31.5T643-763q54 54 85.5 127T760-480q0 83-31.5 156T643-197q-54 54-127 85.5T360-80Z" fill="currentColor"/>
+    </symbol>
 
-        <symbol id="image-ico" viewBox="0 0 24 24">
-         <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z" fill="currentColor"/>
-        </symbol>
+    <symbol id="sun-ico" viewBox="0 -960 960 960" preserveAspectRatio="xMidYMid meet">
+        <path d="M338.5-338.5Q280-397 280-480t58.5-141.5Q397-680 480-680t141.5 58.5Q680-563 680-480t-58.5 141.5Q563-280 480-280t-141.5-58.5ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Z" fill="currentColor"/>
+    </symbol>
 
 
 
+    <!-- Стрілка горизонтальна туди і назад (id="arrows-horizontal-ico") -->
+    <symbol id="arrows-horizontal-ico" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
+    <path d="M6.9 9L3 12M3 12L6.9 15M3 12H21M21 12L17.1 9M21 12L17.1 15"
+            fill="none" stroke="currentColor" stroke-width="2"
+            stroke-miterlimit="9.56677" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+
+    <!-- 📄 PDF‑tool (id="pdf-tool-ico") -->
+    <symbol id="pdf-tool-ico" viewBox="0 0 24 24">
+      <path d="M0 0h24v24H0V0z" fill="none"/>
+      <path d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm12 6V9c0-.55-.45-1-1-1h-2v5h2c.55 0 1-.45 1-1zm-2-3h1v3h-1V9zm4 2h1v-1h-1V9h1V8h-2v5h1zm-8 0h1c.55 0 1-.45 1-1V9c0-.55-.45-1-1-1H9v5h1v-2zm0-2h1v1h-1V9z"
+            fill="currentColor"/>
+    </symbol>
+
+    <!-- 📂 File‑dock (id="file-dock") -->
+    <symbol id="file-dock" viewBox="0 0 24 24">
+      <path d="M8 16h8v2H8zm0-4h8v2H8zm6-10H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"
+            fill="currentColor"/>
+    </symbol>
+
+    <!-- 🖼️ Image (id="image-ico") -->
+    <symbol id="image-ico" viewBox="0 0 24 24">
+      <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z"
+            fill="currentColor"/>
+    </symbol>
+
+    <!-- 🖼️ Image optimization (id="optimization-img-ico") -->
+    <symbol id="optimization-img-ico" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
+        <g clip-path="url(#clip0_183_35)">
+            <!-- Зовнішній квадрат з пунктиром -->
+            <path d="M18.9474 1H5.05263C2.81442 1 1 2.81442 1 5.05263V18.9474C1 21.1856 2.81442 23 5.05263 23H18.9474C21.1856 23 23 21.1856 23 18.9474V5.05263C23 2.81442 21.1856 1 18.9474 1Z"
+                fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="2.5 2"/>
+            
+            <!-- Маленькі діагональні та горизонтальні лінії -->
+            <path d="M3 3L5 5M5 5V3M5 5H3M21 3L19 5M19 5V3M19 5H21M3 21L5 19M5 19H3M5 19V21M21 21L19 19M19 19H21M19 19V21"
+                fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            
+            <!-- Прямокутник всередині -->
+            <path d="M17 6H8C6.89543 6 6 6.97683 6 8.18182V15.8182C6 17.0232 6.89543 18 8 18H17C18.1046 18 19 17.0232 19 15.8182V8.18182C19 6.97683 18.1046 6 17 6Z"
+                fill="none" stroke="currentColor" stroke-width="1.2"/>
+            
+            <!-- Коло (точка) -->
+            <path d="M9.5 11C10.3284 11 11 10.3284 11 9.5C11 8.67157 10.3284 8 9.5 8C8.67157 8 8 8.67157 8 9.5C8 10.3284 8.67157 11 9.5 11Z"
+                fill="currentColor"/>
+            
+            <!-- Гори з лінією -->
+            <path d="M6 16L9 12.4L11 14.8L14 10L19 16"
+                fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+
+        <defs>
+            <clipPath id="clip0_183_35">
+            <rect width="24" height="24" fill="white"/>
+            </clipPath>
+        </defs>
+    </symbol>
+
+    <!-- 📎 Merge‑PDF (id="merge-pdf-ico") -->
+    <symbol id="merge-pdf-ico" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
+      <path d="M8 3h9l3 3v13H8z" fill="none" stroke="currentColor" stroke-width="1.6" opacity="0.35"/>
+      <path d="M10 8h6M10 10h6M10 12h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.35"/>
+      <path d="M4 6h9l3 3v13H4z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+      <path d="M6.5 11h7M6.5 13h7M6.5 15h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" opacity="0.75"/>
+      <path d="M19 13v4M17 15h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+
+    <!-- ✂️ Split‑PDF (id="split-pdf-ico") -->
+    <symbol id="split-pdf-ico" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
+      <path d="M8 3h9l3 3v13H8z" fill="none" stroke="currentColor" stroke-width="1.6" opacity="0.35"/>
+      <path d="M10 8h6M10 10h6M10 12h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.35"/>
+      <path d="M4 6h9l3 3v13H4z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+      <path d="M6.5 11h7M6.5 13h7M6.5 15h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" opacity="0.75"/>
+      <g fill="currentColor" transform="translate(10 4) scale(0.8) translate(0 2)">
+        <path d="M3.5 3.5c-.614-.884-.074-1.962.858-2.5L8 7.226l3.642-6.226c.932.538 1.472 1.616.858 2.5L8.81 8.61l1.556 2.661a2.5 2.5 0 1 1-.794.637L8 9.73l-1.572 2.177a2.5 2.5 0 1 1-.794-.637L7.19 8.61zm2.5 10a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0m7 0a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0"/>
+      </g>
+    </symbol>
+
+    <!-- 📦 Compress‑PDF (outline) (id="compress-pdf-outline-ico") -->
+    <symbol id="compress-pdf-outline-ico" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
+        <g clip-path="url(#clip0_183_35)">
+            <path d="M18.9474 1H5.05263C2.81442 1 1 2.81442 1 5.05263V18.9474C1 21.1856 2.81442 23 5.05263 23H18.9474C21.1856 23 23 21.1856 23 18.9474V5.05263C23 2.81442 21.1856 1 18.9474 1Z"
+                fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="2.5 2"/>
+            <path d="M3 3L5 5M5 5V3M5 5H3M21 3L19 5M19 5V3M19 5H21M3 21L5 19M5 19H3M5 19V21M21 21L19 19M19 19H21M19 19V21"
+                fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M7 6V17.6552C7 18.3724 8 19 9.14286 19H17"
+                fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            <path d="M7 6.27273C7 5.59394 7.98437 5 9.10938 5H14.8125L17 7.54545V19"
+                fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 10H14M10 13H14M10 16H12.6667"
+                fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        </g>
+        <defs>
+            <clipPath id="clip0_183_35">
+            <rect width="24" height="24" fill="white"/>
+            </clipPath>
+        </defs>
+    </symbol>
+
+    <!-- 📄 Image → PDF (id="img-to-pdf-ico") -->
+<symbol id="img-to-pdf-ico" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
+  <!-- 1️⃣ Перший крок – контур листа, лише stroke -->
+  <path d="M12 1H3C1.89543 1 1 1.97683 1 3.18182V10.8182C1 12.0232 1.89543 13 3 13H12C13.1046 13 14 12.0232 14 10.8182V3.18182C14 1.97683 13.1046 1 12 1Z"
+        fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <!-- 2️⃣ Круглий маркер – залишаємо заповнення -->
+  <path d="M4.5 6C5.32843 6 6 5.32843 6 4.5C6 3.67157 5.32843 3 4.5 3C3.67157 3 3 3.67157 3 4.5C3 5.32843 3.67157 6 4.5 6Z"
+        fill="currentColor"/>
+  <!-- 3️⃣ Стрілка, лише stroke -->
+  <path d="M1 11L4 7.4L6 9.8L9 5L14 11"
+        fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 4️⃣ Лінії‑хвилі підпису, лише stroke -->
+  <path d="M6 16C6.51429 18.5 9.45601 18.5 12 18.5M12 18.5L10.6286 17M12 18.5L10.6286 20"
+        fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 5️⃣ Вертикальна лінія «завантаження», лише stroke -->
+  <path d="M16 15V22.1724C16 22.6138 16.7 23 17.5 23H23"
+        fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+  <!-- 6️⃣ Нижня панель, лише stroke -->
+  <path d="M16 14.8182C16 14.3818 16.6891 14 17.4766 14H21.4688L23 15.6364V23"
+        fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 7️⃣ Остання група коротких ліній, лише stroke -->
+  <path d="M18 17H21M18 19H21M18 21H20"
+        fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+</symbol>
+
+<!-- 📸 PDF → Image (id="pdf-to-img-ico") -->
+<symbol id="pdf-to-img-ico" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
+  <!-- 1️⃣ Прямокутник‑фрейм, лише stroke -->
+  <path d="M21.7692 16H16.2308C15.551 16 15 16.5698 15 17.2727V21.7273C15 22.4302 15.551 23 16.2308 23H21.7692C22.449 23 23 22.4302 23 21.7273V17.2727C23 16.5698 22.449 16 21.7692 16Z"
+        fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <!-- 2️⃣ Круглий маркер, залишаємо заповнення -->
+  <path d="M17 19C17.5523 19 18 18.5523 18 18C18 17.4477 17.5523 17 17 17C16.4477 17 16 17.4477 16 18C16 18.5523 16.4477 19 17 19Z"
+        fill="currentColor"/>
+  <!-- 3️⃣ Стрілка «PDF → Image», лише stroke -->
+  <path d="M15 22L16.8462 20.2L18.0769 21.4L19.9231 19L23 22"
+        fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 4️⃣ Лінія‑хвилі, лише stroke -->
+  <path d="M6 17C6.51429 19.5 9.45601 19.5 12 19.5M12 19.5L10.6286 18M12 19.5L10.6286 21"
+        fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 5️⃣ Вертикальна частина «документа», лише stroke -->
+  <path d="M1 2V13.6552C1 14.3724 2.1 15 3.35714 15H12"
+        fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+  <!-- 6️⃣ Верхня рамка «документа», лише stroke -->
+  <path d="M1 2.27273C1 1.59394 2.08281 1 3.32031 1H9.59375L12 3.54545V15"
+        fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 7️⃣ Лінії‑розмірування, лише stroke -->
+  <path d="M4 6H9M4 9H9M4 12H7.33333"
+        fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+</symbol>
 
 
-    </defs>
+  </defs>
 </svg>

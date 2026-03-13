@@ -49,7 +49,7 @@
                          href="#" data-link="imgtools/optimizer-img/">
                         <span class="mega-card__icon">
                           <svg class="icon" aria-hidden="true">
-                            <use data-icon="assets/img/icons/icons.svg#image-ico"></use>
+                            <use data-icon="assets/img/icons/icons.svg#optimization-img-ico"></use>
                           </svg>
                         </span>
                         <span class="mega-card-tools-title">Оптимізатор зображень</span>
@@ -80,15 +80,73 @@
                 <div class="mega-card__sublist-container">
                   <ul class="mega-card__sublist">
                     <li class="mega-card__sublist-item">
-                      <a class="mega-card__sublist-link" href="#" data-link="pdftools/pdfmerge/">Об’єднання PDF</a>
-                      <a class="mega-card__sublist-link" href="#" data-link="/pdftools/pdfsplit/">Розділення PDF</a>
+
+                      <a class="mega-card__sublist-link mega-card--link-tools"
+                         href="./pdftools/pdfmerge/" data-link="pdftools/pdfmerge/">
+                        <span class="mega-card__icon">
+                          <svg class="icon" aria-hidden="true">
+                            <use data-icon="assets/img/icons/icons.svg#merge-pdf-ico"></use>
+                          </svg>
+                        </span>
+                        <span class="mega-card-tools-title">Об’єднання PDF</span>
+                      </a>
+
+                      <span class="mega-card-arrow-icon">
+                        <svg class="icon" aria-hidden="true">
+                          <use data-icon="assets/img/icons/icons.svg#arrows-horizontal-ico"></use>
+                        </svg>
+                      </span>
+
+                      <a class="mega-card__sublist-link mega-card--link-tools"
+                         href="./pdftools/pdfsplit/" data-link="pdftools/pdfsplit/">
+                        <span class="mega-card__icon">
+                          <svg class="icon" aria-hidden="true">
+                            <use data-icon="assets/img/icons/icons.svg#split-pdf-ico"></use>
+                          </svg>
+                        </span>
+                        <span class="mega-card-tools-title">Розділення PDF</span>
+                      </a>
+
                     </li>
                     <li class="mega-card__sublist-item">
-                      <a class="mega-card__sublist-link" href="#" data-link="pdftools/pdfcompress/">Стискання PDF</a>
+
+                      <a class="mega-card__sublist-link mega-card--link-tools"
+                         href="./pdftools/pdfcompress/" data-link="pdftools/pdfcompress/">
+                        <span class="mega-card__icon">
+                          <svg class="icon" aria-hidden="true">
+                            <use data-icon="assets/img/icons/icons.svg#compress-pdf-outline-ico"></use>
+                          </svg>
+                        </span>
+                        <span class="mega-card-tools-title">Стискання PDF</span>
+                      </a>
                     </li>
                     <li class="mega-card__sublist-item">
-                      <a class="mega-card__sublist-link" href="#" data-link="pdftools/convert-pdf-to-image/">PDF в Зображення</a>
-                      <a class="mega-card__sublist-link" href="#" data-link="pdftools/convert-image-to-pdf/">Зображення в PDF</a>
+                      
+                      <a class="mega-card__sublist-link mega-card--link-tools"
+                         href="./pdftools/convert-pdf-to-image/" data-link="pdftools/convert-pdf-to-image/">
+                        <span class="mega-card__icon">
+                          <svg class="icon" aria-hidden="true">
+                            <use data-icon="assets/img/icons/icons.svg#pdf-to-img-ico"></use>
+                          </svg>
+                        </span>
+                        <span class="mega-card-tools-title">PDF в Зображення</span>
+                      </a>
+
+                      <span class="mega-card-arrow-icon">
+                        <svg class="icon" aria-hidden="true">
+                          <use data-icon="assets/img/icons/icons.svg#arrows-horizontal-ico"></use>
+                        </svg>
+                      </span>
+
+                      <a class="mega-card__sublist-link mega-card--link-tools"
+                         href="./pdftools/convert-image-to-pdf/" data-link="pdftools/convert-image-to-pdf/">
+                        <span class="mega-card__icon">
+                          <svg class="icon" aria-hidden="true">
+                            <use data-icon="assets/img/icons/icons.svg#img-to-pdf-ico"></use>
+                          </svg>
+                        </span>
+                        <span class="mega-card-tools-title">Зображення в PDF</span>
+                      </a>
                     </li>
                   </ul>
                 </div>
@@ -104,7 +162,13 @@
 
     <!-- ACTIONS (темна/мобільна кнопка) -->
     <div class="header__actions">
-      <button id="themeToggle" class="theme-toggle">🌙</button>
+      <button id="themeToggle" class="theme-toggle">
+
+        <svg class="icon theme-icon" aria-hidden="true">
+          <use data-icon="assets/img/icons/icons.svg#moon-ico"></use>
+        </svg>
+
+    </button>
 
       <button id="mobileMenuBtn" class="mobile-btn" aria-label="Відкрити меню">
         <span></span><span></span><span></span>
@@ -116,9 +180,11 @@
 
 <!-- MOBILE MENU -->
 <div id="mobileMenu" class="mobile-menu">
+
+  <!-- Головна -->
   <a href="#" data-link="index.html" class="mobile-menu__link">Головна</a>
 
-  <!-- MOBILE DROPDOWN “Застосунки” -->
+  <!-- Застосунки -->
   <div class="mobile-dropdown">
     <button class="mobile-dropdown__btn">
       <span>Застосунки</span>
@@ -126,29 +192,159 @@
     </button>
 
     <div class="mobile-dropdown__content">
-      <a href="#" data-link="imgtools/optimizer-img/" class="mobile-submenu-item">
-        <span class="mobile-submenu-item__icon">🖼</span>
-        <div class="mobile-submenu-item__text">
-          <h4 class="mobile-submenu-item__title">Оптимізатор зображень</h4>
-          <p class="mobile-submenu-item__desc">Стискай фото без втрати якості</p>
-        </div>
-      </a>
 
-      <a href="#" data-link="pdftools/" class="mobile-submenu-item">
-        <span class="mobile-submenu-item__icon">PDF</span>
-        <div class="mobile-submenu-item__text">
-          <h4 class="mobile-submenu-item__title">Робота з PDF</h4>
-          <p class="mobile-submenu-item__desc">
-            Стискай, об’єднуй, конвертуй, оптимізуй, редактуй та багато іншого
-          </p>
+      <!-- IMG Tools -->
+      <div class="mobile-submenu-item-title">
+        <div class="mobile-submenu-item mobile-submenu-item-title-active">
+          <span class="mobile-submenu-item__icon">
+            <svg class="icon" aria-hidden="true">
+              <use data-icon="assets/img/icons/icons.svg#image-ico"></use>
+            </svg>
+          </span>
+          <div class="mobile-submenu-item__text">
+            <h4 class="mobile-submenu-item__title">IMG Tools</h4>
+            <p class="mobile-submenu-item__desc">
+              Стиснення, оптимізування, редактування, конвертування зображень та багато іншого
+            </p>
+          </div>
+          <span class="mobile-submenu-item__arrow">▼</span>
         </div>
-      </a>
 
-      <!-- інші під‑меню – додавайте сюди -->
+        <ul class="mobile-submenu-list">
+          <li class="mobile-submenu-item-container">
+            <a href="./imgtools/" data-link="imgtools/" class="mobile-submenu-item">
+              <span class="mobile-submenu-item__icon">
+                <svg class="icon" aria-hidden="true">
+                  <use data-icon="assets/img/icons/icons.svg#image-ico"></use>
+                </svg>
+              </span>
+              <div class="mobile-submenu-item__text">
+                <h4 class="mobile-submenu-item__title">Головна IMG Tools</h4>
+                <p class="mobile-submenu-item__desc">Всі інструменти роботи з зображеннями</p>
+              </div>
+            </a>
+          </li>
+          <li class="mobile-submenu-item-container">
+            <a href="./imgtools/optimizer-img/" data-link="imgtools/optimizer-img/" class="mobile-submenu-item">
+              <span class="mobile-submenu-item__icon">
+                <svg class="icon" aria-hidden="true">
+                  <use data-icon="assets/img/icons/icons.svg#optimization-img-ico"></use>
+                </svg>
+              </span>
+              <div class="mobile-submenu-item__text">
+                <h4 class="mobile-submenu-item__title">Оптимізатор зображень</h4>
+                <p class="mobile-submenu-item__desc">Стискання та оптимізація фото</p>
+              </div>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- PDF Tools -->
+      <div class="mobile-submenu-item-title">
+        <div class="mobile-submenu-item mobile-submenu-item-title-active">
+          <span class="mobile-submenu-item__icon">
+            <svg class="icon" aria-hidden="true">
+              <use data-icon="assets/img/icons/icons.svg#pdf-tool-ico"></use>
+            </svg>
+          </span>
+          <div class="mobile-submenu-item__text">
+            <h4 class="mobile-submenu-item__title">PDF Tools</h4>
+            <p class="mobile-submenu-item__desc">
+              Стискай, об’єднуй, конвертуй, оптимізуй, редактуй та багато іншого
+            </p>
+          </div>
+          <span class="mobile-submenu-item__arrow">▼</span>
+        </div>
+
+        <ul class="mobile-submenu-list">
+          <li class="mobile-submenu-item-container">
+            <a href="#" data-link="pdftools/" class="mobile-submenu-item">
+              <span class="mobile-submenu-item__icon">
+                <svg class="icon" aria-hidden="true">
+                  <use data-icon="assets/img/icons/icons.svg#pdf-tool-ico"></use>
+                </svg>
+              </span>
+              <div class="mobile-submenu-item__text">
+                <h4 class="mobile-submenu-item__title">Головна PDF Tools</h4>
+                <p class="mobile-submenu-item__desc">Всі інструменти роботи з PDF</p>
+              </div>
+            </a>
+          </li>
+          <li class="mobile-submenu-item-container">
+            <a href="./pdftools/pdfmerge/" data-link="pdftools/pdfmerge/" class="mobile-submenu-item">
+              <span class="mobile-submenu-item__icon">
+                <svg class="icon" aria-hidden="true">
+                  <use data-icon="assets/img/icons/icons.svg#merge-pdf-ico"></use>
+                </svg>
+              </span>
+              <div class="mobile-submenu-item__text">
+                <h4 class="mobile-submenu-item__title">Об’єднання PDF</h4>
+                <p class="mobile-submenu-item__desc">Об’єднай декілька PDF в один файл</p>
+              </div>
+            </a>
+          </li>
+          <li class="mobile-submenu-item-container">
+            <a href="./pdftools/pdfsplit/" data-link="pdftools/pdfsplit/" class="mobile-submenu-item">
+              <span class="mobile-submenu-item__icon">
+                <svg class="icon" aria-hidden="true">
+                  <use data-icon="assets/img/icons/icons.svg#split-pdf-ico"></use>
+                </svg>
+              </span>
+              <div class="mobile-submenu-item__text">
+                <h4 class="mobile-submenu-item__title">Розділення PDF</h4>
+                <p class="mobile-submenu-item__desc">Розділи PDF на окремі сторінки</p>
+              </div>
+            </a>
+          </li>
+          <li class="mobile-submenu-item-container">
+            <a href="./pdftools/pdfcompress/" data-link="pdftools/pdfcompress/" class="mobile-submenu-item">
+              <span class="mobile-submenu-item__icon">
+                <svg class="icon" aria-hidden="true">
+                  <use data-icon="assets/img/icons/icons.svg#compress-pdf-outline-ico"></use>
+                </svg>
+              </span>
+              <div class="mobile-submenu-item__text">
+                <h4 class="mobile-submenu-item__title">Стискання PDF</h4>
+                <p class="mobile-submenu-item__desc">Зменшуй розмір PDF без втрати якості</p>
+              </div>
+            </a>
+          </li>
+          <li class="mobile-submenu-item-container">
+            <a href="./pdftools/convert-pdf-to-image/" data-link="pdftools/convert-pdf-to-image/" class="mobile-submenu-item">
+              <span class="mobile-submenu-item__icon">
+                <svg class="icon" aria-hidden="true">
+                  <use data-icon="assets/img/icons/icons.svg#pdf-to-img-ico"></use>
+                </svg>
+              </span>
+              <div class="mobile-submenu-item__text">
+                <h4 class="mobile-submenu-item__title">PDF в Зображення</h4>
+                <p class="mobile-submenu-item__desc">Конвертуй PDF в PNG або JPG</p>
+              </div>
+            </a>
+          </li>
+          <li class="mobile-submenu-item-container">
+            <a href="./pdftools/convert-image-to-pdf/" data-link="pdftools/convert-image-to-pdf/" class="mobile-submenu-item">
+              <span class="mobile-submenu-item__icon">
+                <svg class="icon" aria-hidden="true">
+                  <use data-icon="assets/img/icons/icons.svg#img-to-pdf-ico"></use>
+                </svg>
+              </span>
+              <div class="mobile-submenu-item__text">
+                <h4 class="mobile-submenu-item__title">Зображення в PDF</h4>
+                <p class="mobile-submenu-item__desc">Створи PDF із зображень</p>
+              </div>
+            </a>
+          </li>
+        </ul>
+      </div>
+
     </div>
   </div>
 
+  <!-- Про нас -->
   <a href="#" data-link="about.html" class="mobile-menu__link">Про нас</a>
+
 </div>
 
 <div id="mobileOverlay" class="mobile-overlay"></div>

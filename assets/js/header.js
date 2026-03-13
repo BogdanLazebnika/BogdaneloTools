@@ -1,44 +1,71 @@
 // ===== LOAD THEME =====
 (function () {
+
     const saved = localStorage.getItem('lb_theme');
-    
+
     if (saved) {
-        // Якщо користувач вже обирав тему - використовуємо його вибір
+
         if (saved === 'light') {
             document.body.classList.add('light-theme');
         }
+
     } else {
-        // Авто-вибір на основі системних налаштувань
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+
+        if (window.matchMedia('(prefers-color-scheme: light)').matches) {
             document.body.classList.add('light-theme');
             localStorage.setItem('lb_theme', 'light');
         } else {
             localStorage.setItem('lb_theme', 'dark');
         }
+
     }
-    
-    // Оновити іконку кнопки при завантаженні
-    updateThemeButtonIcon();
+
+    waitForThemeButton();
+
 })();
+
+
+// ===== ЧЕКАЄМО ПОКИ З'ЯВИТЬСЯ КНОПКА =====
+function waitForThemeButton() {
+
+    const interval = setInterval(() => {
+
+        const themeBtn = document.getElementById('themeToggle');
+
+        if (themeBtn) {
+            updateThemeButtonIcon();
+            clearInterval(interval);
+        }
+
+    }, 30);
+
+}
+
 
 // ===== GLOBAL CLICK HANDLER =====
 document.addEventListener('click', function (e) {
+
     const themeBtn = e.target.closest('#themeToggle');
     const burger = e.target.closest('#mobileMenuBtn');
     const overlay = document.getElementById('mobileOverlay');
     const mobileMenu = document.getElementById('mobileMenu');
-    const dropdownBtn = e.target.closest('.mobile-dropdown-btn');
+    const dropdownBtn = e.target.closest('.mobile-dropdown__btn');
+
 
     /* THEME */
     if (themeBtn) {
+
         document.body.classList.toggle('light-theme');
 
         const isLight = document.body.classList.contains('light-theme');
-        themeBtn.textContent = isLight ? '☀️' : '🌙';
 
         localStorage.setItem('lb_theme', isLight ? 'light' : 'dark');
+
+        updateThemeButtonIcon();
+
         return;
     }
+
 
     /* BURGER */
     if (burger) {
@@ -46,62 +73,97 @@ document.addEventListener('click', function (e) {
         return;
     }
 
+
     /* MOBILE DROPDOWN */
     if (dropdownBtn) {
+
         const dropdown = dropdownBtn.closest('.mobile-dropdown');
+
         dropdown.classList.toggle('active');
+
         return;
     }
 
-    /* CLICK OUTSIDE (overlay) */
+
+    /* OVERLAY CLICK */
     if (overlay && e.target === overlay) {
         closeMenu();
         return;
     }
 
-    /* CLICK OUTSIDE DROPDOWN (in mobile menu) */
-    if (mobileMenu && mobileMenu.classList.contains('open') && 
+
+    /* CLICK OUTSIDE DROPDOWN */
+    if (mobileMenu && mobileMenu.classList.contains('open') &&
         !e.target.closest('.mobile-dropdown')) {
+
         const activeDropdown = mobileMenu.querySelector('.mobile-dropdown.active');
+
         if (activeDropdown) {
             activeDropdown.classList.remove('active');
         }
+
     }
+
 });
 
-// ===== ESC KEY =====
+
+// ===== ESC =====
 document.addEventListener('keydown', function (e) {
+
     if (e.key === 'Escape') {
         closeMenu();
     }
+
 });
 
-// ===== THEME CHANGE LISTENER (опціонально) =====
-// Слідкує за зміною системної теми в реальному часі
+
+// ===== SYSTEM THEME LISTENER =====
 window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
+
     const saved = localStorage.getItem('lb_theme');
-    // Змінюємо тему тільки якщо користувач ще не робив власний вибір
+
     if (!saved) {
+
         if (e.matches) {
             document.body.classList.add('light-theme');
-            localStorage.setItem('lb_theme', 'light');
         } else {
             document.body.classList.remove('light-theme');
-            localStorage.setItem('lb_theme', 'dark');
         }
+
         updateThemeButtonIcon();
+
     }
+
 });
 
+
+// ===== UPDATE ICON =====
 function updateThemeButtonIcon() {
+
     const themeBtn = document.getElementById('themeToggle');
-    if (themeBtn) {
-        const isLight = document.body.classList.contains('light-theme');
-        themeBtn.textContent = isLight ? '☀️' : '🌙';
+    if (!themeBtn) return;
+
+    const icon = themeBtn.querySelector('use');
+    if (!icon) return;
+
+    const isLight = document.body.classList.contains('light-theme');
+
+    const iconPath = isLight
+        ? "assets/img/icons/icons.svg#sun-ico"
+        : "assets/img/icons/icons.svg#moon-ico";
+
+    icon.setAttribute("data-icon", iconPath);
+
+    if (window.fixIcons) {
+        window.fixIcons();
     }
+
 }
 
-function toggleMenu(){
+
+// ===== MENU =====
+function toggleMenu() {
+
     const burger = document.getElementById('mobileMenuBtn');
     const mobileMenu = document.getElementById('mobileMenu');
     const overlay = document.getElementById('mobileOverlay');
@@ -112,9 +174,12 @@ function toggleMenu(){
     mobileMenu.classList.toggle('open');
     overlay.classList.toggle('active');
     document.body.classList.toggle('menu-open');
+
 }
 
-function closeMenu(){
+
+function closeMenu() {
+
     const burger = document.getElementById('mobileMenuBtn');
     const mobileMenu = document.getElementById('mobileMenu');
     const overlay = document.getElementById('mobileOverlay');
@@ -124,11 +189,38 @@ function closeMenu(){
     burger.classList.remove('active');
     mobileMenu.classList.remove('open');
     overlay.classList.remove('active');
+
     document.body.classList.remove('menu-open');
-    
-    // Закриваємо всі відкриті dropdown
+
     const activeDropdowns = mobileMenu.querySelectorAll('.mobile-dropdown.active');
+
     activeDropdowns.forEach(dropdown => {
         dropdown.classList.remove('active');
     });
+
 }
+// ===== MOBILE SUBMENU LOGIC =====
+document.addEventListener('click', function (e) {
+
+    // Знаходимо кнопку розгортання підменю у всіх mobile-submenu-item-title
+    const submenuToggle = e.target.closest('.mobile-submenu-item__arrow, .mobile-submenu-item-title > .mobile-submenu-item');
+
+    if (submenuToggle) {
+
+        // parent контейнер підменю
+        const submenuWrapper = submenuToggle.closest('.mobile-submenu-item-title');
+
+        if (!submenuWrapper) return;
+
+        submenuWrapper.classList.toggle('active');
+
+        // Згортаємо інші відкриті підменю всередині того ж dropdown
+        const siblingSubmenus = Array.from(submenuWrapper.parentElement.querySelectorAll('.mobile-submenu-item-title.active'))
+            .filter(el => el !== submenuWrapper);
+
+        siblingSubmenus.forEach(el => el.classList.remove('active'));
+
+        return;
+    }
+
+});

@@ -40,10 +40,11 @@
   border: none;
   cursor: pointer;
   transition: var(--transition);
+  padding-bottom: 5px;
 }
 .header__nav-link {
   position: relative;
-  padding-bottom: 5px;
+
 }
 .header__nav-link::after {
   content: "";
@@ -241,6 +242,10 @@
   border-bottom: none;
   border-radius: 20px 20px 0 0;
 }
+.mega-card-arrow-icon svg {
+  width: 35px;
+  height: 28px;
+}
 
 /* -------------------------------------------------
    4. Header actions (theme‑toggle, burger)
@@ -261,11 +266,11 @@
 }
 .theme-toggle:hover { border-color: var(--accent); }
 
-/* burger‑button */
+/* Burger button */
 .mobile-btn {
   display: none;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -274,177 +279,247 @@
   border: 1px solid var(--border-color);
   border-radius: 14px;
   cursor: pointer;
-  transition: .25s ease;
-}
-.mobile-btn:hover {
-  border-color: var(--accent);
-  box-shadow: var(--glow);
+  transition: 0.25s ease;
 }
 .mobile-btn span {
-  width: 20px;
-  height: 2px;
+  display: block;
+  width: 24px;
+  height: 3px;
   background: var(--text-primary);
-  border-radius: 2px;
-  transition: .25s ease;
+  border-radius: 3px;
+  transition: 0.25s ease;
 }
-.mobile-btn.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.mobile-btn.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
 .mobile-btn.active span:nth-child(2) { opacity: 0; }
-.mobile-btn.active span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+.mobile-btn.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
 
-/* -------------------------------------------------
-   5. Mobile menu
-   ------------------------------------------------- */
+/* =================================================
+   2. Mobile Menu Container
+================================================= */
 .mobile-menu {
-  box-sizing: border-box;
   position: fixed;
   top: 70px;
-  right: -380px;
+  right: -100%;
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
   height: calc(100vh - 70px);
   background: var(--bg-secondary);
-  padding: 40px 24px;
+  padding: 25px 15px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  border-left: 1px solid var(--border-color);
+  gap: 12px;
   overflow-y: auto;
-  transition: .35s ease;
+  box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+  transition: right 0.35s ease, opacity 0.35s ease;
   z-index: 1002;
+  box-sizing: border-box;
 }
 .mobile-menu.open { right: 0; }
+
 .mobile-menu::before {
   content: "Меню";
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-size: 16px;
+  font-weight: 600;
   color: var(--text-muted);
-  margin-bottom: 10px;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  display: block;
 }
 
-/* посилання в мобільному меню */
+/* =================================================
+   3. Main Links
+================================================= */
 .mobile-menu__link {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 18px;
+  padding: 18px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 16px;
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 14px;
   color: var(--text-primary);
-  font-weight: 500;
-  font-size: 15px;
   text-decoration: none;
-  transition: .25s ease;
+  transition: all 0.25s ease;
 }
 .mobile-menu__link::after {
   content: "›";
   font-size: 18px;
-  color: var(--text-muted);
-  transition: .25s ease;
+  color: var(--text-primary);
+  transition: transform 0.25s ease, color 0.25s ease;
 }
 .mobile-menu__link:hover {
-  border-color: var(--accent);
   background: var(--accent-soft);
-  transform: translateX(4px);
+  border-color: var(--accent);
+  transform: translateX(3px);
 }
 .mobile-menu__link:hover::after {
   color: var(--accent);
-  transform: translateX(4px);
+  transform: translateX(3px);
 }
-.mobile-menu__link:active { transform: scale(.98); }
+.mobile-menu__link:active { transform: scale(0.97); }
 
-/* -------------------------------------------------
-   6. Mobile dropdown (внутрішнє меню “Застосунки”)
-   ------------------------------------------------- */
+/* =================================================
+   4. Mobile Dropdown
+================================================= */
 .mobile-dropdown {
-  position: relative;
+  display: flex;
+  flex-direction: column;
 }
+
 .mobile-dropdown__btn {
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 18px;
+  padding: 18px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 16px;
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 14px;
-  color: var(--text-primary);
-  font-weight: 500;
-  font-size: 15px;
   cursor: pointer;
-  transition: .25s ease;
+  transition: all 0.25s ease;
+  color: var(--text-primary);
 }
 .mobile-dropdown__btn:hover {
-  border-color: var(--accent);
   background: var(--accent-soft);
+  border-color: var(--accent);
 }
+.mobile-dropdown.active .mobile-dropdown__btn {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
 .mobile-dropdown__arrow {
-  font-size: 12px;
-  transition: transform .3s ease;
+  font-size: 14px;
+  transition: transform 0.3s ease;
 }
-.mobile-dropdown.active .mobile-dropdown__arrow { transform: rotate(180deg); }
+.mobile-dropdown.active .mobile-dropdown__arrow {
+  transform: rotate(180deg);
+}
+
+/* =================================================
+   5. Submenu Items
+================================================= */
 .mobile-dropdown__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
   max-height: 0;
   overflow: hidden;
-  margin-left: 20px;
-  transition: max-height .4s ease;
-}
-.mobile-dropdown.active .mobile-dropdown__content { max-height: 500px; }
+  transition: max-height 0.35s ease, padding 0.35s ease;
+  padding: 0 10px;
 
-/* елементи під‑меню в моб. меню */
+}
+.mobile-dropdown.active .mobile-dropdown__content {
+  max-height: 1000px;
+  gap: 15px;
+  padding: 10px;
+}
+
 .mobile-submenu-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  margin: 8px 0;
+  gap: 14px;
+  padding: 10px 15px;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 14px;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
   color: var(--text-primary);
   text-decoration: none;
-  transition: .25s ease;
-}
-.mobile-submenu-item__icon { font-size: 24px; }
-.mobile-submenu-item__title {
-  margin: 0 0 4px;
-  font-size: 14px;
-  font-weight: 600;
-}
-.mobile-submenu-item__desc {
-  margin: 0;
-  font-size: 12px;
-  color: var(--text-muted);
+  transition: all 0.25s ease;
 }
 .mobile-submenu-item:hover {
+  background: var(--accent-soft);
   border-color: var(--accent);
-  transform: translateX(4px);
+  transform: translateX(2px);
 }
 
-/* -------------------------------------------------
-   7. Overlay & body lock
-   ------------------------------------------------- */
+.mobile-submenu-item-title-active{
+  background: var(--accent-soft);
+  border-color: var(--accent-soft-);
+}
+
+/* Submenu Text */
+.mobile-submenu-item__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.mobile-submenu-item__title {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.mobile-submenu-item__desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Icons */
+.mobile-submenu-item__icon {
+  font-size: 26px;
+  flex-shrink: 0;
+}
+
+/* Nested Submenu */
+.mobile-submenu-list {
+  list-style: none;
+  padding-left: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0 0 0 15px;
+}
+.mobile-submenu-item-title.active > .mobile-submenu-list {
+  max-height: 1000px;
+  gap: 15px;
+  padding: 15px 0 0 15px;
+}
+
+/* Arrow Rotation */
+.mobile-submenu-item-title > .mobile-submenu-item__arrow {
+  transition: transform 0.3s ease;
+}
+.mobile-submenu-item-title.active > .mobile-submenu-item__arrow {
+  transform: rotate(180deg);
+}
+
+/* =================================================
+   6. Overlay & Body Lock
+================================================= */
 .mobile-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.45);
+  background: rgba(0,0,0,0.5);
   backdrop-filter: blur(4px);
   opacity: 0;
   pointer-events: none;
-  transition: .3s ease;
+  transition: opacity 0.3s ease;
   z-index: 1001;
 }
 .mobile-overlay.active {
   opacity: 1;
   pointer-events: auto;
 }
-body.menu-open { overflow: hidden; }
+body.menu-open {
+  overflow: hidden;
+}
 
-/* -------------------------------------------------
-   8. Responsive (tablet & mobile)
-   ------------------------------------------------- */
+/* =================================================
+   7. Responsive
+================================================= */
 @media (max-width: 900px) {
   .header__nav { display: none; }
-  .mobile-btn   { display: flex; }
+  .mobile-btn { display: flex; }
 }

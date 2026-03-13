@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>PDF Tools Онлайн — Об'єднати, Стиснути, Розділити PDF безкоштовно | LB Tools</title>
+    <title>PDF Tools онлайн – об’єднати, стискати, розділяти PDF безкоштовно</title>
     <meta name="description" content="Використовуйте наші PDF Tools для швидкого об'єднання, розділення, стиснення та конвертації PDF. Без реєстрації, без завантаження файлів на сервер.">
-    
 
     <link rel="canonical" href="https://lbtools.site/pdftools/">
     <meta name="robots" content="index, follow">
@@ -21,7 +20,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="PDF Tools — Безкоштовні онлайн інструменти для PDF">
     <meta name="twitter:description" content="Об'єднання, розділення, стиснення PDF без завантаження на сервер.">
-    <meta name="twitter:image" content="https://lbtools.site/assets/img/pdf-tools-preview.png">
+    <meta name="twitter:image" content="https://lbtools.site/assets/img/banner/pdf-tools-preview.png">
     
     <link rel="icon" href="./../favicon.ico" type="image/x-icon">
     
@@ -31,33 +30,38 @@
     <link rel="stylesheet" href="./../assets/css/header.css">
     <link rel="stylesheet" href="./../assets/css/footer.css">
     
+    <!-- Structured data – WebPage -->
     <script type="application/ld+json">
     {
-      "@context": "https://schema.org",
-      "@type": "WebPage",
-      "name": "PDF Tools - Онлайн інструменти для PDF",
-      "description": "Безкоштовні інструменти для об'єднання, розділення, стиснення PDF документів. Працює локально у браузері.",
-      "url": "https://lbtools.site/pdftools/",
-      "breadcrumb": {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          {
-            "@type": "ListItem",
-            "position": 1,
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "PDF Tools – Онлайн інструменти для PDF",
+        "description": "Безкоштовні інструменти для об’єднання, стискання, розділення, конвертації PDF. 100 % локальна обробка в браузері.",
+        "url": "https://lbtools.site/pdftools/",
+        "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {"@type":"ListItem","position":1,"name":"LB Tools","item":"https://lbtools.site/"},
+                {"@type":"ListItem","position":2,"name":"PDF Tools","item":"https://lbtools.site/pdftools/"}
+            ]
+        },
+        "author": {
+            "@type": "Organization",
             "name": "LB Tools",
-            "item": "https://lbtools.site/"
-          },
-          {
-            "@type": "ListItem",
-            "position": 2,
-            "name": "PDF Tools",
-            "item": "https://lbtools.site/pdftools/"
-          }
-        ]
-      }
+            "url": "https://lbtools.site/"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "LB Tools",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://lbtools.site/favicon.ico"
+            }
+        }
     }
     </script>
-    
+
+    <!-- Structured data – FAQ -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -90,11 +94,9 @@
       ]
     }
     </script>
-    
+
     <style>
         /* ==================== БАЗОВІ СТИЛІ ==================== */
-        
-        
         .section-title {
             text-align: center;
             font-size: 2rem;
@@ -102,7 +104,6 @@
             position: relative;
             padding-bottom: 15px;
         }
-        
         .section-title::after {
             content: '';
             position: absolute;
@@ -114,7 +115,7 @@
             background: var(--accent);
             border-radius: 2px;
         }
-        
+
         /* ==================== HERO ==================== */
         .hero {
             position: relative;
@@ -122,14 +123,12 @@
             text-align: center;
             overflow: hidden;
         }
-
         .hero-content {
             position: relative;
             z-index: 2;
             max-width: 800px;
             margin: 0 auto;
         }
-
         .hero h1 {
             font-size: 3.5rem;
             margin-bottom: 20px;
@@ -138,14 +137,12 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-
         .hero-subtitle {
             font-size: 1.25rem;
             color: var(--text-secondary);
             margin-bottom: 40px;
             line-height: 1.6;
         }
-
         .hero-buttons {
             display: flex;
             gap: 20px;
@@ -163,25 +160,20 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-
             box-sizing: border-box;
         }
-
         .btn-primary {
             background: var(--accent);
             color: #fff;
         }
-
         .btn-primary:hover {
             background: var(--accent-hover);
             transform: translateY(-3px);
         }
-
         .btn-secondary {
             border: 1px solid var(--border-color);
             color: var(--text-primary);
         }
-
         .btn-secondary:hover {
             background: var(--card-bg);
             transform: translateY(-3px);
@@ -206,13 +198,12 @@
             margin: 0 auto;
             padding: 60px 20px;
         }
-
-        .tools-grid, .apps-grid {
+        .tools-grid,
+        .apps-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 30px;
         }
-
         .tool-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -226,29 +217,31 @@
             flex-direction: column;
             justify-content: space-between;
         }
-
         .tool-card:hover {
             transform: translateY(-8px);
             border-color: var(--accent);
         }
-
         .tool-card > span:first-child {
             font-size: 40px;
             margin-bottom: 20px;
         }
-
         .tool-card h3 {
             margin-bottom: 10px;
             font-size: 20px;
         }
-
         .tool-card p {
             color: var(--text-secondary);
             margin-bottom: 20px;
             line-height: 1.5;
             flex-grow: 1;
         }
-
+        .tool-card svg {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
         .tool-card::after {
             content: "Відкрити →";
             display: inline-block;
@@ -257,7 +250,6 @@
             color: var(--accent);
             transition: var(--transition);
         }
-
         .tool-card:hover::after {
             transform: translateX(5px);
         }
@@ -267,14 +259,12 @@
             padding: 80px 20px;
             background: var(--bg-secondary);
         }
-        
         .seo-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 40px;
             margin-top: 50px;
         }
-        
         .seo-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -282,12 +272,10 @@
             padding: 30px;
             transition: var(--transition);
         }
-        
         .seo-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
-        
         .seo-card h3 {
             font-size: 1.5rem;
             margin-bottom: 20px;
@@ -296,17 +284,32 @@
             align-items: center;
             gap: 10px;
         }
-        
         .seo-card p {
             color: var(--text-secondary);
             line-height: 1.7;
         }
-        
+
+        /* Доданий розгорнутий SEO‑опис */
+        .seo-description {
+            margin-top: 2.5rem;
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+        .seo-description h3 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+        .seo-description p {
+            margin-bottom: 1.2rem;
+        }
+
+        /* ==================== ПЕРЕВАГИ ==================== */
         .benefits-section {
             padding: 80px 20px;
             text-align: center;
         }
-        
         .benefits-list {
             list-style-type: none;
             padding: 0;
@@ -314,14 +317,12 @@
             margin: 50px auto 0;
             text-align: left;
         }
-        
         .benefits-list li {
             margin-bottom: 25px;
             padding-left: 40px;
             position: relative;
             font-size: 1.1rem;
         }
-        
         .benefits-list li::before {
             content: "✓";
             position: absolute;
@@ -331,46 +332,40 @@
             font-size: 1.5rem;
             font-weight: bold;
         }
-        
         .benefits-list strong {
             color: var(--text-primary);
         }
 
         /* ==================== АДАПТИВНІСТЬ ==================== */
         @media (max-width: 768px) {
-            .tools-grid, .apps-grid, .seo-grid {
+            .tools-grid,
+            .apps-grid,
+            .seo-grid {
                 gap: 20px;
             }
-            
             .hero {
                 padding: 80px 15px;
             }
-            
             .hero h1 {
                 font-size: 2.5rem;
             }
-            
             .hero-subtitle {
                 font-size: 1.1rem;
             }
-            
             .hero-buttons {
                 flex-direction: column;
                 gap: 15px;
             }
-            
             .btn {
                 width: 100%;
             }
-            
             #toolsInject {
                 padding: 40px 15px;
             }
-            
-            .seo-section, .benefits-section {
+            .seo-section,
+            .benefits-section {
                 padding: 60px 15px;
             }
-            
             .section-title {
                 font-size: 1.75rem;
             }
@@ -380,27 +375,21 @@
             .hero {
                 padding: 60px 10px;
             }
-            
             .hero h1 {
                 font-size: 2rem;
             }
-            
             .hero-subtitle {
                 font-size: 1rem;
             }
-            
             .tool-card {
                 padding: 20px;
             }
-            
             .tool-card h3 {
                 font-size: 18px;
             }
-            
             .seo-card {
                 padding: 20px;
             }
-            
             .seo-card h3 {
                 font-size: 1.25rem;
             }
@@ -411,7 +400,7 @@
 <header></header>
 
 <main class="home">
-    <!-- ==================== ГЕРОЙ ==================== -->
+    <!-- ==================== HERO ==================== -->
     <section class="hero">
         <div class="hero-content">
             <h1>PDF Tools</h1>
@@ -419,22 +408,24 @@
                 Повний набір інструментів для роботи з PDF документами.
                 100% локальна обробка — без завантаження файлів на сервер.
             </p>
+
             <div class="seo-hidden">
-            <h2>Як ефективно працювати з PDF онлайн</h2>
-            <p>Наші PDF Tools дозволяють об’єднувати, стискати, розділяти та конвертувати PDF файли за секунди. Всі операції відбуваються локально у браузері, без завантаження на сервер.</p>
-            <p>Це ідеально для студентів, офісних працівників та всіх, хто працює з документами PDF.</p>
+                <h2>Як ефективно працювати з PDF онлайн</h2>
+                <p>Наші PDF Tools дозволяють об’єднувати, стискати, розділяти та конвертувати PDF файли за секунди. Всі операції відбуваються локально у браузері, без завантаження на сервер.</p>
+                <p>Це ідеально для студентів, офісних працівників та всіх, хто працює з документами PDF.</p>
             </div>
 
             <style>
-            .seo-hidden {
-            font-size: 0;      /* текст “зменшуємо” */
-            height: 0;
-            overflow: hidden;
-            position: absolute;
-            }
-            .seo-hidden p, .seo-hidden h2 {
-            font-size: 16px;   /* для індексації, люди не бачать */
-            }
+                .seo-hidden {
+                    font-size: 0;
+                    height: 0;
+                    overflow: hidden;
+                    position: absolute;
+                }
+                .seo-hidden p,
+                .seo-hidden h2 {
+                    font-size: 16px;
+                }
             </style>
 
             <div class="hero-buttons">
@@ -442,7 +433,6 @@
                 <a href="./../index.html" class="btn btn-secondary">← До всіх інструментів</a>
             </div>
         </div>
-
         <div class="hero-bg"></div>
     </section>
 
@@ -458,29 +448,45 @@
     <section class="seo-section">
         <div class="container">
             <h2 class="section-title">Потужні інструменти для роботи з PDF</h2>
-            
+
             <div class="seo-grid">
+                <!-- Об’єднання -->
                 <div class="seo-card">
                     <h3>🔗 Об'єднання PDF</h3>
-                    <p>
-                        Швидко об'єднуйте кілька PDF документів в один файл. Перетягніть файли, змініть порядок сторінок та отримайте готовий документ. Ідеально для зшивання договорів, звітів та інших документів.
-                    </p>
+                    <p>Швидко об'єднуйте кілька PDF документів в один файл. Перетягніть файли, змініть порядок сторінок та отримайте готовий документ. Ідеально для зшивання договорів, звітів та інших документів.</p>
                 </div>
-                
+
+                <!-- Стиснення -->
                 <div class="seo-card">
                     <h3>🗜️ Стиснення PDF</h3>
-                    <p>
-                        Зменшуйте розмір PDF файлів без втрати якості. Наш інструмент оптимізує зображення та вміст документа, що дозволяє зменшити розмір файлу до 80% без втрати якості.
-                    </p>
+                    <p>Зменшуйте розмір PDF файлів без втрати якості. Наш інструмент оптимізує зображення та вміст документа, що дозволяє зменшити розмір файлу до 80 % без помітної втрати якості.</p>
                 </div>
-                
+
+                <!-- Конвертація -->
                 <div class="seo-card">
                     <h3>🖼️ Конвертація PDF</h3>
-                    <p>
-                        Конвертуйте PDF документи в зображення (JPG, PNG) або створюйте PDF з ваших фотографій. Ідеально для діління документами в соціальних мережах або друку.
-                    </p>
+                    <p>Конвертуйте PDF документи в зображення (JPG, PNG) або створюйте PDF з ваших фотографій. Ідеально для діління документами в соціальних мережах або друку.</p>
+                </div>
+
+                <!-- Розділення (ДОДАНО) -->
+                <div class="seo-card">
+                    <h3>🪓 Розділення PDF</h3>
+                    <p>Виділяйте окремі сторінки або діапазони сторінок із великого PDF‑документа. Після вибору потрібних ділянок інструмент миттєво створює нові PDF‑файли, які можна завантажити окремо.</p>
+                    <p>Корисно, коли треба отримати окремі розділи підручника, вилучити лише потрібні сторінки зі звіту, підготувати окремі частини договору або розбити презентацію на менші частини для швидкого надсилання електронною поштою.</p>
                 </div>
             </div>
+
+            <!-- Доданий розгорнутий SEO‑опис -->
+            <div class="seo-description">
+                <h3>Все, що треба знати про онлайн‑роботу з PDF</h3>
+                <p><strong>PDF Tools</strong> – це безкоштовна колекція веб‑інструментів, що працює в 100 % локально в браузері. Жоден файл не передається на сервер, тому ваші дані залишаються захищеними, а обробка відбувається миттєво навіть на середньо‑потужних пристроях.</p>
+                <p><strong>Коли потрібен інструмент «Розділити PDF»?</strong> Коли потрібно отримати окремі розділи великого підручника, вилучити лише потрібні сторінки зі звіту, підготувати окремі частини договору або розбити велику презентацію на менші файли для швидкого надсилання по електронній пошті.</p>
+                <p><strong>Стиснення без втрати якості</strong> за рахунок сучасних алгоритмів WebAssembly (WASM) зменшує вага файлів до 80 % та більше, що особливо корисно для веб‑сайтів, електронної пошти та мобільних пристроїв.</p>
+                <p><strong>Конвертація PDF ↔ зображення</strong> дозволяє створювати JPG/PNG/WebP з фото‑сканів, а також збирати серію зображень в один PDF‑файл без втрати кольорової гами та деталізації.</p>
+                <p><strong>Крок‑за‑кроком</strong>: виберіть потрібний інструмент, перетягніть файли у вікно, задайте параметри (діапазон сторінок, рівень стиснення, формат виводу) і натисніть кнопку – готовий файл з’явиться у вікні завантаження.</p>
+                <p><strong>Чому користувачі обирають саме PDF Tools?</strong> Відсутність реєстрації, повна безпека, швидкість роботи завдяки локальній обробці, підтримка усіх популярних форматів і повна безплатність.</p>
+            </div>
+            <!-- Кінець розгорнутого SEO‑опису -->
         </div>
     </section>
 
@@ -488,13 +494,12 @@
     <section class="benefits-section">
         <div class="container">
             <h2 class="section-title">Чому обирають наші PDF інструменти?</h2>
-            
             <ul class="benefits-list">
-                <li><strong>Без реєстрації</strong> - Використовуйте інструменти миттєво без створення акаунту</li>
-                <li><strong>100% безпека</strong> - Ваші файли ніколи не залишають ваш комп'ютер</li>
-                <li><strong>Швидка обробка</strong> - Всі операції виконуються прямо у вашому браузері</li>
-                <li><strong>Безкоштовно</strong> - Всі інструменти повністю безкоштовні для використання</li>
-                <li><strong>Підтримка всіх форматів</strong> - Працює з PDF, JPG, PNG, WebP та іншими форматами</li>
+                <li><strong>Без реєстрації</strong> – використовуйте інструменти миттєво без створення акаунту</li>
+                <li><strong>100 % безпека</strong> – ваші файли ніколи не залишають ваш комп’ютер</li>
+                <li><strong>Швидка обробка</strong> – всі операції виконуються прямо у вашому браузері</li>
+                <li><strong>Безкоштовно</strong> – всі інструменти повністю безкоштовні для використання</li>
+                <li><strong>Підтримка всіх форматів</strong> – працює з PDF, JPG, PNG, WebP та іншими форматами</li>
             </ul>
         </div>
     </section>
